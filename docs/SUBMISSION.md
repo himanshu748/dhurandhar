@@ -41,12 +41,12 @@ The submission is not "eight chat personas." Its differentiator is a coherent co
 - parses structured JSONL into model, thread, tokens, commands, files, final message, and event count;
 - captures changed files, numstat, diff SHA-256, and a bounded preview after workspace writes;
 - blocks live promotion without a real diff, approved verdict, recognized test command, and zero failing test exits;
-- records every material action in an append-only SHA-256-linked JSONL journal;
+- records every material action in an append-only SHA-256-linked JSONL journal whose event discriminator is `type`;
 - reconstructs runs, replay frames, agents, memories, balances, transactions, and policies from events;
 - provides Change Replay with auction, provenance, evidence, ledger, and recovery inspection;
 - injects a controlled sandbox regression and assigns liability to the implementer, Aegis, Sentinel, and Shipwright;
 - restores the known-good sandbox version and records four controls already backed by executable release-path gates;
-- compares active and proposed mechanism-kind coverage deterministically, without presenting the score as an efficacy benchmark;
+- compares active and proposed policy-mechanism coverage deterministically, without presenting the score as an efficacy benchmark;
 - still requires an explicit human decision before activation;
 - ships a deterministic, no-secret fallback for repeatable judging.
 
@@ -180,7 +180,13 @@ Open the policy check and proposal. Show the four memory, prompt, routing, and e
 
 The hosted or Docker fallback is intentionally fixture-backed. It lets a judge inspect the roster, auction, economy, event chain, replay, recovery, and policy gate without credentials. It makes zero model calls, reports zero model tokens, and must be labeled `fixture` throughout.
 
-The public Render instance is intentionally read-only: it exposes the seeded recovery and policy evidence but rejects mutation requests because no operator token is configured. A local Docker run in the default development environment can execute the deterministic drill; the narrated hero run uses a controlled server-side operator token held only in the browser tab's memory.
+The public Render instance and default Docker Compose stack are intentionally read-only: both run with `DHURANDHAR_ENV=production`, expose the seeded evidence, and reject mutation requests because no operator token is configured. On a fresh seeded instance, `GET /api/health` must return exactly:
+
+```json
+{"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":78,"runtime":"deterministic"}
+```
+
+Representative GET routes such as `/api/objectives` and `/api/runs` return `200`; `POST /api/objectives` without an operator token returns `503` with `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. The narrated mutable hero run uses the separate local-development path with a controlled server-side operator token held only in the browser tab's memory.
 
 The fallback is a reliability path, not the video story and not evidence for the Codex criterion.
 
@@ -241,5 +247,15 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [ ] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the release commit.
 - [ ] Create and push the tagged release.
 - [ ] Verify every claim and link against the final public commit.
+
+## Release/tag procedure
+
+Complete and check every pre-release evidence item above first. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the first command passes:
+
+```bash
+make submission-check
+git tag -s v1.0.0 -m "Dhurandhar OpenAI Build Week submission"
+git push origin v1.0.0
+```
 
 Rules references: [OpenAI Build Week rules](https://openai.devpost.com/rules) and [OpenAI Build Week](https://openai.com/build-week/).

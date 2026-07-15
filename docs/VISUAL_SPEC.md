@@ -113,6 +113,8 @@ The final action summarizes consequences: `Start fixture run`, `Start read-only 
 
 ## 6. Change Replay
 
+The API event discriminator is `type`. UI code must not rename it to `kind`; `kind` is reserved for explicitly nested evidence, artifact, ledger, file-change, and policy records.
+
 ### Run header
 
 Display:

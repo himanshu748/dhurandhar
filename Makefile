@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help setup install demo dev dev-backend dev-frontend test lint build docker up down logs clean
+.PHONY: help setup install demo dev dev-backend dev-frontend test lint build submission-check docker up down logs clean
 
 help: ## Show available targets
 	@awk 'BEGIN {FS = ":.*## "; printf "Dhurandhar targets:\n\n"} /^[a-zA-Z_-]+:.*## / {printf "  %-18s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -10,7 +10,7 @@ setup: ## Create a local .env from safe sample defaults
 	@echo "Local configuration is ready in .env (sample/read-only by default)."
 
 install: ## Install backend and frontend dependencies
-	python -m pip install -r backend/requirements.txt
+	python -m pip install -r backend/requirements-dev.txt
 	cd frontend && npm ci
 
 demo: setup ## Run the deterministic, offline demo
@@ -36,6 +36,9 @@ lint: ## Run available backend and frontend static checks
 
 build: ## Build the production frontend
 	cd frontend && npm run build
+
+submission-check: ## Fail while release evidence or checklist blockers remain
+	python scripts/check_submission.py
 
 docker: ## Build the production container
 	docker build --tag dhurandhar:local .

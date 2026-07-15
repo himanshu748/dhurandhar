@@ -1,17 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { decidePolicy, runRecoveryDrill } from "./api";
 import { EvidenceInspector } from "./components/EvidenceInspector";
 import { LedgerPanel } from "./components/LedgerPanel";
 import { NewObjectiveDialog } from "./components/NewObjectiveDialog";
 import { OperatorAccessDialog } from "./components/OperatorAccessDialog";
-import { RecoveryFlow } from "./components/RecoveryFlow";
 import { RunHeader } from "./components/RunHeader";
-import { SecondaryView } from "./components/SecondaryView";
 import { Sidebar, type Page } from "./components/Sidebar";
 import { Timeline } from "./components/Timeline";
 import { Topbar } from "./components/Topbar";
 import { useReplay } from "./hooks/useReplay";
 import { selectCinematicEvents } from "./lib/replay";
+
+const RecoveryFlow = lazy(() => import("./components/RecoveryFlow")
+  .then((module) => ({ default: module.RecoveryFlow })));
+const SecondaryView = lazy(() => import("./components/SecondaryView")
+  .then((module) => ({ default: module.SecondaryView })));
 
 function BootSkeleton() {
   return (
@@ -22,6 +25,21 @@ function BootSkeleton() {
       <div className="skeleton-inspector"><i />{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</div>
       <p>Verifying journal chain and evidence provenance…</p>
     </main>
+  );
+}
+
+function SurfaceSkeleton({ surface }: { surface: "recovery" | "secondary" }) {
+  return (
+    <section
+      className={`${surface === "secondary" ? "secondary-view " : ""}skeleton-replay`}
+      aria-label={`Loading ${surface} evidence`}
+      aria-busy="true"
+    >
+      <i className="wide" />
+      {Array.from({ length: surface === "secondary" ? 4 : 2 }, (_, index) => (
+        <article key={index}><i /><i /><i /></article>
+      ))}
+    </section>
   );
 }
 
@@ -197,15 +215,17 @@ export default function App() {
             runMode={snapshot.run.mode}
             onSelect={(_event, index) => seek(index)}
           >
-            <RecoveryFlow
-              events={snapshot.events}
-              currentSequence={selectedEvent.sequence}
-              policies={snapshot.policies}
-              operatorEnabled={operatorEnabled}
-              policyBusyId={policyBusyId}
-              onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
-              onOpenPolicies={() => setPage("policies")}
-            />
+            <Suspense fallback={<SurfaceSkeleton surface="recovery" />}>
+              <RecoveryFlow
+                events={snapshot.events}
+                currentSequence={selectedEvent.sequence}
+                policies={snapshot.policies}
+                operatorEnabled={operatorEnabled}
+                policyBusyId={policyBusyId}
+                onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
+                onOpenPolicies={() => setPage("policies")}
+              />
+            </Suspense>
           </Timeline>
           <EvidenceInspector event={selectedEvent} runMode={snapshot.run.mode} />
           <LedgerPanel
@@ -218,14 +238,16 @@ export default function App() {
           />
         </>
       ) : (
-        <SecondaryView
-          page={page}
-          snapshot={snapshot}
-          onOpenReplay={() => setPage("replay")}
-          onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
-          policyBusyId={policyBusyId}
-          operatorEnabled={operatorEnabled}
-        />
+        <Suspense fallback={<SurfaceSkeleton surface="secondary" />}>
+          <SecondaryView
+            page={page}
+            snapshot={snapshot}
+            onOpenReplay={() => setPage("replay")}
+            onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
+            policyBusyId={policyBusyId}
+            operatorEnabled={operatorEnabled}
+          />
+        </Suspense>
       )}
 
       {actionMessage && <div className="action-toast" role="status" onClick={() => setActionMessage(null)}>{actionMessage}</div>}

@@ -10,6 +10,17 @@ const apiProxy = {
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("/node_modules/gsap/")) return "vendor-gsap";
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "vendor-react";
+          return undefined;
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: apiProxy,
