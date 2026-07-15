@@ -1,11 +1,18 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach } from "vitest";
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+// App tests exercise rendered evidence, not animation clocks. Keep every GSAP
+// branch deterministic and give lazy chunks enough time on a cold first run.
+configure({ asyncUtilTimeout: 5_000 });
+
 Object.defineProperty(window, "matchMedia", {
+  configurable: true,
   writable: true,
   value: (query: string) => ({
-    matches: query.includes("prefers-reduced-motion"),
+    matches: query === REDUCED_MOTION_QUERY,
     media: query,
     onchange: null,
     addEventListener: () => undefined,

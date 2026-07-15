@@ -211,11 +211,11 @@ docker compose up --build
 
 Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as GPT-5.5, GPT-5.6, or a live Codex run.
 
-This path lets judges verify the company roster, three-bid auction, ledger settlement, replay ordering, recovery drill, policy gate, and deterministic event chain without granting credentials.
+This path lets judges inspect the company roster, three-bid auction, ledger settlement, replay ordering, seeded recovery and policy evidence, and deterministic event chain without granting credentials.
 
 ### Operator access and the public demo
 
-Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint deliberately omits that secret, so its public deployment is a read-only replay: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
+Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint and default Docker Compose stack deliberately omit that secret, so both are read-only replays: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
 
 For a controlled local recording, set the server-side token before starting the API, click the **Read-only** control in the top bar, and enter the same value. The browser keeps it only in the current React memory, sends it only in `X-Dhurandhar-Operator-Token` on mutation requests, and never writes it to storage, request bodies, or the event journal. **Forget token** or a page reload clears it.
 
@@ -226,11 +226,7 @@ Prerequisites: Python 3.12+, Node.js 22+, npm, and Git.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r backend/requirements.txt
-
-cd frontend
-npm ci
-cd ..
+make install
 ```
 
 Run the services in separate terminals:

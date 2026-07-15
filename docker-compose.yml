@@ -8,7 +8,9 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
-      DHURANDHAR_ENV: ${DHURANDHAR_ENV:-development}
+      # Match the public Render service: deterministic seeded replay, with
+      # mutations disabled because no operator token is present.
+      DHURANDHAR_ENV: ${DHURANDHAR_ENV:-production}
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
       DHURANDHAR_EVENT_LOG: /app/data/events.jsonl
@@ -22,7 +24,6 @@ services:
       DHURANDHAR_CODEX_TIMEOUT_SECONDS: ${DHURANDHAR_CODEX_TIMEOUT_SECONDS:-120}
       DHURANDHAR_IMPLEMENTATION_MODEL: ${DHURANDHAR_IMPLEMENTATION_MODEL:-gpt-5.5}
       DHURANDHAR_REVIEWER_MODEL: ${DHURANDHAR_REVIEWER_MODEL:-gpt-5.5}
-      DHURANDHAR_OPERATOR_TOKEN: ${DHURANDHAR_OPERATOR_TOKEN:-}
     volumes:
       - dhurandhar-data:/app/data
       - dhurandhar-workspaces:/app/workspaces

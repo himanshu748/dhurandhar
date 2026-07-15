@@ -24,7 +24,7 @@ The submission's live target is **Misconception Debugger**, a separate Education
 | Separate read-only Codex reviewer with structured verdict and findings | Engineer self-approval |
 | Live promotion gate requiring a real Git diff and successful test-command exit codes | Trusting a prose claim that tests passed |
 | Internal `demo-sandbox` promotion, health, fault injection, and known-good recovery state | Commit, push, merge, external deployment, production traffic, or infrastructure rollback |
-| Deterministic four-kind structural policy check with explicit human approval | Policy-efficacy benchmark, recursive self-modification, or silent activation |
+| Deterministic four-mechanism structural policy check with explicit human approval | Policy-efficacy benchmark, recursive self-modification, or silent activation |
 | Deterministic no-secret fixture for repeatable judge testing | Calling the fixture GPT-5.5, GPT-5.6, or live Codex |
 
 The currently authenticated Codex account exposes `gpt-5.5`, so both configured defaults are `gpt-5.5`. GPT-5.6 must not be claimed until the account has access and a new live implementation plus reviewer run records it.
@@ -111,7 +111,7 @@ The winner is the lowest-cost eligible bid. Equal cost is resolved by higher cre
 
 ### 4.3 Economy and escrow
 
-The orchestrator appends every movement as `ledger.transaction` with source run, reason, sender, recipient, kind, and amount.
+The orchestrator appends every movement as an event whose discriminator is `type: "ledger.transaction"`. Its nested ledger payload records source run, reason, sender, recipient, `data.kind`, and amount.
 
 For the current delivery contract:
 
@@ -194,7 +194,7 @@ The JSONL parser requires both `thread.started` and `turn.completed`. It extract
 - thread ID and configured model;
 - input, cached-input, output, and reasoning-output tokens;
 - command ID, command, status, and exit code;
-- file-change path, kind, and status;
+- file-change path, nested change `kind`, and status;
 - final agent message and raw event count.
 
 After a workspace-write call, evidence-only Git commands capture tracked and untracked file names, numstat, a SHA-256 of the complete diff evidence, and a bounded preview with a truncation flag. Raw Codex output and command output are not stored.
@@ -301,6 +301,8 @@ The append-only JSONL event journal is the source for run, replay, agent, ledger
 }
 ```
 
+`type` is the event discriminator everywhere in the API and replay UI. A `kind` key appears only inside explicitly nested ledger, evidence, artifact, file-change, memory, or policy records.
+
 Journal invariants:
 
 - global sequence is unique and monotonic;
@@ -348,7 +350,7 @@ The recovery drill is a controlled journal/API workflow:
 2. Sentinel emits `monitor.alert` with the synthetic HTTP status, error rate, and threshold;
 3. the implementing engineer, Aegis, Sentinel, and Shipwright receive explicit run-linked liability penalties;
 4. a human recovery action asks Shipwright to restore the recorded known-good sandbox version;
-5. Aegis records root cause and a deterministic four-kind structural coverage check;
+5. Aegis records root cause and a deterministic four-mechanism structural coverage check;
 6. Atlas proposes one runtime-backed memory, prompt, routing, and economy control;
 7. the API refuses approval unless proposed structural coverage is greater than active structural coverage and the compatibility regression flag is zero;
 8. even after that automated gate, a named human decision is required;

@@ -10,6 +10,7 @@ export type RunStatus = "running" | "blocked" | "deployed" | "recovered" | "comp
 
 export interface EvidenceItem {
   id: string;
+  /** Nested evidence category. Replay events themselves are discriminated by ReplayEvent.type. */
   kind: "test" | "review" | "commit" | "deployment" | "monitor" | "policy";
   label: string;
   detail?: string;
@@ -17,6 +18,7 @@ export interface EvidenceItem {
 }
 
 export interface Artifact {
+  /** Nested artifact category. Replay events themselves are discriminated by ReplayEvent.type. */
   kind: "diff" | "plan" | "command" | "log";
   path?: string;
   language?: string;
@@ -104,6 +106,7 @@ export interface ReviewEvidence {
 }
 
 export interface LedgerEvidence {
+  /** Nested ledger transaction category carried by a ledger.transaction event. */
   kind: string;
   amount: number;
   fromAgent?: string;
@@ -117,6 +120,7 @@ export interface ReplayEvent {
   occurredAt: string;
   actor: string;
   role: string;
+  /** Canonical API event discriminator. */
   type: string;
   title: string;
   summary: string;
@@ -186,6 +190,7 @@ export interface LedgerTransaction {
   tokens: number;
   credits: number;
   eventId?: string;
+  /** Nested ledger category; not an event discriminator. */
   kind?: string;
   fromAgent?: string;
   toAgent?: string;
