@@ -1,7 +1,47 @@
-import { Activity, ArrowUpRight, Check, Gauge, GitPullRequest, LoaderCircle, ShieldCheck, X } from "lucide-react";
+import { Activity, ArrowUpRight, Brain, Check, Gauge, GitPullRequest, LoaderCircle, ShieldCheck, X } from "lucide-react";
 import type { Page } from "./Sidebar";
-import type { ReplaySnapshot } from "../types";
+import type { AgentBalance, ReplaySnapshot } from "../types";
 import { RoleMark } from "./RoleMark";
+
+function AgentDirectory({ agents }: { agents: AgentBalance[] }) {
+  return (
+    <div className="agent-directory">
+      {agents.map((agent) => (
+        <article className={`agent-card state-${agent.state}`} key={agent.id}>
+          <header className="agent-card-heading">
+            <RoleMark role={agent.companyRole ?? agent.displayName} showLabel={false} />
+            <div>
+              <h3>{agent.displayName}</h3>
+              <small>{agent.companyRole ?? agent.role}</small>
+            </div>
+            <span className="agent-state"><i aria-hidden="true" />{agent.reported === false ? "not reported" : agent.state}</span>
+          </header>
+          {agent.personality && <p className="agent-personality">{agent.personality}</p>}
+          {agent.currentTask && <p className="agent-current-task"><strong>Now</strong>{agent.currentTask}</p>}
+          <section className="agent-capabilities" aria-label={`${agent.displayName} capabilities`}>
+            <h4>Capabilities</h4>
+            <ul>{(agent.capabilities ?? []).map((capability) => <li key={capability}>{capability}</li>)}</ul>
+          </section>
+          <section className="agent-memory" aria-label={`${agent.displayName} memory`}>
+            <div className="agent-section-heading"><h4><Brain size={13} />Memory</h4><code>{agent.memoryCount ?? agent.memoryReferences?.length ?? 0} refs</code></div>
+            {agent.lastLearning ? <p><strong>Last learning</strong>{agent.lastLearning}</p> : <p className="agent-empty-memory">No learned memory reported yet.</p>}
+            {(agent.memoryReferences?.length ?? 0) > 0 && (
+              <ul>
+                {agent.memoryReferences?.slice(-2).reverse().map((memory) => (
+                  <li key={memory.id}><code>{memory.eventId ?? memory.id}</code><span>{memory.label}</span></li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <dl className="agent-stats">
+            <div><dt>Balance</dt><dd>{agent.balance.toLocaleString()} cr</dd></div>
+            <div><dt>Actions</dt><dd>{agent.completedActions?.toLocaleString() ?? "—"}</dd></div>
+          </dl>
+        </article>
+      ))}
+    </div>
+  );
+}
 
 export function SecondaryView({
   page,
@@ -9,12 +49,14 @@ export function SecondaryView({
   onOpenReplay,
   onPolicyDecision,
   policyBusyId,
+  operatorEnabled,
 }: {
   page: Exclude<Page, "replay">;
   snapshot: ReplaySnapshot;
   onOpenReplay: () => void;
   onPolicyDecision: (proposalId: string, decision: "promote" | "reject") => void;
   policyBusyId: string | null;
+  operatorEnabled: boolean;
 }) {
   if (page === "runs") {
     return (
@@ -34,16 +76,8 @@ export function SecondaryView({
   if (page === "agents") {
     return (
       <section className="secondary-view">
-        <div className="view-intro"><div><h2>Role agents</h2><p>Bounded contracts with measured work, not simulated personalities.</p></div></div>
-        <div className="agent-directory">
-          {snapshot.agents.map((agent) => (
-            <article key={agent.id}>
-              <RoleMark role={agent.displayName} />
-              <p>{agent.role === "reviewer" ? "Adversarial correctness review and verified findings." : `Owns ${agent.role} work inside the run state machine.`}</p>
-              <dl><div><dt>State</dt><dd>{agent.state}</dd></div><div><dt>Credits</dt><dd>{agent.balance.toLocaleString()}</dd></div></dl>
-            </article>
-          ))}
-        </div>
+        <div className="view-intro"><div><h2>Eight-agent company</h2><p>Persistent role contracts expose capabilities, current state, credits, and learned memory.</p></div><code className="view-count">{snapshot.agents.length} roles</code></div>
+        <AgentDirectory agents={snapshot.agents} />
       </section>
     );
   }
@@ -51,17 +85,17 @@ export function SecondaryView({
   if (page === "policies") {
     return (
       <section className="secondary-view">
-        <div className="view-intro"><div><h2>Self-improvement policies</h2><p>Memory, prompt, routing, and economy changes pass the same evidence gate.</p></div></div>
+        <div className="view-intro"><div><h2>Self-improvement policies</h2><p>Memory, prompt, routing, and economy controls require executable enforcement and an operator decision. Coverage is structural, not an efficacy score.</p></div></div>
         <div className="policy-list">
           {snapshot.policies.map((policy) => (
             <article key={policy.id}>
               <div className="policy-title"><span className={`mechanism mechanism-${policy.mechanism}`}>{policy.mechanism}</span><h3>{policy.title}</h3><span className={`proposal-status status-${policy.status}`}>{policy.status}</span></div>
               <p>{policy.rationale}</p>
-              <div className="score-comparison"><Gauge size={15} /><span>Baseline <strong>{policy.baselineScore.toFixed(2)}</strong></span><ArrowUpRight size={14} /><span>Candidate <strong>{policy.candidateScore.toFixed(2)}</strong></span></div>
+              <div className="score-comparison" title="Deterministic control-kind coverage; not policy efficacy"><Gauge size={15} /><span>Coverage <strong>{policy.baselineScore.toFixed(2)}</strong></span><ArrowUpRight size={14} /><span>Coverage <strong>{policy.candidateScore.toFixed(2)}</strong></span><span>structure only</span></div>
               {policy.status === "proposed" && policy.decisionOwner && snapshot.source === "api" && (
                 <div className="policy-actions">
-                  <button type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "reject")} disabled={Boolean(policyBusyId)}><X size={14} />Reject</button>
-                  <button className="promote" type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "promote")} disabled={Boolean(policyBusyId)}>
+                  <button type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "reject")} disabled={Boolean(policyBusyId) || !operatorEnabled} title={operatorEnabled ? "Reject this candidate" : "Load an operator token to decide policies"}><X size={14} />Reject</button>
+                  <button className="promote" type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "promote")} disabled={Boolean(policyBusyId) || !operatorEnabled} title={operatorEnabled ? "Promote this candidate" : "Load an operator token to decide policies"}>
                     {policyBusyId === (policy.proposalId ?? policy.id) ? <LoaderCircle className="spin" size={14} /> : <Check size={14} />}
                     Promote
                   </button>

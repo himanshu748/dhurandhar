@@ -1,8 +1,18 @@
 from __future__ import annotations
 
+import secrets
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    status,
+)
 
 from app.models.domain import (
     Agent,
@@ -36,6 +46,34 @@ def get_orchestrator(request: Request) -> Orchestrator:
 OrchestratorDep = Annotated[Orchestrator, Depends(get_orchestrator)]
 
 
+def require_operator(request: Request) -> None:
+    """Protect every mutation whenever the app is live-capable or deployed."""
+    settings = request.app.state.settings
+    live_capable = (
+        settings.runtime == "codex"
+        or settings.enable_codex_runtime
+        or settings.codex_apply_changes
+    )
+    deployed = settings.environment.strip().lower() != "development"
+    token = settings.operator_token
+    if not live_capable and not deployed and token is None:
+        return
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured",
+        )
+    provided = request.headers.get("X-Dhurandhar-Operator-Token", "")
+    if not provided or not secrets.compare_digest(provided, token):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="valid operator credentials are required",
+        )
+
+
+OperatorDep = Annotated[None, Depends(require_operator)]
+
+
 @router.get("/health", response_model=HealthResponse, tags=["system"])
 def health(request: Request, orchestrator: OrchestratorDep) -> HealthResponse:
     chain = orchestrator.chain_state()
@@ -49,14 +87,43 @@ def health(request: Request, orchestrator: OrchestratorDep) -> HealthResponse:
     )
 
 
+def _pulse_is_degraded(orchestrator: Orchestrator) -> bool:
+    """Reduce the latest demo-sandbox health transition from the event journal."""
+    health_events = {
+        "fault.injected",
+        "monitor.alert",
+        "monitor.healthy",
+        "rollback.completed",
+        "run.completed",
+    }
+    latest = next(
+        (
+            event
+            for event in reversed(orchestrator.store.all())
+            if event.type in health_events
+        ),
+        None,
+    )
+    return latest is not None and latest.type in {"fault.injected", "monitor.alert"}
+
+
 @router.get("/pulse", response_model=PulseResponse, tags=["system"])
-def pulse(request: Request) -> PulseResponse:
-    """The tiny artifact created by the deterministic self-hosting run."""
+def pulse(
+    request: Request,
+    response: Response,
+    orchestrator: OrchestratorDep,
+) -> PulseResponse:
+    """Event-backed demo-sandbox pulse; it is not an external deployment probe."""
+    degraded = _pulse_is_degraded(orchestrator)
+    if degraded:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return PulseResponse(
-        status="operational",
+        status="degraded" if degraded else "operational",
         release=request.app.version,
         monitored_by="sentinel",
         self_hosted_objective=SEED_OBJECTIVE_ID,
+        evidence_scope="demo-sandbox",
+        external_observation=False,
     )
 
 
@@ -70,6 +137,7 @@ def create_objective(
     payload: ObjectiveCreate,
     background_tasks: BackgroundTasks,
     orchestrator: OrchestratorDep,
+    _operator: OperatorDep,
 ) -> Objective:
     objective = orchestrator.create_objective(payload)
     background_tasks.add_task(orchestrator.execute_objective, objective)
@@ -150,6 +218,7 @@ def inject_regression(
     run_id: str,
     payload: RegressionInjection,
     orchestrator: OrchestratorDep,
+    _operator: OperatorDep,
 ) -> RunDetail:
     orchestrator.inject_regression(
         run_id,
@@ -168,6 +237,7 @@ def rollback(
     run_id: str,
     payload: RollbackRequest,
     orchestrator: OrchestratorDep,
+    _operator: OperatorDep,
 ) -> RecoveryResponse:
     run, proposal, events = orchestrator.rollback(run_id, reason=payload.reason)
     return RecoveryResponse(
@@ -186,6 +256,7 @@ def decide_policy(
     proposal_id: str,
     payload: PolicyDecisionRequest,
     orchestrator: OrchestratorDep,
+    _operator: OperatorDep,
 ) -> PolicyProposal:
     return orchestrator.decide_policy(
         proposal_id,

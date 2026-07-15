@@ -4,6 +4,7 @@ import { decidePolicy, runRecoveryDrill } from "./api";
 import { EvidenceInspector } from "./components/EvidenceInspector";
 import { LedgerPanel } from "./components/LedgerPanel";
 import { NewObjectiveDialog } from "./components/NewObjectiveDialog";
+import { OperatorAccessDialog } from "./components/OperatorAccessDialog";
 import { RunHeader } from "./components/RunHeader";
 import { SecondaryView } from "./components/SecondaryView";
 import { Sidebar, type Page } from "./components/Sidebar";
@@ -22,6 +23,9 @@ export default function App() {
   const [drillRunning, setDrillRunning] = useState(false);
   const [policyBusyId, setPolicyBusyId] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [operatorToken, setOperatorToken] = useState("");
+  const [operatorDialogOpen, setOperatorDialogOpen] = useState(false);
+  const operatorEnabled = operatorToken.length > 0;
 
   useEffect(() => {
     if (!snapshot) return;
@@ -122,9 +126,9 @@ export default function App() {
     setDrillRunning(true);
     setActionMessage("Injecting a controlled fault and restoring the last known-good release…");
     try {
-      await runRecoveryDrill(snapshot.run.id);
+      await runRecoveryDrill(snapshot.run.id, operatorToken);
       await refresh();
-      setActionMessage("Recovery verified. A benchmark-gated policy candidate is ready for review.");
+      setActionMessage("Recovery verified. A structurally covered control set is ready for operator review; efficacy is not claimed.");
     } catch (cause) {
       setActionMessage(cause instanceof Error ? cause.message : "Recovery drill failed");
     } finally {
@@ -136,9 +140,9 @@ export default function App() {
     setPolicyBusyId(proposalId);
     setActionMessage(null);
     try {
-      await decidePolicy(proposalId, decision);
+      await decidePolicy(proposalId, decision, operatorToken);
       await refresh();
-      setActionMessage(decision === "promote" ? "Policy promoted and will govern future runs." : "Policy candidate rejected.");
+      setActionMessage(decision === "promote" ? "Operator-approved controls will be inherited by future runs." : "Policy candidate rejected.");
     } catch (cause) {
       setActionMessage(cause instanceof Error ? cause.message : "Policy decision failed");
     } finally {
@@ -149,7 +153,13 @@ export default function App() {
   return (
     <div className={`app-shell ${page !== "replay" ? "secondary-shell" : ""}`}>
       <Sidebar active={page} onSelect={setPage} />
-      <Topbar page={page} source={snapshot.source} onNewObjective={() => setDialogOpen(true)} />
+      <Topbar
+        page={page}
+        source={snapshot.source}
+        operatorEnabled={operatorEnabled}
+        onNewObjective={() => setDialogOpen(true)}
+        onOperatorAccess={() => setOperatorDialogOpen(true)}
+      />
 
       {page === "replay" ? (
         <>
@@ -164,7 +174,8 @@ export default function App() {
             onSpeed={setSpeed}
             onRecoveryDrill={() => void runDrill()}
             drillRunning={drillRunning}
-            drillDisabled={snapshot.source !== "api"}
+            drillDisabled={snapshot.source !== "api" || !operatorEnabled}
+            drillDisabledReason={snapshot.source !== "api" ? "Recovery drills require a live API" : "Load an operator token to run a recovery drill"}
           />
           <Timeline
             events={snapshot.events}
@@ -172,7 +183,7 @@ export default function App() {
             cursor={cursor}
             onSelect={(event) => setSelectedId(event.id)}
           />
-          <EvidenceInspector event={selectedEvent} />
+          <EvidenceInspector event={selectedEvent} runMode={snapshot.run.mode} />
           <LedgerPanel agents={snapshot.agents} transactions={snapshot.transactions} onTransaction={selectTransaction} />
         </>
       ) : (
@@ -182,6 +193,7 @@ export default function App() {
           onOpenReplay={() => setPage("replay")}
           onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
           policyBusyId={policyBusyId}
+          operatorEnabled={operatorEnabled}
         />
       )}
 
@@ -189,8 +201,25 @@ export default function App() {
 
       <NewObjectiveDialog
         open={dialogOpen}
+        operatorToken={operatorToken}
         onClose={() => setDialogOpen(false)}
         onCreated={() => void refresh()}
+      />
+      <OperatorAccessDialog
+        open={operatorDialogOpen}
+        tokenLoaded={operatorEnabled}
+        onClose={() => setOperatorDialogOpen(false)}
+        onLoadToken={(token) => {
+          setOperatorToken(token);
+          setOperatorDialogOpen(false);
+          setActionMessage("Operator token loaded into this tab's memory. Mutation controls are enabled.");
+        }}
+        onForgetToken={() => {
+          setOperatorToken("");
+          setDialogOpen(false);
+          setOperatorDialogOpen(false);
+          setActionMessage("Operator token forgotten. The control plane is read-only.");
+        }}
       />
     </div>
   );

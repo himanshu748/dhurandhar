@@ -1,12 +1,12 @@
 services:
   - type: web
-    name: dhurandhar
+    name: dhurandhar-asc
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /api/health
-    autoDeploy: false
+    autoDeployTrigger: "off"
     envVars:
       - key: DHURANDHAR_ENV
         value: production
@@ -17,40 +17,10 @@ services:
       - key: DHURANDHAR_EVENT_LOG
         value: /tmp/events.jsonl
       - key: DHURANDHAR_SEED_DEMO
-        value: true
+        value: "true"
       - key: DHURANDHAR_RUNTIME
         value: deterministic
       - key: DHURANDHAR_ENABLE_CODEX_RUNTIME
-        value: false
+        value: "false"
       - key: DHURANDHAR_CODEX_APPLY_CHANGES
-        value: false
-      - key: DHURANDHAR_CODEX_BIN
-        value: codex
-      - key: DHURANDHAR_CODEX_WORKDIR
-        value: /app
-      - key: DHURANDHAR_CODEX_TIMEOUT_SECONDS
-        value: 120
-      - key: DHURANDHAR_DEMO_MODE
-        value: sample
-      - key: DHURANDHAR_WRITE_ENABLED
-        value: false
-      - key: DHURANDHAR_AUTO_MERGE
-        value: false
-      - key: DHURANDHAR_SELF_IMPROVEMENT_ENABLED
-        value: false
-      - key: DHURANDHAR_REQUIRE_CI
-        value: true
-      - key: DHURANDHAR_MAX_PARALLEL_RUNS
-        value: 1
-      - key: DHURANDHAR_MAX_STEPS_PER_RUN
-        value: 12
-      - key: OPENAI_MODEL
-        value: gpt-5.6
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: GITHUB_TOKEN
-        sync: false
-      - key: GITHUB_REPOSITORY
-        sync: false
-      - key: DHURANDHAR_ALLOWED_REPOSITORIES
-        sync: false
+        value: "false"

@@ -1,11 +1,34 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from app.models.domain import PolicyProposal
+from app.models.domain import ObjectiveCreate, PolicyProposal
+from app.services.event_store import JsonlEventStore
 from app.services.orchestrator import SEED_OBJECTIVE_ID, SEED_RUN_ID, Orchestrator
+from app.services.runtime import DeterministicRuntime, RuntimeResult
+
+
+class BriefCapturingRuntime(DeterministicRuntime):
+    def __init__(self) -> None:
+        self.implementation_briefs: list[str] = []
+        self.review_briefs: list[str] = []
+
+    def generate(self, *, brief: str, run_id: str) -> RuntimeResult:
+        self.implementation_briefs.append(brief)
+        return super().generate(brief=brief, run_id=run_id)
+
+    def review(
+        self, *, brief: str, run_id: str, diff_context: str
+    ) -> RuntimeResult:
+        self.review_briefs.append(brief)
+        return super().review(
+            brief=brief,
+            run_id=run_id,
+            diff_context=diff_context,
+        )
 
 
 def test_legacy_policy_events_remain_readable_but_unbenchmarked() -> None:
@@ -140,3 +163,47 @@ def test_new_active_policy_supersedes_each_mechanism_kind(
         "routing",
         "economy",
     ]
+
+
+def test_approved_incident_controls_are_inherited_by_both_runtime_briefs(
+    tmp_path: Path,
+) -> None:
+    runtime = BriefCapturingRuntime()
+    orchestrator = Orchestrator(
+        JsonlEventStore(tmp_path / "events.jsonl"),
+        runtime,
+    )
+    orchestrator.bootstrap_seeded_run()
+    _append_proposal(
+        orchestrator,
+        proposal_id="policy_runtime_brief",
+        baseline_score=0.0,
+        candidate_score=1.0,
+        critical_regressions=0,
+    )
+    orchestrator.decide_policy(
+        "policy_runtime_brief",
+        decision="approve",
+        decided_by="operator-test",
+    )
+    objective = orchestrator.create_objective(
+        ObjectiveCreate(title="Exercise inherited incident controls")
+    )
+
+    orchestrator.execute_objective(objective)
+
+    assert orchestrator.run_summary(objective.run_id).status == "completed"
+    assert len(runtime.implementation_briefs) == 1
+    assert len(runtime.review_briefs) == 1
+    expected_ids = {mechanism.id for mechanism in orchestrator._mechanisms()}
+    for brief in [*runtime.implementation_briefs, *runtime.review_briefs]:
+        assert "Operator-approved incident controls inherited by this run:" in brief
+        assert all(mechanism_id in brief for mechanism_id in expected_ids)
+    inherited = next(
+        event
+        for event in orchestrator.run_detail(objective.run_id).events
+        if event.type == "policy.inherited"
+    )
+    assert inherited.data["runtime_brief_injection"] is True
+    assert set(inherited.data["mechanism_ids"]) == expected_ids
+    assert {item["id"] for item in inherited.data["mechanisms"]} == expected_ids

@@ -36,14 +36,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         application.state.orchestrator = orchestrator
         if configured.seed_demo:
             orchestrator.bootstrap_seeded_run()
+        orchestrator.bootstrap_company()
+        orchestrator.reconcile_interrupted_runs()
         yield
 
     application = FastAPI(
         title=configured.app_name,
         version=__version__,
         description=(
-            "Event-sourced API for a deterministic autonomous software delivery demo. "
-            "Every material action is stored in a verifiable hash chain."
+            "Event-sourced API for an eight-agent autonomous software company. "
+            "Every material action and model claim is stored in a verifiable hash chain."
         ),
         lifespan=lifespan,
         openapi_tags=[
@@ -60,7 +62,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_origins=list(configured.cors_origins),
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "X-Request-ID"],
+        allow_headers=[
+            "Content-Type",
+            "X-Request-ID",
+            "X-Dhurandhar-Operator-Token",
+        ],
         expose_headers=["X-Request-ID", "X-Process-Time-Ms"],
     )
 

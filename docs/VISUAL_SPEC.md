@@ -9,10 +9,12 @@ This specification translates the design concept into an implementable UI contra
 Within ten seconds, a maintainer should be able to answer:
 
 1. What objective is this run pursuing?
-2. Where is it in the delivery lifecycle?
-3. Is the current state healthy, blocked, or awaiting approval?
-4. What evidence supports the last consequential decision?
-5. What did the run cost, and can it be stopped or rolled back?
+2. Which of the three engineers won the evidence-backed auction, and why?
+3. Is the implementation live Codex evidence or a deterministic fixture?
+4. Where is it in the delivery lifecycle?
+5. Is the current state healthy, blocked, or awaiting approval?
+6. What evidence supports the last consequential decision?
+7. What did the run cost, and can it be stopped or recovered?
 
 The interface should feel like a calm operations console: dense enough for engineering evidence, restrained enough that status remains legible during a three-minute demo.
 
@@ -34,7 +36,7 @@ The implementation should preserve this information hierarchy even if spacing or
 
 ### Evidence before personality
 
-Show role, action, status, and evidence. Do not add avatars, chat bubbles, simulated emotions, office metaphors, or celebratory “agent society” animations.
+Show the exact persistent identity, role, action, status, and evidence. Do not add chat bubbles, simulated emotions, office metaphors, or celebratory “agent society” animations. Atlas, Forge, Prism, Rivet, Aegis, Sentinel, Shipwright, and Chronicle must not collapse into anonymous generic roles.
 
 ### One run, one causal story
 
@@ -98,16 +100,16 @@ The label opens a small panel with API health, storage health, adapter mode, and
 
 The MVP orange `New objective` button opens a focused form containing objective, context, line-separated acceptance criteria, and priority. Runtime/write mode is configured by the host so a browser action cannot silently expand authority.
 
-The future repository adapter should extend the form with:
+The future repository adapter may extend the form with:
 
 - objective;
 - acceptance criteria;
 - repository selection from the allowlist;
-- live/sample mode;
+- live/fixture mode;
 - budget ceiling;
 - merge policy.
 
-The final action summarizes consequences: `Start read-only run`, `Create branch`, or `Create PR`. Never use a generic `Go` label.
+The final action summarizes consequences: `Start fixture run`, `Start read-only Codex run`, or `Start workspace-write run`. Branch and pull-request actions must not appear until corresponding adapters exist. Never use a generic `Go` label.
 
 ## 6. Change Replay
 
@@ -121,7 +123,8 @@ Display:
 - elapsed duration;
 - number of human interventions;
 - measured total tokens;
-- optional PR and deployment links.
+- provenance (`fixture` or `live`) and sandbox mode;
+- configured implementation model and thread ID when present.
 
 The state label uses sentence case. `Recovered` means a regression occurred and rollback or repair completed; it must not be styled as if no incident happened.
 
@@ -171,12 +174,13 @@ The inspector title describes the event, not the agent. Show timestamp and actor
 
 Section order:
 
-1. **Decision rationale** — two to five concise sentences; collapsed if lengthy.
-2. **Evidence** — tests, CI checks, review findings, commits, deployment/monitor signals.
-3. **Artifact** — unified diff, file excerpt, structured plan, or command output.
-4. **Cost & credits** — input tokens, output tokens, total tokens, estimated spend when available, and separately labeled credits charged or awarded.
+1. **Provenance** — fixture/live, sandbox, agent, model, thread ID, token categories, and raw event count.
+2. **Decision rationale** — two to five concise sentences; collapsed if lengthy.
+3. **Evidence** — bid assessment, command exits, test checks, independent-review verdict and findings, sandbox promotion, or monitor signals.
+4. **Artifact** — unified diff preview, changed files, numstat, diff SHA-256, file excerpt, or structured plan.
+5. **Cost & credits** — measured model tokens and separately labeled credits charged, escrowed, paid, refunded, or penalized.
 
-Evidence cards must display source type and stable identifier. External links use an explicit external-link icon. Copy actions confirm success without a toast storm.
+Evidence cards must display source type and stable identifier. Implementation and review thread IDs must remain visibly distinct. External links use an explicit external-link icon. Copy actions confirm success without a toast storm.
 
 ### Diff presentation
 
@@ -184,6 +188,7 @@ Evidence cards must display source type and stable identifier. External links us
 - file path and line range above code;
 - red removed lines and green added lines with sufficient contrast;
 - horizontal scrolling rather than wrapped code;
+- display changed-file count, additions/deletions, full-diff SHA-256, and preview-truncated status above the preview;
 - `Open in editor` only when a safe local link is available;
 - never render unredacted secrets, environment values, or raw authorization headers.
 
@@ -195,7 +200,7 @@ The bottom region supports the run story but must not dominate it.
 
 ### Agent balances
 
-Show role, stable color/icon, and current credit balance. Avoid leaderboards, medals, or game language. A zero balance may display `Dormant by policy`, not “bankrupt” as entertainment.
+Show all eight names, roles, stable color/icons, and current credit balances. Avoid leaderboards, medals, or game language. A zero balance may display `Dormant by policy`, not “bankrupt” as entertainment.
 
 ### Recent transactions
 
@@ -210,6 +215,8 @@ Columns:
 
 A transaction opens the event that caused it. `View full ledger` navigates to a filterable, exportable table.
 
+The current transaction vocabulary includes `issue`, `bid_fee`, `escrow`, `payout`, `refund`, and `penalty`. The interface must show both sides of a transfer so escrow and incident liability are understandable rather than decorative.
+
 ## 9. Supporting screens
 
 ### Runs
@@ -218,7 +225,7 @@ A table of objectives with run ID, repository, phase, health, elapsed time, toke
 
 ### Agents
 
-Show role contract, current assignment, memory summary, measured usage, credits, and last event. Do not expose hidden chain-of-thought. “Rationale” means a concise, deliberately generated decision summary.
+Show the exact eight-agent roster, role contract, capabilities, personality contract, current assignment, source-linked memory summary, measured usage, credits, and last event. The three engineers must show auction status (`bidding`, `working`, or `idle`) without implying that non-engineers may bid. Do not expose hidden chain-of-thought. “Rationale” means a concise, deliberately generated decision summary.
 
 ### Policies
 
@@ -249,9 +256,10 @@ Use CSS custom properties so semantic colors do not leak into component names.
   --warning: #ffc342;
   --role-product: #b178ff;
   --role-engineer: #51dfa0;
-  --role-qa: #62d7ff;
   --role-reviewer: #ffc342;
+  --role-qa: #62d7ff;
   --role-recovery: #6bc8ff;
+  --role-history: #d49bff;
 }
 ```
 
@@ -278,7 +286,7 @@ Use tabular numerals for timestamps, tokens, durations, and balances.
 ## 11. Loading, empty, and error states
 
 - **Initial load:** render shell immediately, then skeleton rows; do not show fake events.
-- **No runs:** explain sample mode and offer `Load sample replay` or `New objective` according to policy.
+- **No runs:** explain fixture mode and offer `Load fixture replay` or `New objective` according to policy.
 - **Disconnected stream:** preserve the last durable sequence and display reconnection state.
 - **Evidence unavailable:** retain the event and state why evidence could not be loaded.
 - **Write disabled:** show a persistent `Read only` indicator near any disabled state-changing action.
@@ -302,9 +310,13 @@ Use tabular numerals for timestamps, tokens, durations, and balances.
 - [ ] The replay can be understood with audio muted.
 - [ ] Reviewer block and post-release regression are visually distinct.
 - [ ] Seeking does not reorder events or trigger side effects.
-- [ ] Every highlighted claim links to deterministic evidence.
+- [ ] Every highlighted claim links to source evidence and labels that evidence `live` or `fixture`.
 - [ ] Human interventions appear in the timeline.
 - [ ] Tokens and credits use distinct labels and data fields.
-- [ ] Read-only/sample mode is unmistakable.
+- [ ] Read-only and fixture modes are unmistakable.
+- [ ] A live hero run shows model, implementation thread, reviewer thread, tokens, commands, changed files, diff, and verdict.
+- [ ] All three engineer bids and the evidence-backed winner are visible.
+- [ ] Sandbox promotion says `external_deployment: false` and is never narrated as a public deployment.
+- [ ] Escaped-regression penalties identify the implementer, Aegis, Sentinel, and Shipwright.
 - [ ] No secret or unredacted environment value appears in the inspector.
-- [ ] The final frame clearly shows that Change Replay is part of Dhurandhar itself, not a second generated product.
+- [ ] The final frame clearly shows that Change Replay is Dhurandhar, while Misconception Debugger is the separate target worktree and Education submission.

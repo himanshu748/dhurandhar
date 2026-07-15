@@ -1,98 +1,245 @@
-# Dhurandhar — submission draft
+# Dhurandhar - submission draft
+
+> [!WARNING]
+> This is not yet a complete submission. The live GPT-5.6 run, Codex `/feedback` session ID, deployed demo, narrated video, final screenshot, and tagged release are still uncaptured. The checklist at the end is the source of truth.
 
 ## One-line pitch
 
-Dhurandhar turns a software objective into an auditable delivery-and-recovery run, then improves how the next run operates using benchmark-gated memory, prompt, routing, and economy changes.
+Dhurandhar turns one software objective into an auditable company run: eight persistent agents auction, build with Codex, review independently, verify, promote inside a recoverable sandbox, monitor, and learn from failure - with receipts.
 
 ## Category
 
-Developer Tools
+**Developer Tools**
+
+The hero objective adds a privacy-safe session evidence export to **Misconception Debugger**, a separate Education submission. Dhurandhar is the control plane around that target and does not present the target application as an internal Dhurandhar feature.
 
 ## Short description
 
-Most coding agents stop at a patch. Dhurandhar is the control plane around the patch: product scope, implementation runtime, independent review, QA, release, monitoring, rollback, internal resource accounting, and self-improvement all become typed events in one replayable hash chain.
+Most coding agents stop at a patch. Dhurandhar controls the lifecycle around it. Atlas scopes the objective and requires Forge, Prism, and Rivet to submit evidence-backed bids. The lowest eligible bid wins. A live Codex invocation edits only a configured disposable Git worktree; a second, read-only Codex invocation acts as Aegis and returns a structured review. Sentinel accepts a live release only when a real diff exists and recognized test commands exit successfully. Shipwright records an internal, reversible sandbox promotion, and Chronicle preserves a source-linked account and durable memories.
 
-The demo starts with Dhurandhar's own monitored pulse endpoint. A judge can inject a controlled HTTP 500 from the UI. Sentinel detects the error-budget breach; Shipwright restores the known-good version; Aegis records root cause and evaluates a four-case shadow benchmark; Atlas proposes one change in each bounded improvement class. Promotion is refused unless the candidate beats baseline and has zero critical regressions, and it still requires a human click. The next objective visibly inherits those mechanisms and changes its deployment strategy to a canary.
+Change Replay makes the whole causal chain inspectable: bid fees, escrow, payouts, model and thread provenance, token categories, commands, file changes, diff hash and preview, independent verdict, test evidence, sandbox health, and human decisions. A controlled regression assigns liability to implementation, review, QA, and release, restores the known-good sandbox state, and proposes four runtime-backed incident controls. Its deterministic comparison measures structural coverage of the memory, prompt, routing, and economy slots—not policy efficacy. Recording the controls for later briefs still requires a human click.
 
-## Inspiration
+## Why this can win
 
-Agent demos often show an impressive transcript but leave the consequential questions unanswered: What exactly changed? Which evidence justified the next transition? What happened after deployment? Who can weaken the policy? Could the system learn from a failure without silently rewriting itself?
+The submission is not "eight chat personas." Its differentiator is a coherent control system around real Codex work:
 
-Dhurandhar treats those questions as the product. The interface is an operations console, not an agent chat room.
+- **Codex is the hero, not an optional footnote:** the main demo is one live workspace-write implementation plus a separate read-only reviewer invocation.
+- **Evidence is executable:** a live run cannot advance without an actual Git diff and successful test-command exit codes.
+- **The team has persistent state:** all eight roles have stable identity, capabilities, memory, balances, and source-linked history.
+- **Allocation is accountable:** every engineer bids; evidence determines eligibility; fees, escrow, settlement, refund, and penalties are replayable.
+- **Recovery closes the SDLC:** monitoring, liability, known-good recovery, postmortem, deterministic structural policy evidence, and human-gated learning are part of the same run.
+- **The boundaries are honest:** internal sandbox promotion is never called external deployment, and fixture data is never called a model run.
 
 ## What it does
 
-- accepts arbitrary bounded software objectives and strict acceptance criteria;
-- coordinates product, engineer, reviewer, QA/reliability, release, and policy roles;
-- invokes a deterministic fixture by default or an explicitly enabled Codex CLI runtime;
-- records all material actions in an append-only SHA-256-linked JSONL journal;
-- reconstructs objectives, runs, agent state, balances, policies, and replay frames from events;
-- provides Change Replay with playback, keyboard seek, evidence inspection, artifacts, tokens, and credits;
-- injects a controlled post-release regression and automatically detects the error-budget breach;
-- rolls back to the known-good version and records root-cause evidence;
-- proposes exactly four improvement mechanisms: memory, prompt, routing, and economy;
-- requires candidate score > baseline, zero critical regressions, and human approval;
-- applies an approved policy to future runs, including a visible canary strategy;
-- ships as one non-root Docker container with safe deterministic defaults.
+- accepts a bounded objective, description, and strict acceptance criteria;
+- coordinates the exact roster: Atlas, Forge, Prism, Rivet, Aegis, Sentinel, Shipwright, and Chronicle;
+- requires one evidence-backed bid from each of the three engineers;
+- selects the lowest eligible bid and records assessments, fees, escrow, payouts, refunds, and penalties;
+- invokes an explicitly enabled Codex CLI implementation runtime against one configured Git worktree;
+- invokes an independent Codex reviewer in a read-only sandbox;
+- parses structured JSONL into model, thread, tokens, commands, files, final message, and event count;
+- captures changed files, numstat, diff SHA-256, and a bounded preview after workspace writes;
+- blocks live promotion without a real diff, approved verdict, recognized test command, and zero failing test exits;
+- records every material action in an append-only SHA-256-linked JSONL journal;
+- reconstructs runs, replay frames, agents, memories, balances, transactions, and policies from events;
+- provides Change Replay with auction, provenance, evidence, ledger, and recovery inspection;
+- injects a controlled sandbox regression and assigns liability to the implementer, Aegis, Sentinel, and Shipwright;
+- restores the known-good sandbox version and records four controls already backed by executable release-path gates;
+- compares active and proposed mechanism-kind coverage deterministically, without presenting the score as an efficacy benchmark;
+- still requires an explicit human decision before activation;
+- ships a deterministic, no-secret fallback for repeatable judging.
 
 ## How it was built
 
-- FastAPI and Pydantic v2 for the strict control-plane API;
+- FastAPI and Pydantic v2 for the strict company-control API;
 - an append-only JSONL event store with canonical serialization and SHA-256 chain verification;
-- a deterministic event reducer for runs, replay frames, agents, internal credits, and policies;
-- React 19, TypeScript, Vite, and Lucide for the Change Replay interface;
-- an optional Codex CLI adapter with read-only default and triple-opt-in workspace writes;
-- Vitest/Testing Library and Pytest for contract, policy-gate, runtime, reducer, and UI coverage;
-- a multi-stage Docker build that serves the compiled UI from the FastAPI process;
-- Render and Docker Compose release configurations.
+- deterministic reducers for runs, replay, agents, memories, credits, and policies;
+- a Codex CLI adapter using structured JSONL, reduced environment, bounded capture, read-only review, and opt-in workspace writes;
+- React 19, TypeScript, Vite, and Lucide for the Change Replay control room;
+- Pytest and Vitest/Testing Library for runtime, auction, ledger, policy, recovery, API, and UI behavior;
+- a multi-stage, non-root Docker build plus Docker Compose and Render scaffolding.
 
-## OpenAI use
+## OpenAI and Codex use
 
-The implemented OpenAI boundary is the optional Codex CLI runtime. Read-only use requires both `DHURANDHAR_RUNTIME=codex` and `DHURANDHAR_ENABLE_CODEX_RUNTIME=true`. Worktree edits require the independent third flag `DHURANDHAR_CODEX_APPLY_CHANGES=true` and a configured Git worktree. The adapter does not commit, push, merge, deploy, or enable approval bypasses.
+### Codex inside Dhurandhar
 
-The zero-secret judge path is deterministic and makes no model call. Deterministic role events must not be presented as GPT-5.6 output. Before submission, capture one live Codex worktree run and attach its repository diff plus the required Codex session/feedback identifier; do not substitute configuration screenshots for usage evidence.
+The implementation runtime calls the authenticated Codex CLI with a scoped brief, configured model, structured JSONL, and either `read-only` or `workspace-write` sandboxing. Workspace writes require three independent settings and an existing Git worktree. After the call, Dhurandhar captures Git evidence without asking the model to summarize its own diff.
+
+Aegis is a second Codex call in a read-only sandbox. It receives the objective and bounded diff context, cannot edit the worktree, and must produce a structured verdict and findings. An unknown verdict or requested change fails closed.
+
+The live event record contains the configured model, thread ID, token categories, command status and exit code, files, diff metadata, final message, and raw JSONL event count. The adapter does not persist raw process or command output and does not commit, push, merge, or deploy.
+
+### Codex collaboration used to build Dhurandhar
+
+Codex was used throughout the repository build: translating the original autonomous-software-company brief into a testable architecture, implementing the FastAPI and React system, adding the persistent roster and auction economy, hardening the runtime/reviewer/evidence boundary, testing the result, and revising the submission so claims match the code. This is materially different from adding a late model button to a conventionally built demo.
+
+The final README and release notes must include the real `/feedback` session ID so judges can inspect that collaboration.
+
+> [!CAUTION]
+> **Required session ID: TODO - NOT CAPTURED.** Generate it from the primary Codex build session, verify it, then replace this line. Never fabricate an identifier.
+
+### Current model truth
+
+As of 2026-07-15, the authenticated account available to this project exposes `gpt-5.5`; the implementation and reviewer defaults are therefore `gpt-5.5`. No GPT-5.6 call is claimed.
+
+The final competition recording requires account access to GPT-5.6. Once available, set both model variables to `gpt-5.6`, run the live path again, and show the recorded model fields in Change Replay. A configuration value without a completed run is not acceptable evidence.
+
+## Hero objective: Misconception Debugger
+
+Use the bounded objective already completed in the captured development run so the Codex result can be reviewed and verified inside the video:
+
+**Title:** Add privacy-safe session evidence export API
+
+**Description:** In this separate Education project, add a read-only endpoint that exports strict aggregate evidence for one learning session without exposing learner answers, written working, question prompts, expected answers, or diagnosis text. Do not add authentication, model calls, external storage, or deployment behavior.
+
+**Acceptance criteria:**
+
+1. `GET /api/sessions/{session_id}/evidence` returns session status, attempt count, three misconception counts, four provenance-mode counts, and total model tokens in a strict schema.
+2. Zero-attempt and completed sessions are supported, and unknown sessions preserve the existing `404` behavior.
+3. Focused tests prove both aggregate correctness and exclusion of raw learning text.
+
+This exact objective produced a six-file, 293-insertion diff; an independent read-only review approved it and Sentinel passed 16 tests. The full `gpt-5.5` development record is in [Live Codex evidence](LIVE_EVIDENCE.md), including both thread IDs, token categories, diff/test hashes, and the chain-verifiable 90-event journal. Repeat it from the same clean baseline with GPT-5.6 for the final recording. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
+
+## Safe live-run configuration
+
+Create a disposable worktree from the separate target repository:
+
+```bash
+git -C /absolute/path/to/misconception-debugger status --short
+git -C /absolute/path/to/misconception-debugger worktree add \
+  /tmp/misconception-debugger-dhurandhar-demo \
+  -b demo/dhurandhar-live \
+  3332982b5cdb8e2e697e63d0e30797134c307c06
+```
+
+The status command must print nothing. Start a fresh Dhurandhar journal and the live runtime:
+
+```bash
+DHURANDHAR_RUNTIME=codex \
+DHURANDHAR_ENABLE_CODEX_RUNTIME=true \
+DHURANDHAR_CODEX_APPLY_CHANGES=true \
+DHURANDHAR_CODEX_WORKDIR=/tmp/misconception-debugger-dhurandhar-demo \
+DHURANDHAR_EVENT_LOG=/tmp/dhurandhar-misconception-demo-events.jsonl \
+DHURANDHAR_SEED_DEMO=false \
+DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.5 \
+DHURANDHAR_REVIEWER_MODEL=gpt-5.5 \
+make dev-backend
+```
+
+Run `make dev-frontend` separately. Use a new branch, worktree path, and event-log path for the final recording. Replace both model values with `gpt-5.6` only after that model appears in the authenticated catalog.
+
+## Three-minute judge video
+
+Target length: **2:55**, narrated. Record the real run; if model latency is removed, mark the time cut on screen rather than implying an instantaneous response.
+
+### 0:00-0:18 - Hook
+
+Show the completed control room, then say:
+
+> "Most coding agents stop at a patch. Dhurandhar runs the company around it: allocation, implementation, independent review, verification, recovery, and learning - all replayable."
+
+Point to the `live` provenance badge and the Misconception Debugger objective.
+
+### 0:18-0:42 - Persistent team and real auction
+
+Open Agents long enough to show all eight names. Return to Replay and select the auction. Show that Forge, Prism, and Rivet all bid, one ineligible or higher bid cannot win merely by being cheap, and the lowest eligible bid is awarded. Briefly point to bid fees and bounty escrow.
+
+### 0:42-1:25 - Live Codex is the hero
+
+Show the moment the objective is submitted, then the resulting implementation event. In the evidence inspector, show:
+
+- `live` + `workspace-write`;
+- the configured GPT-5.6 model after access is available;
+- implementation thread ID and measured token categories;
+- actual commands with exit codes;
+- changed files, numstat, diff SHA-256, and diff preview;
+- final Codex message.
+
+Do not use the deterministic seed for this section.
+
+### 1:25-1:48 - Independent reviewer
+
+Select Aegis's review event. Show a different thread ID, read-only sandbox, reviewer model, structured verdict, and findings. State that the implementing call cannot approve itself.
+
+### 1:48-2:08 - Evidence gate and honest release semantics
+
+Select Sentinel's verification and Shipwright's promotion. Show that successful test-command exits and a non-empty diff are mandatory. Point to `environment: demo-sandbox` and `external_deployment: false`; say explicitly that this prototype does not push, merge, or deploy externally.
+
+### 2:08-2:35 - Recover and assign liability
+
+Run the controlled recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration and source-linked incident evidence.
+
+### 2:35-2:55 - Human-gated learning and close
+
+Open the policy check and proposal. Show the four memory, prompt, routing, and economy slots, the `structure-only-not-efficacy` scope, and the human decision control. After approval, point out that the next runtime brief inherits the serialized controls and that the strategy is labeled `policy-gated-demo-sandbox`, not public canary traffic. Close with:
+
+> "Dhurandhar does not ask you to trust an agent transcript. It shows who did what, which evidence allowed the next step, what failure cost, and exactly where the human still decides."
+
+## Deterministic fallback for judges
+
+The hosted or Docker fallback is intentionally fixture-backed. It lets a judge inspect the roster, auction, economy, event chain, replay, recovery, and policy gate without credentials. It makes zero model calls, reports zero model tokens, and must be labeled `fixture` throughout.
+
+The public Render instance is intentionally read-only: it exposes the seeded recovery and policy evidence but rejects mutation requests because no operator token is configured. A local Docker run in the default development environment can execute the deterministic drill; the narrated hero run uses a controlled server-side operator token held only in the browser tab's memory.
+
+The fallback is a reliability path, not the video story and not evidence for the Codex criterion.
 
 ## Challenges
 
-- separating internal credits from actual model-token usage without implying fake economics;
-- making replay order deterministic even when wall-clock timestamps collide;
-- allowing self-improvement without allowing a proposal to silently weaken its own gate;
-- presenting dense SDLC evidence in a three-minute, screenshot-legible interface;
-- keeping the default demo useful without secrets while preserving an honest live-runtime boundary.
+- preserving independent review while both roles use the same bounded CLI boundary;
+- distinguishing internal credits from measured model usage without fake economics;
+- making diff, command, and token provenance inspectable without storing dangerous raw output;
+- allowing a meaningful workspace write without granting commit, merge, deploy, or host authority;
+- making recovery change future behavior without allowing a proposal to approve itself;
+- presenting a dense SDLC and economy in under three minutes.
 
 ## Accomplishments
 
-- a full objective → release → monitor → incident → rollback → benchmark → policy → inherited-next-run loop;
-- four explicit improvement classes with executable approval guards;
-- a verifiable event chain and source-linked internal ledger;
-- one-click recovery and policy-promotion flows tested in a real browser;
-- responsive UI with zero console errors and no horizontal overflow at 390 px;
-- 26 automated tests, a clean TypeScript build, and a verified non-root production container.
+- exact eight-agent persistent company state with source-linked memory;
+- mandatory three-engineer evidence-backed auction and replayable settlement;
+- structured live Codex provenance plus independent read-only Codex review;
+- fail-closed live gate requiring real diff and executable checks;
+- one objective-to-sandbox-to-monitor-to-recovery-to-policy causal loop;
+- accountable escaped-regression penalties across implementation, review, QA, and release;
+- deterministic fallback, responsive Change Replay, and automated backend/frontend coverage;
+- explicit separation between internal sandbox promotion and external deployment.
 
 ## What comes next
 
-1. Per-run Git worktree creation plus independent diff, command, check, token, and commit capture.
-2. GitHub branch/PR and CI-result adapters with exact repository allowlists.
-3. A direct GPT-5.6 role runtime whose decisions and measured usage appear as first-class evidence.
-4. Real deployment-provider and monitor ingestion instead of deterministic deployment events.
-5. Authentication, durable external event storage, signed provenance, and multi-tenant isolation.
-
-## Three-minute judge script
-
-1. Open **Replay** and explain the ordered, hash-chained self-hosting run.
-2. Click **Run recovery drill**; select the HTTP 500 alert, rollback, root-cause, and benchmark events.
-3. Open **Policies**; show all four mechanisms and the `0.25 → 1.00` evidence, then click **Promote**.
-4. Create the prefilled objective and return to Replay.
-5. Select the inherited-policy event and the deployment artifact containing `canary-10-percent`.
-6. End on tokens versus credits and state the bootstrap boundary plainly.
+1. Capture and document the GPT-5.6 implementation/reviewer run and Codex `/feedback` session.
+2. Add authenticated GitHub branch/PR and CI-evidence adapters with exact repository allowlists.
+3. Add a real deployment-provider and monitor adapter while preserving human release authority.
+4. Move the event journal to durable signed storage with authentication and tenant isolation.
+5. Add independently versioned efficacy datasets alongside the current deterministic structural coverage check.
 
 ## Last-mile submission checklist
 
-- [ ] Publish the repository with a tagged release.
-- [ ] Deploy the deterministic demo and verify persistent storage expectations.
-- [ ] Record a 2–3 minute video following the judge script.
-- [ ] Capture one real Codex run against a disposable worktree.
-- [ ] Add the required Codex session/feedback identifier.
-- [ ] Add direct live-demo, repository, and video links.
-- [ ] Use the implementation screenshot, not the generated concept, as the cover image.
+### Implemented in the repository
+
+- [x] Exact eight-agent roster and role contracts.
+- [x] Three-engineer auction with eligibility evidence and deterministic winner selection.
+- [x] Bid fees, escrow, payouts, refunds, penalties, and conserved internal ledger.
+- [x] Source-linked persistent memory and changelog events.
+- [x] Structured Codex JSONL provenance and bounded Git diff evidence.
+- [x] Separate read-only Codex reviewer and fail-closed verdict handling.
+- [x] Live gate requiring a real diff and successful test commands.
+- [x] Explicit `demo-sandbox` / `external_deployment: false` semantics.
+- [x] Four-way escaped-regression liability and human-gated policy activation.
+- [x] Deterministic no-secret judge fallback.
+- [x] Captured `gpt-5.5` development run with distinct implementation/review threads, diff/test hashes, and a verified raw event journal.
+
+### Evidence and publishing still required
+
+- [ ] Obtain GPT-5.6 access for the authenticated Codex account.
+- [ ] Run implementation and reviewer with GPT-5.6 against a fresh disposable worktree.
+- [ ] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, and final messages.
+- [ ] Add the required primary Codex `/feedback` session ID to README and release notes.
+- [ ] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
+- [ ] Record and narrate the sub-three-minute live-Codex video.
+- [ ] Capture a final implementation cover image from the release candidate.
+- [ ] Publish direct live-demo, repository, and video URLs.
 - [ ] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the release commit.
+- [ ] Create and push the tagged release.
+- [ ] Verify every claim and link against the final public commit.
+
+Rules references: [OpenAI Build Week rules](https://openai.devpost.com/rules) and [OpenAI Build Week](https://openai.com/build-week/).
