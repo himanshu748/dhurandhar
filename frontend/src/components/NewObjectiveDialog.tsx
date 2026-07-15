@@ -1,4 +1,4 @@
-import { LoaderCircle, X } from "lucide-react";
+import { X } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { createObjective } from "../api";
 
@@ -78,8 +78,8 @@ export function NewObjectiveDialog({
         <div className="dialog-actions">
           <button className="secondary-action" type="button" onClick={onClose}>Cancel</button>
           <button className="primary-action simple" type="submit" disabled={submitting}>
-            {submitting && <LoaderCircle className="spin" size={15} />}
-            Start objective
+            {submitting && <span className="button-skeleton" aria-hidden="true" />}
+            {submitting ? "Starting objective…" : "Start objective"}
           </button>
         </div>
       </form>

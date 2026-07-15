@@ -1,6 +1,7 @@
 import { Check, Copy, ExternalLink, FileCode2, Radio, TerminalSquare, X } from "lucide-react";
 import { useState } from "react";
 import type { CommandOutcome, ModelProvenance, ReplayEvent, RunSummary, TaskAuction } from "../types";
+import { CopyableValue } from "./CopyableValue";
 import { RoleMark } from "./RoleMark";
 
 const time = (value: string) =>
@@ -102,7 +103,7 @@ function ProvenanceEvidence({ provenance, runMode }: { provenance?: ModelProvena
       <dl className="provenance-facts">
         <div><dt>Runtime</dt><dd>{provenance.runtime ?? "Not reported"}</dd></div>
         <div><dt>Model</dt><dd>{provenance.model ?? (live ? "Not reported" : "None")}</dd></div>
-        <div><dt>Thread / session</dt><dd>{provenance.threadId ?? provenance.sessionId ?? "Not reported"}</dd></div>
+        <div><dt>Thread / session</dt><dd>{provenance.threadId || provenance.sessionId ? <CopyableValue value={provenance.threadId ?? provenance.sessionId ?? ""} label="thread or session ID" /> : "Not reported"}</dd></div>
         <div><dt>Sandbox</dt><dd>{provenance.sandbox ?? "Not reported"}</dd></div>
       </dl>
       <div className="provenance-usage" aria-label="Model token usage">
@@ -122,7 +123,7 @@ function ProvenanceEvidence({ provenance, runMode }: { provenance?: ModelProvena
       {provenance.diff && (provenance.diff.sha256 || provenance.diff.preview) && (
         <div className="provenance-diff">
           <div className="provenance-diff-meta">
-            <span>Diff SHA-256</span><code>{provenance.diff.sha256 ?? "Not reported"}</code>
+            <span>Diff SHA-256</span>{provenance.diff.sha256 ? <CopyableValue value={provenance.diff.sha256} label="diff SHA-256" /> : <code>Not reported</code>}
             {(provenance.diff.linesAdded !== undefined || provenance.diff.linesDeleted !== undefined) && (
               <small><b>+{provenance.diff.linesAdded ?? 0}</b> / <i>-{provenance.diff.linesDeleted ?? 0}</i></small>
             )}

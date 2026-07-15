@@ -1,33 +1,55 @@
 # Dhurandhar visual fidelity ledger
 
-Compared on 2026-07-15 at the 1440 × 900 implementation target.
+Release-candidate comparison completed on 2026-07-15 at the 1440 × 1000 desktop demo target.
 
-- Concept: [`design-concept.png`](./design-concept.png)
-- Existing implementation capture: [`../output/playwright/dhurandhar-desktop-1440x900.png`](../output/playwright/dhurandhar-desktop-1440x900.png)
+- Visual north star: [`design-concept.png`](./design-concept.png)
+- Live replay capture: [`../output/browser/dhurandhar-cinema-live-1440x1000.png`](../output/browser/dhurandhar-cinema-live-1440x1000.png)
+- Live auction capture: [`../output/browser/dhurandhar-auction-live-1440x1000.png`](../output/browser/dhurandhar-auction-live-1440x1000.png)
+- Live recovery capture: [`../output/browser/dhurandhar-recovery-live-1440x1000.png`](../output/browser/dhurandhar-recovery-live-1440x1000.png)
 
-> [!NOTE]
-> The existing capture is a UI/fidelity artifact from the deterministic API-driven flow. It is not evidence of a Codex invocation, GPT-5.5 or GPT-5.6 use, a public deployment, or the final submission recording. Replace it with a release-candidate capture after the live hero run.
+> [!IMPORTANT]
+> These release-candidate captures use the recorded live event journal in `output/evidence/codex-live-run-2026-07-15.jsonl`. They demonstrate UI fidelity and captured Codex evidence. They are not proof of a public deployment or an external production recovery.
 
-| Comparison point | Concept intent | Implemented result | Disposition |
+## Gap closure
+
+| Gap found before this pass | Implemented result | Evidence / disposition |
+| --- | --- | --- |
+| Replay was a dense dashboard table with no cinematic causal reveal | Consequential records project into 39 vertical evidence cards controlled by one scrubber-owned GSAP timeline. Cards reveal with transform/opacity, SVG links draw by stroke offset, and predecessor hashes pulse in order. | Closed; 38 visible predecessor links plus the genesis record make the append-only chain legible. |
+| Provenance was easy to miss and fixture output could resemble live output | Every run and card carries a persistent provenance badge. Live model boundaries show model and sandbox; live journal-only orchestration has a distinct state; fixtures are neutral gray and explicitly say no model call. | Closed without inferring provenance from generic fields. |
+| Codex evidence was hidden in a side inspector | The implementation moment presents the recorded thread, model, token categories, commands, exit codes, file/numstat evidence, and SHA-256 in the primary card. | Closed; the live capture reports `gpt-5.5`, `workspace-write`, and the recorded values only. |
+| Auction outcome was summarized rather than experienced | Forge, Prism, and Rivet render side-by-side with exact cost, credibility, and citations. GSAP Flip promotes the recorded winner; the two losers recede. Participation fees and escrow use animated counters. | Closed; the live journal shows three 1-credit fees and the 40-credit lock. |
+| Economy panel exposed only a transaction list and a partial roster | The ledger shows all eight agents, state, balance bar, and cursor-time balance. Settlement plays as winner/Aegis/Sentinel/Shipwright/Chronicle/refund transfers and proves the sum beside escrow. Penalties use restrained red and a 2 px shake; dormant agents grayscale. | Closed; captured settlement is `19 + 5 + 5 + 3 + 2 + 6 = 40`. |
+| Recovery was buried among general replay records | Regression, alert, four recorded liability penalties, known-good restore, policy proposal, and the human decision form a guided recovery rail. | Closed; the captured proposal was rejected, so the UI truthfully renders a resolved human gate instead of fabricating a pending action. |
+| Global state did not keep provenance/model/operator mode in view | Kernel health, run provenance, model, exact read-only/workspace-write boundary, and operator state remain in the top bar. | Closed. |
+| Loading and copy affordances were inconsistent | Boot and inline pending states use skeleton blocks. Hashes, IDs, thread/session values, and SHA-256 use JetBrains Mono, middle-out truncation, full-value tooltips, and copy-on-click status. | Closed. |
+| Old theme still contained blue/purple AI styling, a gradient scrubber, and spinners | Surfaces use near-black `#0B0C0E`, hairline 8%-white borders, amber `#FFB000`, cyan `#22D3EE`, and red only for failure/liability. Gradient, purple role color, emoji iconography, and spinner keyframes were removed. | Closed. |
+
+## Concept comparison
+
+| Comparison point | Concept intent | Release-candidate result | Disposition |
 | --- | --- | --- | --- |
-| Command-center shell | Fixed left rail, compact global header, timeline center, inspector right, ledger across the bottom | The five-region shell is preserved. At desktop size, replay owns the primary area while the evidence inspector and ledger remain visible. | Match |
-| Visual language | Graphite/blue-black surfaces, hairline borders, orange interaction accent, semantic green/red/amber | CSS tokens reproduce the palette and status roles. Status includes an icon and label, not color alone. | Match |
-| Causal replay | Dense numbered rows connected by a causal spine, with one selected event | Hash-chained events render in sequence order. The timeline includes planning, three bids, implementation, review, tests, sandbox promotion, ledger, memory, recovery, and policy events. | Match with real-data extension |
-| Exact company | Stable agent identities and balances | The Agents surface exposes Atlas, Forge, Prism, Rivet, Aegis, Sentinel, Shipwright, and Chronicle with role, capability, memory, balance, and activity. | Product-specific extension |
-| Auction | Allocation should be understandable before implementation | Forge, Prism, and Rivet each produce an evidence-backed bid; the replay shows eligibility, fees, escrow, winner, and settlement. | Product-specific extension |
-| Evidence inspector | Decision rationale, evidence, artifact/diff, and separate cost/credit accounting | Fixture events are labeled as such. Live-capable events expose model, implementation/reviewer thread, token categories, commands, files, Git diff metadata, verdict, and final message when present. | Stronger evidence contract |
-| Recovery story | Monitor failure, repair or rollback, then proposed policy | The API-driven deterministic drill appends a controlled sandbox regression, alert, four liability penalties, known-good restoration, benchmark, and human-gated proposal. It does not claim external production recovery. | Match with honest sandbox boundary |
-| Bottom ledger | Agent balances plus recent source-linked transactions | Balances and issue, bid-fee, escrow, payout, refund, and penalty transactions are backed by the API ledger. Model tokens and credits remain separate. | Match |
-| Brand and navigation | Dhurandhar mark plus Runs, Replay, Agents, Policies, and Ledger | The same literal navigation and brand hierarchy are implemented with accessible controls and current-page state. | Match |
-| Objective action | High-contrast orange primary action | `New objective` opens a modal with objective, context, line-separated acceptance criteria, and priority. Runtime and configured worktree remain host-controlled. | Deliberate safety boundary |
-| Run density | Curated proof events visible in one frame | Real runs contain roster, memory, auction, evidence, and settlement events, so the timeline scrolls independently and can filter to consequential evidence. | Deliberate truth-over-curation delta |
-| Responsive behavior | Desktop first; collapse rail and stack inspector below 900 px | Existing captures cover 900 × 900 and 390 × 844. The rail collapses, the inspector stacks, and the narrow layout avoids document overflow. | Match |
+| Command-center shell | Fixed left rail, compact global header, replay center, inspector right, ledger below | The five-region desktop shell and information density remain intact. Replay is the dominant lens while inspector and economy stay concurrently visible. | Match |
+| Forensic density | A high-signal operational instrument rather than a consumer dashboard | Hairline dividers, compact typography, literal status labels, command evidence, and numeric columns replace decorative dashboard chrome. | Match, refined |
+| Selected evidence coupling | Timeline selection should drive the right-hand proof surface | Clicking or scrubbing a card updates the selected event, inspector, balances, hash state, and auction/recovery moment from one cursor. | Match |
+| Causal replay | Ordered records connected by an explicit spine | The concept row spine became a card-and-connector filmstrip because the current brief requires replay as cinema. | Deliberate current-brief override |
+| Palette | Original concept used graphite/blue-black with broader role color | The current brief supersedes it with exact near-black, amber economy, cyan activity, and failure-only red. | Deliberate current-brief override |
+| Agent company | Concept exposed a smaller roster and compact balances | All eight PRD agents are always available and settlement roles are individually visible. | Product truth extension |
+| Recovery and governance | Failure, rollback, and proposed policy should remain auditable | The guided recovery rail ends at a visually weighted human gate and never implies autonomous policy activation. | Stronger safety story |
+| Desktop framing | Control-room composition intended for a recorded desktop demo | The layout is optimized for 1280 px and above as requested. No additional sub-1280 redesign was added in this pass. | Intentional scope boundary |
+
+## Motion and truth constraints
+
+- `ScrollTrigger` and `Flip` register once in `src/lib/gsap.ts`.
+- Effect-owned motion is scoped with `gsap.context()` and reverted during cleanup.
+- `prefers-reduced-motion` removes sequencing and presents the evidence immediately.
+- Scrubbing mutates GSAP timeline progress, SVG stroke state, transforms, and opacity; it does not write React state on animation frames or tween layout properties.
+- The cinematic projection contains 39 consequential cards from 90 raw records, keeping the demo legible while preserving the complete event journal as the source of truth.
+- The captured run contains three live model boundaries and 36 live journal/orchestration cards. Those states remain visually distinct.
+- Missing evidence renders as unavailable or fixture data; the UI does not synthesize hashes, verdicts, test exits, policy states, or production claims.
 
 ## Verification notes
 
-- Existing desktop capture: 1440 × 900, deterministic FastAPI data.
-- Existing responsive captures: 900 × 900 and 390 × 844.
-- The generated concept is a visual north star, not a screenshot of product behavior.
-- A new capture is required after the final live Codex implementation/reviewer run.
-- The final evidence inspector must visibly show live provenance, model, two distinct thread IDs, tokens, commands, files, diff, and reviewer verdict.
-- The final video must state that `demo-sandbox` promotion is not external deployment.
+- Production Vite preview was inspected in the in-app browser at 1440 × 1000 against the recorded live journal.
+- Dedicated captures cover the implementation hero, three-way auction, and complete recovery/human-gate story.
+- Frontend type-check, Vitest suite, production build, and browser console checks are required to pass before the branch is published.
+- The final submission recording should use the live replay capture as the hero and describe the deterministic fixture only as the judge-testing fallback.

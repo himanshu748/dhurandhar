@@ -1,4 +1,4 @@
-import { ChevronDown, KeyRound, LockKeyhole, Plus } from "lucide-react";
+import { ChevronDown, KeyRound, LockKeyhole, Plus, Radio } from "lucide-react";
 
 const titles = {
   runs: "Runs",
@@ -12,12 +12,18 @@ export function Topbar({
   page,
   source,
   operatorEnabled,
+  model,
+  provenance,
+  sandbox,
   onNewObjective,
   onOperatorAccess,
 }: {
   page: keyof typeof titles;
   source: "api" | "snapshot";
   operatorEnabled: boolean;
+  model?: string;
+  provenance: "live" | "fixture";
+  sandbox?: string;
   onNewObjective: () => void;
   onOperatorAccess: () => void;
 }) {
@@ -25,10 +31,15 @@ export function Topbar({
     <header className="topbar">
       <h1>{titles[page]}</h1>
       <div className="topbar-actions">
-        <button className="kernel-status" type="button" title="Runtime and journal health">
+        <div className="forensic-signals" aria-label="Kernel, provenance, and model status">
+          <button className="kernel-status" type="button" title="Runtime and journal health">
           <span className={source === "api" ? "health-dot" : "health-dot snapshot"} />
-          {source === "api" ? "Kernel online" : "Replay snapshot"}
-        </button>
+          <span>{source === "api" ? "Kernel online" : "Snapshot fallback"}</span>
+          </button>
+          <span className={`topbar-provenance is-${provenance}`}><Radio size={11} />{provenance === "live" ? "LIVE" : "FIXTURE"}</span>
+          <span className="topbar-model"><small>MODEL</small><code>{model ?? (provenance === "fixture" ? "none" : "unreported")}</code></span>
+          {sandbox && <span className="topbar-model"><small>MODE</small><code>{sandbox}</code></span>}
+        </div>
         <button
           className={`operator-access ${operatorEnabled ? "is-loaded" : ""}`}
           type="button"
