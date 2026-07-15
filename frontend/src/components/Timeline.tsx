@@ -48,7 +48,18 @@ export function Timeline({
           <span className="timeline-node"><StatusMark status={event.status} compact /></span>
           <time dateTime={event.occurredAt}>{time(event.occurredAt)}</time>
           <RoleMark role={event.role} />
-          <span className="event-summary">{event.summary}</span>
+          <span className="event-summary-cell">
+            <span className="event-summary">{event.summary}</span>
+            {event.auction && (
+              <small className="auction-marker">
+                {event.auction.status === "awarded" && event.auction.winner
+                  ? `${event.auction.winner} won · ${event.auction.bidsConsidered ?? event.auction.bids.length} bids`
+                  : event.auction.status === "bidding"
+                    ? `${event.auction.bids.length} bids received`
+                    : `${event.auction.eligibleEngineers.length} engineers eligible`}
+              </small>
+            )}
+          </span>
           <StatusMark status={event.status} />
           <ChevronRight className="row-chevron" size={16} aria-hidden="true" />
         </button>

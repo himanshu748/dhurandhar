@@ -25,6 +25,7 @@ export function Sidebar({ active, onSelect }: { active: Page; onSelect: (page: P
             className={`nav-item ${active === id ? "is-active" : ""}`}
             onClick={() => onSelect(id)}
             aria-current={active === id ? "page" : undefined}
+            aria-label={label}
           >
             <Icon size={18} strokeWidth={1.9} aria-hidden="true" />
             <span>{label}</span>

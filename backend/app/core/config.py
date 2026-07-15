@@ -30,7 +30,10 @@ class Settings(BaseModel):
     codex_apply_changes: bool = False
     codex_bin: str = "codex"
     codex_workdir: Path = BACKEND_ROOT
-    codex_timeout_seconds: int = Field(default=120, ge=10, le=300)
+    codex_timeout_seconds: int = Field(default=120, ge=10, le=600)
+    implementation_model: str = Field(default="gpt-5.5", min_length=1, max_length=120)
+    reviewer_model: str = Field(default="gpt-5.5", min_length=1, max_length=120)
+    operator_token: str | None = Field(default=None, min_length=16, max_length=256)
     cors_origins: tuple[str, ...] = (
         "http://localhost:3000",
         "http://localhost:5173",
@@ -44,6 +47,14 @@ class Settings(BaseModel):
         if not resolved.exists() or not resolved.is_dir():
             raise ValueError("codex_workdir must be an existing directory")
         return resolved
+
+    @field_validator("operator_token", mode="before")
+    @classmethod
+    def normalize_operator_token(cls, value: object) -> object:
+        if not isinstance(value, str):
+            return value
+        token = value.strip()
+        return token or None
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -71,6 +82,13 @@ class Settings(BaseModel):
             codex_timeout_seconds=int(
                 os.getenv("DHURANDHAR_CODEX_TIMEOUT_SECONDS", "120")
             ),
+            implementation_model=os.getenv(
+                "DHURANDHAR_IMPLEMENTATION_MODEL", "gpt-5.5"
+            ).strip(),
+            reviewer_model=os.getenv(
+                "DHURANDHAR_REVIEWER_MODEL", "gpt-5.5"
+            ).strip(),
+            operator_token=os.getenv("DHURANDHAR_OPERATOR_TOKEN"),
             cors_origins=tuple(
                 origin.strip()
                 for origin in origins.split(",")

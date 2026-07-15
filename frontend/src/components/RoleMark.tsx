@@ -1,8 +1,10 @@
 import {
+  BookOpen,
   Bot,
   Braces,
   ClipboardCheck,
   CloudCog,
+  Monitor,
   Radar,
   ScrollText,
   ShieldCheck,
@@ -10,18 +12,19 @@ import {
 
 const roleIcon = (role: string) => {
   const normalized = role.toLowerCase();
-  if (normalized.includes("engineer")) return Braces;
-  if (normalized.includes("review")) return ShieldCheck;
-  if (normalized.includes("qa")) return ClipboardCheck;
-  if (normalized.includes("deploy")) return CloudCog;
-  if (normalized.includes("monitor")) return Radar;
-  if (normalized.includes("policy")) return ScrollText;
-  return Bot;
+  if (normalized.includes("product") || normalized.includes("atlas")) return { Icon: ScrollText, token: "product" };
+  if (normalized.includes("frontend") || normalized.includes("prism")) return { Icon: Monitor, token: "frontend" };
+  if (normalized.includes("backend") || normalized.includes("forge")) return { Icon: Braces, token: "backend" };
+  if (normalized.includes("platform") || normalized.includes("rivet")) return { Icon: CloudCog, token: "platform" };
+  if (normalized.includes("review") || normalized.includes("aegis")) return { Icon: ShieldCheck, token: "reviewer" };
+  if (normalized.includes("qa") || normalized.includes("saboteur") || normalized.includes("sentinel")) return { Icon: ClipboardCheck, token: "qa" };
+  if (normalized.includes("release") || normalized.includes("recovery") || normalized.includes("shipwright")) return { Icon: Radar, token: "release" };
+  if (normalized.includes("histor") || normalized.includes("chronicle")) return { Icon: BookOpen, token: "historian" };
+  return { Icon: Bot, token: "agent" };
 };
 
 export function RoleMark({ role, showLabel = true }: { role: string; showLabel?: boolean }) {
-  const Icon = roleIcon(role);
-  const token = role.toLowerCase().replace(/\s+agent|\s+/g, "-");
+  const { Icon, token } = roleIcon(role);
   return (
     <span className={`role-mark role-${token}`}>
       <Icon size={16} strokeWidth={2} aria-hidden="true" />

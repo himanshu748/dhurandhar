@@ -151,12 +151,25 @@ class Agent(ApiModel):
     id: str
     name: str
     role: str
-    status: Literal["idle", "working", "reviewing", "testing", "monitoring"]
+    status: Literal[
+        "idle",
+        "bidding",
+        "working",
+        "reviewing",
+        "testing",
+        "deploying",
+        "monitoring",
+        "documenting",
+        "dormant",
+    ]
     credits: int
     current_task: str | None = None
     completed_actions: int = Field(ge=0)
     last_seen: datetime | None = None
     memory: list[str] = Field(default_factory=list)
+    memory_count: int = Field(default=0, ge=0)
+    capabilities: list[str] = Field(default_factory=list)
+    personality: str = ""
 
 
 class AgentsResponse(ApiModel):
@@ -168,7 +181,16 @@ class LedgerTransaction(ApiModel):
     event_id: str
     sequence: int
     timestamp: datetime
-    kind: Literal["issue", "escrow", "payout", "penalty", "refund"]
+    kind: Literal[
+        "issue",
+        "escrow",
+        "bid_fee",
+        "payout",
+        "salary",
+        "penalty",
+        "clawback",
+        "refund",
+    ]
     from_agent: str | None = None
     to_agent: str | None = None
     amount: int = Field(gt=0)
@@ -201,6 +223,10 @@ class PolicyMechanism(ApiModel):
             "canary-window": "routing",
             "error-budget-gate": "economy",
             "rollback-quarantine": "memory",
+            "independent-review-gate": "prompt",
+            "sentinel-static-check-gate": "routing",
+            "health-evidence-escrow": "economy",
+            "incident-policy-memory": "memory",
         }
         mechanism_id = value.get("id")
         if mechanism_id in legacy_kinds:
@@ -283,10 +309,12 @@ class HealthResponse(ApiModel):
 
 
 class PulseResponse(ApiModel):
-    status: Literal["operational"]
+    status: Literal["operational", "degraded"]
     release: str
     monitored_by: str
     self_hosted_objective: str
+    evidence_scope: Literal["demo-sandbox"] = "demo-sandbox"
+    external_observation: bool = False
 
 
 class ApiError(ApiModel):

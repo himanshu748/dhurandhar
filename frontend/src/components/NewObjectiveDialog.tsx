@@ -2,7 +2,17 @@ import { LoaderCircle, X } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { createObjective } from "../api";
 
-export function NewObjectiveDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) {
+export function NewObjectiveDialog({
+  open,
+  operatorToken,
+  onClose,
+  onCreated,
+}: {
+  open: boolean;
+  operatorToken: string;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +39,7 @@ export function NewObjectiveDialog({ open, onClose, onCreated }: { open: boolean
           .map((criterion) => criterion.trim())
           .filter(Boolean),
         priority: String(data.get("priority")) === "urgent" ? "urgent" : "standard",
-      });
+      }, operatorToken);
       onCreated();
       onClose();
       event.currentTarget.reset();

@@ -29,6 +29,68 @@ export interface Usage {
   credits: number;
 }
 
+export interface MemoryReference {
+  id: string;
+  label: string;
+  eventId?: string;
+}
+
+export interface CommandOutcome {
+  command: string;
+  status: string;
+  exitCode?: number;
+  detail?: string;
+}
+
+export interface DiffProvenance {
+  sha256?: string;
+  files: string[];
+  linesAdded?: number;
+  linesDeleted?: number;
+  preview?: string;
+}
+
+export interface ModelProvenance {
+  mode: "live" | "deterministic";
+  runtime?: string;
+  model?: string;
+  sandbox?: string;
+  threadId?: string;
+  sessionId?: string;
+  inputTokens: number;
+  cachedInputTokens: number;
+  outputTokens: number;
+  reasoningOutputTokens: number;
+  commands: CommandOutcome[];
+  checks: CommandOutcome[];
+  changedFiles: string[];
+  diff?: DiffProvenance;
+  finalMessage?: string;
+}
+
+export interface TaskBid {
+  bidderId: string;
+  bidder: string;
+  amount: number;
+  plan?: string;
+  credibility?: number;
+  evidence: string[];
+  winner?: boolean;
+}
+
+export interface TaskAuction {
+  task: string;
+  bounty?: number;
+  eligibleEngineers: string[];
+  bids: TaskBid[];
+  winnerId?: string;
+  winner?: string;
+  winningAmount?: number;
+  winningPlan?: string;
+  bidsConsidered?: number;
+  status: "opened" | "bidding" | "awarded";
+}
+
 export interface ReplayEvent {
   id: string;
   sequence: number;
@@ -43,6 +105,8 @@ export interface ReplayEvent {
   evidence: EvidenceItem[];
   artifact?: Artifact;
   usage: Usage;
+  provenance?: ModelProvenance;
+  auction?: TaskAuction;
   hash?: string;
   previousHash?: string;
 }
@@ -65,8 +129,27 @@ export interface AgentBalance {
   id: string;
   role: string;
   displayName: string;
+  companyRole?: string;
   balance: number;
-  state: "available" | "working" | "dormant";
+  state:
+    | "available"
+    | "bidding"
+    | "working"
+    | "reviewing"
+    | "testing"
+    | "deploying"
+    | "monitoring"
+    | "documenting"
+    | "dormant";
+  capabilities?: string[];
+  personality?: string;
+  memoryCount?: number;
+  memoryReferences?: MemoryReference[];
+  lastLearning?: string;
+  currentTask?: string;
+  completedActions?: number;
+  lastSeen?: string;
+  reported?: boolean;
   color?: string;
 }
 

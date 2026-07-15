@@ -21,6 +21,7 @@ export function RunHeader({
   onRecoveryDrill,
   drillRunning = false,
   drillDisabled = false,
+  drillDisabledReason,
 }: {
   run: RunSummary;
   current: number;
@@ -33,6 +34,7 @@ export function RunHeader({
   onRecoveryDrill?: () => void;
   drillRunning?: boolean;
   drillDisabled?: boolean;
+  drillDisabledReason?: string;
 }) {
   const percent = total > 1 ? (current / (total - 1)) * 100 : 0;
   return (
@@ -51,11 +53,14 @@ export function RunHeader({
               <Copy size={13} />
             </button>
             <span className="run-state"><span>✓</span>{run.status}</span>
+            <span className={`run-provenance provenance-${run.mode === "codex" ? "live" : "deterministic"}`}>
+              {run.mode === "codex" ? "Live model provenance" : "Deterministic fallback"}
+            </span>
           </div>
         </div>
         <div className="run-actions">
           {onRecoveryDrill && (
-            <button className="drill-action" type="button" onClick={onRecoveryDrill} disabled={drillRunning || drillDisabled}>
+            <button className="drill-action" type="button" onClick={onRecoveryDrill} disabled={drillRunning || drillDisabled} title={drillDisabled ? drillDisabledReason : "Inject a controlled fault, then verify rollback"}>
               {drillRunning ? <LoaderCircle className="spin" size={14} /> : <ShieldAlert size={14} />}
               {drillRunning ? "Recovering…" : "Run recovery drill"}
             </button>

@@ -1,4 +1,4 @@
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, KeyRound, LockKeyhole, Plus } from "lucide-react";
 
 const titles = {
   runs: "Runs",
@@ -11,11 +11,15 @@ const titles = {
 export function Topbar({
   page,
   source,
+  operatorEnabled,
   onNewObjective,
+  onOperatorAccess,
 }: {
   page: keyof typeof titles;
   source: "api" | "snapshot";
+  operatorEnabled: boolean;
   onNewObjective: () => void;
+  onOperatorAccess: () => void;
 }) {
   return (
     <header className="topbar">
@@ -25,8 +29,24 @@ export function Topbar({
           <span className={source === "api" ? "health-dot" : "health-dot snapshot"} />
           {source === "api" ? "Kernel online" : "Replay snapshot"}
         </button>
-        <button className="primary-action" type="button" onClick={onNewObjective}>
-          <span>New objective</span>
+        <button
+          className={`operator-access ${operatorEnabled ? "is-loaded" : ""}`}
+          type="button"
+          onClick={onOperatorAccess}
+          aria-label={operatorEnabled ? "Operator token loaded" : "Read-only — load operator token"}
+          title={operatorEnabled ? "Token is held in this tab's memory" : "Mutations require an operator token"}
+        >
+          {operatorEnabled ? <KeyRound size={14} /> : <LockKeyhole size={14} />}
+          <span>{operatorEnabled ? "Token loaded" : "Read-only"}</span>
+        </button>
+        <button
+          className="primary-action"
+          type="button"
+          onClick={onNewObjective}
+          disabled={!operatorEnabled}
+          title={operatorEnabled ? "Create a new objective" : "Load an operator token to create objectives"}
+        >
+          <span className="new-objective-label">New objective</span>
           <Plus size={17} aria-hidden="true" />
           <span className="button-divider" aria-hidden="true" />
           <ChevronDown size={15} aria-hidden="true" />

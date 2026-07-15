@@ -51,6 +51,7 @@ pnpm-debug.log*
 *.db
 *.db-journal
 *.jsonl
+!output/evidence/codex-live-run-2026-07-15.jsonl
 logs/
 *.log
 
