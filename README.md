@@ -302,6 +302,7 @@ The repository allowlist, protected-path, budget, GitHub, and automatic-merge va
 │   ├── ARCHITECTURE.md      Components, state machine, evidence, and trust model
 │   ├── VISUAL_SPEC.md       UI behavior and visual contract
 │   ├── FIDELITY_LEDGER.md   Concept-to-implementation comparison
+│   ├── CLEAN_MACHINE_AUDIT.md  Dated pristine-clone command transcript
 │   ├── SUBMISSION.md        Judge story, runbook, and last-mile checklist
 │   └── design-concept.png   Design north star
 ├── .github/workflows/ci.yml
@@ -321,6 +322,8 @@ make docker     # production container build
 ```
 
 CI runs backend compilation/tests, frontend lint/tests/build, and a container build without application secrets.
+
+The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the pristine-clone install, Docker read-only proof, local-service smoke test, build output, and audited commit.
 
 ## Project status
 
