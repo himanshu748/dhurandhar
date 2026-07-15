@@ -109,6 +109,21 @@ flowchart LR
 
 See [Architecture](docs/ARCHITECTURE.md) for the state machine, evidence contract, and trust boundaries. See [Visual specification](docs/VISUAL_SPEC.md) for the product UI contract and [Submission draft](docs/SUBMISSION.md) for the judge script and final checklist.
 
+## Prerequisites and installation
+
+Run all commands from the repository root. The `python` command must resolve to Python 3.12 or newer. You also need Node.js 22.13+ (or 24+), npm, Git, GNU Make, and, for the container path, Docker Engine or Docker Desktop with Docker Compose v2 and `up --wait` support.
+
+```bash
+python --version
+node --version
+docker compose version
+python -m venv .venv
+source .venv/bin/activate
+make install
+```
+
+`make install` installs the backend development requirements, including pytest, and restores the locked frontend dependencies with `npm ci`.
+
 ## Hero demo: live Codex builds Misconception Debugger
 
 This is the submission path. Run it locally because the production image does not bundle an authenticated Codex CLI.
@@ -131,9 +146,11 @@ The first command should print nothing. Do not point workspace-write mode at Dhu
 
 ### 2. Start Dhurandhar with all write gates explicit
 
-Install and authenticate the Codex CLI, install the project dependencies from the local-development quickstart below, then start the backend:
+Install and authenticate the Codex CLI, complete [Prerequisites and installation](#prerequisites-and-installation), then start the backend from the Dhurandhar repository root. The operator token below is a local demo credential; replace it for any environment beyond this disposable recording:
 
 ```bash
+source .venv/bin/activate
+DHURANDHAR_OPERATOR_TOKEN=dhurandhar-demo-operator-token \
 DHURANDHAR_RUNTIME=codex \
 DHURANDHAR_ENABLE_CODEX_RUNTIME=true \
 DHURANDHAR_CODEX_APPLY_CHANGES=true \
@@ -152,6 +169,8 @@ make dev-frontend
 ```
 
 Open [http://localhost:5173](http://localhost:5173). Kernel health must say `codex`, and the run evidence must say `live` and `workspace-write` before it can be used in a submission claim.
+
+Before submitting the objective, click **Read-only** in the top bar and load the same `dhurandhar-demo-operator-token` value. It is held only in the current browser tab's React memory.
 
 ### 3. Submit the bounded objective
 
@@ -206,12 +225,27 @@ The deterministic fixture remains the no-secret fallback, not the hero story.
 
 ```bash
 cp .env.example .env
-docker compose up --build
+docker compose down --volumes
+docker compose up --build --detach --wait
+curl -fsS http://localhost:8000/api/health
+curl -fsS http://localhost:8000/api/objectives
+curl -fsS http://localhost:8000/api/runs
+curl -sS -o /tmp/dhurandhar-post.json -w '%{http_code}\n' \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Must stay blocked"}' \
+  http://localhost:8000/api/objectives
+cat /tmp/dhurandhar-post.json
 ```
 
-Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as GPT-5.5, GPT-5.6, or a live Codex run.
+The health response reports `runtime` as `deterministic`, both GET collections return successfully, and the POST prints status `503` plus `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as GPT-5.5, GPT-5.6, or a live Codex run.
 
 This path lets judges inspect the company roster, three-bid auction, ledger settlement, replay ordering, seeded recovery and policy evidence, and deterministic event chain without granting credentials.
+
+Stop the fallback and remove its seeded test volumes before starting local development:
+
+```bash
+docker compose down --volumes
+```
 
 ### Operator access and the public demo
 
@@ -221,22 +255,24 @@ For a controlled local recording, set the server-side token before starting the 
 
 ## Local development
 
-Prerequisites: Python 3.12+, Node.js 22+, npm, and Git.
+After completing [Prerequisites and installation](#prerequisites-and-installation), run the services from the repository root in separate terminals.
+
+Terminal 1 (API):
 
 ```bash
-python -m venv .venv
 source .venv/bin/activate
-make install
+make dev-backend
 ```
 
-Run the services in separate terminals:
+Terminal 2 (frontend):
 
 ```bash
-make dev-backend
 make dev-frontend
 ```
 
 The frontend runs at [http://localhost:5173](http://localhost:5173), the API at [http://localhost:8000](http://localhost:8000), and health at [http://localhost:8000/api/health](http://localhost:8000/api/health).
+
+Stop both development processes with `Ctrl-C` before running the verification commands below.
 
 ## Safety boundaries
 
@@ -277,6 +313,7 @@ The repository allowlist, protected-path, budget, GitHub, and automatic-merge va
 ## Verification
 
 ```bash
+source .venv/bin/activate
 make test       # backend and frontend tests
 make lint       # available static checks
 make build      # production frontend build
