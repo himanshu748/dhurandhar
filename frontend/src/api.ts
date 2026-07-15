@@ -12,6 +12,7 @@ import type {
   PolicyProposal,
   ReplayEvent,
   ReplaySnapshot,
+  ReviewEvidence,
   RunStatus,
   RunSummary,
   TaskAuction,
@@ -218,7 +219,8 @@ const normalizeOutcome = (value: unknown, fallbackStatus = "reported"): CommandO
   if (typeof value === "string") return { command: value, status: fallbackStatus };
   const record = asRecord(value);
   if (!record) return undefined;
-  const command = asString(record.command) ?? asString(record.check) ?? asString(record.name) ?? asString(record.label);
+  const argv = Array.isArray(record.argv) ? stringList(record.argv).join(" ") : undefined;
+  const command = asString(record.command) ?? argv ?? asString(record.allowlist_id) ?? asString(record.check) ?? asString(record.name) ?? asString(record.label);
   if (!command) return undefined;
   const exitCode = typeof record.exit_code === "number" ? record.exit_code
     : typeof record.exitCode === "number" ? record.exitCode : undefined;
@@ -260,7 +262,7 @@ const provenanceForEvent = (event: RawEvent): ModelProvenance | undefined => {
   const threadId = asString(data.thread_id) ?? asString(declaredRecord?.thread_id);
   const sessionId = asString(data.session_id) ?? asString(declaredRecord?.session_id);
   const hasModelBoundary = ["runtime.invoked", "code.generated", "review.completed"].includes(event.type)
-    || Boolean(declared || runtime || model || threadId || sessionId);
+    || Boolean(runtime || model || threadId || sessionId);
   if (!hasModelBoundary) return undefined;
 
   const declaration = typeof declared === "string"
@@ -296,11 +298,16 @@ const provenanceForEvent = (event: RawEvent): ModelProvenance | undefined => {
     /(test|pytest|vitest|lint|build|typecheck|tsc)/i.test(outcome.command),
   );
 
+  const explicitWriteMode = data.write_mode === true ? "workspace-write"
+    : data.write_mode === false ? "read-only"
+      : declaredRecord?.write_mode === true ? "workspace-write"
+        : declaredRecord?.write_mode === false ? "read-only" : undefined;
+
   return {
     mode: deterministic ? "deterministic" : "live",
     runtime,
     model,
-    sandbox: asString(data.sandbox) ?? asString(declaredRecord?.sandbox),
+    sandbox: asString(data.sandbox) ?? asString(declaredRecord?.sandbox) ?? explicitWriteMode,
     threadId,
     sessionId,
     inputTokens: Number(usage.input_tokens ?? 0),
@@ -432,6 +439,25 @@ const rationaleForEvent = (event: RawEvent) => {
   return event.summary;
 };
 
+const reviewForEvent = (event: RawEvent): ReviewEvidence | undefined => {
+  const data = event.data ?? {};
+  const verdict = asString(data.verdict) ?? (event.type === "review.approved" ? "approved" : undefined);
+  const findings = Array.isArray(data.findings) ? data.findings.flatMap((item) => {
+    if (typeof item === "string") return [{ severity: "unreported", summary: item }];
+    const finding = asRecord(item);
+    if (!finding) return [];
+    const summary = asString(finding.summary) ?? asString(finding.message) ?? asString(finding.detail);
+    if (!summary) return [];
+    return [{
+      severity: asString(finding.severity) ?? "unreported",
+      summary,
+      file: asString(finding.file) ?? asString(finding.path),
+      line: typeof finding.line === "number" ? finding.line : undefined,
+    }];
+  }) : [];
+  return verdict || findings.length ? { verdict, findings } : undefined;
+};
+
 const normalizeEvent = (event: RawEvent): ReplayEvent => {
   const usage = event.data?.usage && typeof event.data.usage === "object" ? event.data.usage as Json : {};
   const inputTokens = Number(usage.input_tokens ?? 0);
@@ -455,6 +481,15 @@ const normalizeEvent = (event: RawEvent): ReplayEvent => {
     artifact: artifactForEvent(event),
     usage: { inputTokens, outputTokens, credits },
     provenance: provenanceForEvent(event),
+    review: reviewForEvent(event),
+    ledger: event.type === "ledger.transaction" && typeof event.data.amount === "number" ? {
+      kind: asString(event.data.kind) ?? "unreported",
+      amount: Number(event.data.amount),
+      fromAgent: asString(event.data.from_agent),
+      toAgent: asString(event.data.to_agent),
+      reason: asString(event.data.reason),
+    } : undefined,
+    checks: normalizeOutcomes(event.data.check_outcomes ?? event.data.checks),
     hash: event.hash,
     previousHash: event.previous_hash,
   };
@@ -629,6 +664,9 @@ const normalizeTransaction = (transaction: RawLedgerTransaction): LedgerTransact
     tokens: 0,
     credits: transaction.amount,
     eventId: transaction.event_id,
+    kind: transaction.kind,
+    fromAgent: transaction.from_agent ?? undefined,
+    toAgent: transaction.to_agent ?? undefined,
   };
 };
 

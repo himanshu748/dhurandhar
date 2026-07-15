@@ -1,6 +1,7 @@
-import { Clock3, Coins, Copy, LoaderCircle, Pause, Play, RotateCcw, ShieldAlert, SkipBack, SkipForward, UserRound } from "lucide-react";
+import { Check, Clock3, Coins, FlaskConical, Pause, Play, Radio, RotateCcw, ShieldAlert, SkipBack, SkipForward, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 import type { RunSummary } from "../types";
+import { CopyableValue } from "./CopyableValue";
 
 const duration = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -43,25 +44,18 @@ export function RunHeader({
         <div>
           <h2 id="run-objective">{run.objective}</h2>
           <div className="run-identity">
-            <code>{run.id.toUpperCase()}</code>
-            <button
-              className="icon-button subtle"
-              type="button"
-              onClick={() => void navigator.clipboard?.writeText(run.id)}
-              aria-label="Copy run ID"
-            >
-              <Copy size={13} />
-            </button>
-            <span className="run-state"><span>✓</span>{run.status}</span>
+            <CopyableValue value={run.id.toUpperCase()} label="run ID" head={14} tail={10} />
+            <span className="run-state"><span><Check size={9} /></span>{run.status}</span>
             <span className={`run-provenance provenance-${run.mode === "codex" ? "live" : "deterministic"}`}>
-              {run.mode === "codex" ? "Live model provenance" : "Deterministic fallback"}
+              {run.mode === "codex" ? <Radio size={10} /> : <FlaskConical size={10} />}
+              {run.mode === "codex" ? "LIVE RUN · MODEL EVIDENCE" : "FIXTURE · DETERMINISTIC FALLBACK"}
             </span>
           </div>
         </div>
         <div className="run-actions">
           {onRecoveryDrill && (
             <button className="drill-action" type="button" onClick={onRecoveryDrill} disabled={drillRunning || drillDisabled} title={drillDisabled ? drillDisabledReason : "Inject a controlled fault, then verify rollback"}>
-              {drillRunning ? <LoaderCircle className="spin" size={14} /> : <ShieldAlert size={14} />}
+              {drillRunning ? <span className="activity-pip" aria-hidden="true" /> : <ShieldAlert size={14} />}
               {drillRunning ? "Recovering…" : "Run recovery drill"}
             </button>
           )}

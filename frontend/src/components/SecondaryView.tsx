@@ -1,4 +1,4 @@
-import { Activity, ArrowUpRight, Brain, Check, Gauge, GitPullRequest, LoaderCircle, ShieldCheck, X } from "lucide-react";
+import { Activity, ArrowUpRight, Brain, Check, Gauge, GitPullRequest, ShieldCheck, X } from "lucide-react";
 import type { Page } from "./Sidebar";
 import type { AgentBalance, ReplaySnapshot } from "../types";
 import { RoleMark } from "./RoleMark";
@@ -96,7 +96,7 @@ export function SecondaryView({
                 <div className="policy-actions">
                   <button type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "reject")} disabled={Boolean(policyBusyId) || !operatorEnabled} title={operatorEnabled ? "Reject this candidate" : "Load an operator token to decide policies"}><X size={14} />Reject</button>
                   <button className="promote" type="button" onClick={() => onPolicyDecision(policy.proposalId ?? policy.id, "promote")} disabled={Boolean(policyBusyId) || !operatorEnabled} title={operatorEnabled ? "Promote this candidate" : "Load an operator token to decide policies"}>
-                    {policyBusyId === (policy.proposalId ?? policy.id) ? <LoaderCircle className="spin" size={14} /> : <Check size={14} />}
+                    {policyBusyId === (policy.proposalId ?? policy.id) ? <span className="button-skeleton" aria-hidden="true" /> : <Check size={14} />}
                     Promote
                   </button>
                 </div>

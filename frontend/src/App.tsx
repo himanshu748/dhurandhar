@@ -1,16 +1,29 @@
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { decidePolicy, runRecoveryDrill } from "./api";
 import { EvidenceInspector } from "./components/EvidenceInspector";
 import { LedgerPanel } from "./components/LedgerPanel";
 import { NewObjectiveDialog } from "./components/NewObjectiveDialog";
 import { OperatorAccessDialog } from "./components/OperatorAccessDialog";
+import { RecoveryFlow } from "./components/RecoveryFlow";
 import { RunHeader } from "./components/RunHeader";
 import { SecondaryView } from "./components/SecondaryView";
 import { Sidebar, type Page } from "./components/Sidebar";
 import { Timeline } from "./components/Timeline";
 import { Topbar } from "./components/Topbar";
 import { useReplay } from "./hooks/useReplay";
+import { selectCinematicEvents } from "./lib/replay";
+
+function BootSkeleton() {
+  return (
+    <main className="skeleton-shell" aria-label="Loading Dhurandhar control plane" aria-busy="true">
+      <div className="skeleton-sidebar"><span className="brand-mark large">D</span>{Array.from({ length: 5 }, (_, index) => <i key={index} />)}</div>
+      <div className="skeleton-topbar"><i /><i /><i /></div>
+      <div className="skeleton-replay"><i className="wide" />{Array.from({ length: 4 }, (_, index) => <article key={index}><i /><i /><i /></article>)}</div>
+      <div className="skeleton-inspector"><i />{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</div>
+      <p>Verifying journal chain and evidence provenance…</p>
+    </main>
+  );
+}
 
 export default function App() {
   const { snapshot, loading, refresh } = useReplay();
@@ -26,32 +39,33 @@ export default function App() {
   const [operatorToken, setOperatorToken] = useState("");
   const [operatorDialogOpen, setOperatorDialogOpen] = useState(false);
   const operatorEnabled = operatorToken.length > 0;
+  const cinematicEvents = useMemo(() => selectCinematicEvents(snapshot?.events ?? []), [snapshot]);
+  const latestProvenance = useMemo(() => [...(snapshot?.events ?? [])].reverse().find((event) => event.provenance?.mode === "live")?.provenance
+    ?? [...(snapshot?.events ?? [])].reverse().find((event) => event.provenance)?.provenance, [snapshot]);
 
   useEffect(() => {
     if (!snapshot) return;
-    setCursor(snapshot.events.length - 1);
-    const blocked = snapshot.events.find((event) => event.status === "blocked");
-    const proposed = [...snapshot.events].reverse().find((event) => event.status === "proposed");
-    const regression = [...snapshot.events].reverse().find((event) => event.status === "regression");
-    const latest = snapshot.events.at(-1);
-    setSelectedId(blocked?.id ?? proposed?.id ?? regression?.id ?? latest?.id ?? "");
-  }, [snapshot]);
+    const liveImplementation = cinematicEvents.findIndex((event) => event.type === "code.generated" && event.provenance?.mode === "live");
+    const openingIndex = liveImplementation >= 0 ? liveImplementation : Math.max(0, cinematicEvents.length - 1);
+    setCursor(openingIndex);
+    setSelectedId(cinematicEvents[openingIndex]?.id ?? "");
+  }, [cinematicEvents, snapshot]);
 
   useEffect(() => {
-    if (!playing || !snapshot?.events.length) return;
+    if (!playing || !cinematicEvents.length) return;
     const timer = window.setInterval(() => {
       setCursor((current) => {
-        if (current >= snapshot.events.length - 1) {
+        if (current >= cinematicEvents.length - 1) {
           setPlaying(false);
           return current;
         }
         const next = current + 1;
-        setSelectedId(snapshot.events[next].id);
+        setSelectedId(cinematicEvents[next].id);
         return next;
       });
     }, 1100 / speed);
     return () => window.clearInterval(timer);
-  }, [playing, snapshot, speed]);
+  }, [cinematicEvents, playing, speed]);
 
   useEffect(() => {
     const keyboard = (event: KeyboardEvent) => {
@@ -61,63 +75,58 @@ export default function App() {
         event.preventDefault();
         setPlaying((value) => !value);
       }
-      if (!snapshot) return;
+      if (!cinematicEvents.length) return;
       if (event.key === "Home") {
         setCursor(0);
-        setSelectedId(snapshot.events[0]?.id ?? "");
+        setSelectedId(cinematicEvents[0]?.id ?? "");
       }
       if (event.key === "End") {
-        const last = snapshot.events.length - 1;
+        const last = cinematicEvents.length - 1;
         setCursor(last);
-        setSelectedId(snapshot.events[last]?.id ?? "");
+        setSelectedId(cinematicEvents[last]?.id ?? "");
       }
       if (event.key === "ArrowLeft") {
         setCursor((value) => {
           const next = Math.max(0, value - 1);
-          setSelectedId(snapshot.events[next]?.id ?? "");
+          setSelectedId(cinematicEvents[next]?.id ?? "");
           return next;
         });
       }
       if (event.key === "ArrowRight") {
         setCursor((value) => {
-          const next = Math.min(snapshot.events.length - 1, value + 1);
-          setSelectedId(snapshot.events[next]?.id ?? "");
+          const next = Math.min(cinematicEvents.length - 1, value + 1);
+          setSelectedId(cinematicEvents[next]?.id ?? "");
           return next;
         });
       }
     };
     window.addEventListener("keydown", keyboard);
     return () => window.removeEventListener("keydown", keyboard);
-  }, [snapshot]);
+  }, [cinematicEvents]);
 
   const selectedEvent = useMemo(
-    () => snapshot?.events.find((event) => event.id === selectedId) ?? snapshot?.events[0],
-    [selectedId, snapshot],
+    () => cinematicEvents.find((event) => event.id === selectedId) ?? cinematicEvents[0],
+    [cinematicEvents, selectedId],
   );
 
   const seek = (index: number) => {
     if (!snapshot) return;
-    const next = Math.max(0, Math.min(snapshot.events.length - 1, index));
+    const next = Math.max(0, Math.min(cinematicEvents.length - 1, index));
     setCursor(next);
-    setSelectedId(snapshot.events[next].id);
+    setSelectedId(cinematicEvents[next].id);
   };
 
   if (loading && !snapshot) {
-    return (
-      <main className="boot-screen">
-        <span className="brand-mark large">D</span>
-        <LoaderCircle className="spin" size={21} />
-        <p>Verifying journal chain…</p>
-      </main>
-    );
+    return <BootSkeleton />;
   }
 
   if (!snapshot || !selectedEvent) {
-    return <main className="boot-screen"><p>No replayable run found.</p><button className="primary-action simple" onClick={() => void refresh()}>Retry</button></main>;
+    return <main className="boot-screen"><p>No objectives yet. The company is idle.</p><button className="primary-action simple" onClick={() => void refresh()}>Retry evidence sync</button></main>;
   }
 
   const selectTransaction = (eventId?: string) => {
-    if (eventId && snapshot.events.some((event) => event.id === eventId)) setSelectedId(eventId);
+    const index = eventId ? cinematicEvents.findIndex((event) => event.id === eventId) : -1;
+    if (index >= 0) seek(index);
     setPage("replay");
   };
 
@@ -157,6 +166,9 @@ export default function App() {
         page={page}
         source={snapshot.source}
         operatorEnabled={operatorEnabled}
+        model={latestProvenance?.model}
+        provenance={snapshot.run.mode === "codex" ? "live" : "fixture"}
+        sandbox={latestProvenance?.sandbox}
         onNewObjective={() => setDialogOpen(true)}
         onOperatorAccess={() => setOperatorDialogOpen(true)}
       />
@@ -166,7 +178,7 @@ export default function App() {
           <RunHeader
             run={snapshot.run}
             current={cursor}
-            total={snapshot.events.length}
+            total={cinematicEvents.length}
             playing={playing}
             speed={speed}
             onToggle={() => setPlaying((value) => !value)}
@@ -178,13 +190,32 @@ export default function App() {
             drillDisabledReason={snapshot.source !== "api" ? "Recovery drills require a live API" : "Load an operator token to run a recovery drill"}
           />
           <Timeline
-            events={snapshot.events}
+            events={cinematicEvents}
+            allEvents={snapshot.events}
             selectedId={selectedEvent.id}
             cursor={cursor}
-            onSelect={(event) => setSelectedId(event.id)}
-          />
+            runMode={snapshot.run.mode}
+            onSelect={(_event, index) => seek(index)}
+          >
+            <RecoveryFlow
+              events={snapshot.events}
+              currentSequence={selectedEvent.sequence}
+              policies={snapshot.policies}
+              operatorEnabled={operatorEnabled}
+              policyBusyId={policyBusyId}
+              onPolicyDecision={(proposalId, decision) => void reviewPolicy(proposalId, decision)}
+              onOpenPolicies={() => setPage("policies")}
+            />
+          </Timeline>
           <EvidenceInspector event={selectedEvent} runMode={snapshot.run.mode} />
-          <LedgerPanel agents={snapshot.agents} transactions={snapshot.transactions} onTransaction={selectTransaction} />
+          <LedgerPanel
+            agents={snapshot.agents}
+            transactions={snapshot.transactions}
+            events={snapshot.events}
+            currentSequence={selectedEvent.sequence}
+            currentEventId={selectedEvent.id}
+            onTransaction={selectTransaction}
+          />
         </>
       ) : (
         <SecondaryView

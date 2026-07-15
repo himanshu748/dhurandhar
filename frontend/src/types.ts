@@ -91,6 +91,26 @@ export interface TaskAuction {
   status: "opened" | "bidding" | "awarded";
 }
 
+export interface ReviewFinding {
+  severity: string;
+  summary: string;
+  file?: string;
+  line?: number;
+}
+
+export interface ReviewEvidence {
+  verdict?: string;
+  findings: ReviewFinding[];
+}
+
+export interface LedgerEvidence {
+  kind: string;
+  amount: number;
+  fromAgent?: string;
+  toAgent?: string;
+  reason?: string;
+}
+
 export interface ReplayEvent {
   id: string;
   sequence: number;
@@ -107,6 +127,9 @@ export interface ReplayEvent {
   usage: Usage;
   provenance?: ModelProvenance;
   auction?: TaskAuction;
+  review?: ReviewEvidence;
+  ledger?: LedgerEvidence;
+  checks?: CommandOutcome[];
   hash?: string;
   previousHash?: string;
 }
@@ -163,6 +186,9 @@ export interface LedgerTransaction {
   tokens: number;
   credits: number;
   eventId?: string;
+  kind?: string;
+  fromAgent?: string;
+  toAgent?: string;
 }
 
 export interface PolicyProposal {
