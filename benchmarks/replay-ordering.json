@@ -1,0 +1,16 @@
+{
+  "name": "replay event ordering",
+  "description": "A replay must preserve deterministic event order when timestamps collide.",
+  "critical": true,
+  "metric": "ordered_event_ratio",
+  "minimum_score": 1.0,
+  "cases": [
+    {
+      "events": [
+        {"id": "evt-b", "sequence": 2, "timestamp": "2026-07-14T09:32:11Z"},
+        {"id": "evt-a", "sequence": 1, "timestamp": "2026-07-14T09:32:11Z"}
+      ],
+      "expected_ids": ["evt-a", "evt-b"]
+    }
+  ]
+}

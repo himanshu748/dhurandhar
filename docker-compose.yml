@@ -1,0 +1,61 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      DHURANDHAR_ENV: ${DHURANDHAR_ENV:-development}
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+      DHURANDHAR_EVENT_LOG: /app/data/events.jsonl
+      DHURANDHAR_SEED_DEMO: ${DHURANDHAR_SEED_DEMO:-true}
+      DHURANDHAR_CORS_ORIGINS: ${DHURANDHAR_CORS_ORIGINS:-http://localhost:5173,http://localhost:8000}
+      DHURANDHAR_RUNTIME: ${DHURANDHAR_RUNTIME:-deterministic}
+      DHURANDHAR_ENABLE_CODEX_RUNTIME: ${DHURANDHAR_ENABLE_CODEX_RUNTIME:-false}
+      DHURANDHAR_CODEX_APPLY_CHANGES: ${DHURANDHAR_CODEX_APPLY_CHANGES:-false}
+      DHURANDHAR_CODEX_BIN: ${DHURANDHAR_CODEX_BIN:-codex}
+      DHURANDHAR_CODEX_WORKDIR: /app
+      DHURANDHAR_CODEX_TIMEOUT_SECONDS: ${DHURANDHAR_CODEX_TIMEOUT_SECONDS:-120}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.6}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_REPOSITORY: ${GITHUB_REPOSITORY:-owner/sandbox-repository}
+      GITHUB_DEFAULT_BRANCH: ${GITHUB_DEFAULT_BRANCH:-main}
+      DHURANDHAR_ALLOWED_REPOSITORIES: ${DHURANDHAR_ALLOWED_REPOSITORIES:-owner/sandbox-repository}
+      DHURANDHAR_DEMO_MODE: ${DHURANDHAR_DEMO_MODE:-sample}
+      DHURANDHAR_WRITE_ENABLED: ${DHURANDHAR_WRITE_ENABLED:-false}
+      DHURANDHAR_AUTO_MERGE: ${DHURANDHAR_AUTO_MERGE:-false}
+      DHURANDHAR_SELF_IMPROVEMENT_ENABLED: ${DHURANDHAR_SELF_IMPROVEMENT_ENABLED:-false}
+      DHURANDHAR_REQUIRE_CI: ${DHURANDHAR_REQUIRE_CI:-true}
+      DHURANDHAR_MAX_PARALLEL_RUNS: ${DHURANDHAR_MAX_PARALLEL_RUNS:-1}
+      DHURANDHAR_MAX_STEPS_PER_RUN: ${DHURANDHAR_MAX_STEPS_PER_RUN:-12}
+      DHURANDHAR_MAX_INPUT_TOKENS_PER_RUN: ${DHURANDHAR_MAX_INPUT_TOKENS_PER_RUN:-250000}
+      DHURANDHAR_MAX_OUTPUT_TOKENS_PER_RUN: ${DHURANDHAR_MAX_OUTPUT_TOKENS_PER_RUN:-50000}
+      DHURANDHAR_MAX_SPEND_USD_PER_RUN: ${DHURANDHAR_MAX_SPEND_USD_PER_RUN:-25}
+      DHURANDHAR_RUN_TIMEOUT_SECONDS: ${DHURANDHAR_RUN_TIMEOUT_SECONDS:-3600}
+      DHURANDHAR_PROTECTED_PATHS: ${DHURANDHAR_PROTECTED_PATHS:-.github/,Dockerfile,render.yaml,backend/app/policies/}
+      APP_VERSION: ${APP_VERSION:-dev}
+      GIT_SHA: ${GIT_SHA:-local}
+    volumes:
+      - dhurandhar-data:/app/data
+      - dhurandhar-workspaces:/app/workspaces
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    init: true
+    restart: unless-stopped
+
+volumes:
+  dhurandhar-data:
+  dhurandhar-workspaces:

@@ -1,0 +1,67 @@
+# macOS and editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.egg-info/
+dist/
+build/
+
+# Node and Vite
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Runtime state
+/data/
+/backend/data/
+/workspaces/
+/backend/workspaces/
+.worktrees/
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.jsonl
+logs/
+*.log
+
+# Test artifacts
+playwright-report/
+test-results/
+.nyc_output/
+.playwright-cli/
+output/playwright/*.yml
+
+# Deployment and local tooling
+.render/
+.docker/
+.codex/
