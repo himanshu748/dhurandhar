@@ -10,7 +10,9 @@ services:
     environment:
       # Match the public Render service: deterministic seeded replay, with
       # mutations disabled because no operator token is present.
-      DHURANDHAR_ENV: ${DHURANDHAR_ENV:-production}
+      # Keep the judge-facing Compose path read-only even when README setup
+      # copies .env.example, whose local-development value is "development".
+      DHURANDHAR_ENV: production
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
       DHURANDHAR_EVENT_LOG: /app/data/events.jsonl
