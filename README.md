@@ -211,7 +211,7 @@ Inside the product, Codex performs the bounded implementation and independent re
 The completed in-product run is inspectable in [Live Codex evidence](docs/LIVE_EVIDENCE.md). Its implementation and review thread IDs are product provenance; they do not replace the separate Build Week `/feedback` session ID required below.
 
 > [!CAUTION]
-> **Submission blocker - required Codex collaboration evidence:** the primary Codex `/feedback` session ID has not been captured. Add the real session ID here and to the tagged release notes before submission. Do not invent or reuse an unrelated identifier.
+> **Codex collaboration session ID:** `019f6172-596f-7d50-a842-b839fd16af3e`. Codex 0.144.2 returned this exact value from the official feedback upload for the primary Dhurandhar build task on 2026-07-16; extra app logs were not included. This collaboration identifier is separate from the two in-product implementation/reviewer thread IDs above.
 
 ## Deterministic judge/testing fallback
 
@@ -321,7 +321,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, and recovery journal with independently verifiable evidence. The `/feedback` tracking ID, deployed demo, final video, cover image, URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, and primary Codex collaboration session ID with independently verifiable evidence. The deployed demo, final video, cover image, URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

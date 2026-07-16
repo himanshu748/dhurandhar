@@ -1,7 +1,7 @@
 # Dhurandhar - submission draft
 
 > [!WARNING]
-> This is not yet a complete submission. The Codex `/feedback` tracking ID, deployed demo, narrated video, final screenshot, public URLs, final release gates, and tagged release are still uncaptured. The checklist at the end is the source of truth.
+> This is not yet a complete submission. The deployed demo, narrated video, final screenshot, public URLs, final release gates, and tagged release are still uncaptured. The checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -74,10 +74,10 @@ The live event record contains the configured model, thread ID, token categories
 
 Codex was used throughout the repository build: translating the original autonomous-software-company brief into a testable architecture, implementing the FastAPI and React system, adding the persistent roster and auction economy, hardening the runtime/reviewer/evidence boundary, testing the result, and revising the submission so claims match the code. This is materially different from adding a late model button to a conventionally built demo.
 
-The final README and release notes must include the real `/feedback` session ID so judges can inspect that collaboration.
+The README and release-notes draft include the real feedback session ID returned for the primary Codex build task so judges can inspect that collaboration.
 
-> [!CAUTION]
-> **Required session ID: TODO - NOT CAPTURED.** Generate it from the primary Codex build session, verify it, then replace this line. Never fabricate an identifier.
+> [!NOTE]
+> **Codex collaboration session ID: `019f6172-596f-7d50-a842-b839fd16af3e`.** Codex 0.144.2 returned this exact value from the official feedback upload for the primary Dhurandhar build task on 2026-07-16. The upload omitted extra app log files.
 
 ### Current model truth
 
@@ -213,7 +213,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 
 ## What comes next
 
-1. Capture the Codex `/feedback` tracking ID and publish the final demo assets.
+1. Publish the final demo, video, cover image, and direct submission URLs.
 2. Add authenticated GitHub branch/PR and CI-evidence adapters with exact repository allowlists.
 3. Add a real deployment-provider and monitor adapter while preserving human release authority.
 4. Move the event journal to durable signed storage with authentication and tenant isolation.
@@ -241,7 +241,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [x] Confirm `gpt-5.6-sol` in the authenticated Codex catalog.
 - [x] Run implementation and reviewer with `gpt-5.6-sol` against a fresh disposable worktree.
 - [x] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence.
-- [ ] Add the required primary Codex `/feedback` session ID to README and release notes.
+- [x] Add the returned primary Codex collaboration session ID to README and release notes.
 - [ ] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
