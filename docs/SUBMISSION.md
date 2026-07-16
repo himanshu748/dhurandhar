@@ -265,7 +265,7 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 - [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
 - [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; the submission guard now reports only unfinished human media items.
 - [ ] Create and push the tagged release.
-- [ ] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
+- [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
 
 ## Release/tag procedure
 
