@@ -1,7 +1,7 @@
 # Dhurandhar - submission draft
 
 > [!WARNING]
-> This is not yet a complete submission. The narrated video, final screenshot, video URL, final release gates, and tagged release are still uncaptured. The deterministic public demo is deployed and verified; the checklist at the end is the source of truth.
+> This is not yet a complete submission. The narrated video, cover image, video URL, and tagged release are still uncaptured. The deterministic public demo and release gates are verified; the checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -87,7 +87,7 @@ A configuration value alone is not evidence. Every submission claim names the ex
 
 ## Hero objective: Misconception Debugger
 
-Use the bounded objective already completed in the captured development run so the Codex result can be reviewed and verified inside the video:
+Use the bounded objective from the captured final 2026-07-16 run so the Codex result can be reviewed and verified inside the video:
 
 **Title:** Add privacy-safe session evidence export API
 
@@ -101,7 +101,12 @@ Use the bounded objective already completed in the captured development run so t
 
 The final 2026-07-16 run produced a five-file, 226-insertion diff from the same clean baseline. A distinct read-only `gpt-5.6-sol` reviewer approved it, Sentinel's independent static-allowlist pytest command exited `0`, the 40-credit escrow settled completely, and the recovery drill ended at an unapproved human decision gate. The complete 89-event record is in [Live Codex evidence](LIVE_EVIDENCE.md). The earlier six-file `gpt-5.5` development run remains there as historical context. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
 
-## Safe live-run configuration
+## Safe live-run configuration for another model run
+
+The final evidence already exists. Use the immutable playback procedure in the
+[video shot list](VIDEO_SHOT_LIST.md) for recording. Use this section only if a
+new model invocation is intentionally required; it creates new evidence rather
+than replaying the captured final run.
 
 Create a disposable worktree from the separate target repository:
 
@@ -132,7 +137,9 @@ Run `make dev-frontend` separately. Use a new branch, worktree path, and event-l
 
 ## Three-minute judge video
 
-Target length: **2:55**, narrated. Record the real run; if model latency is removed, mark the time cut on screen rather than implying an instantaneous response.
+Target length: **2:55**, narrated. Replay the captured real run from its read-only journal copy. If footage from the original model latency is removed, mark the time cut on screen rather than implying an instantaneous response.
+
+The exact immutable-playback commands, event sequences, UI proof labels, and narration guardrails are in the [evidence-based video shot list](VIDEO_SHOT_LIST.md).
 
 ### 0:00-0:18 - Hook
 
@@ -146,7 +153,7 @@ Point to the `live` provenance badge and the Misconception Debugger objective.
 
 Open Agents long enough to show all eight names. Return to Replay and select the auction. Show that Forge, Prism, and Rivet all bid, one ineligible or higher bid cannot win merely by being cheap, and the lowest eligible bid is awarded. Briefly point to bid fees and bounty escrow.
 
-### 0:42-1:25 - Live Codex is the hero
+### 0:42-1:20 - Live Codex is the hero
 
 Show the moment the objective is submitted, then the resulting implementation event. In the evidence inspector, show:
 
@@ -159,21 +166,21 @@ Show the moment the objective is submitted, then the resulting implementation ev
 
 Do not use the deterministic seed for this section.
 
-### 1:25-1:48 - Independent reviewer
+### 1:20-1:48 - Diff and independent reviewer
 
-Select Aegis's review event. Show a different thread ID, read-only sandbox, reviewer model, structured verdict, and findings. State that the implementing call cannot approve itself.
+Keep the implementation diff evidence visible, then select Aegis's review event. Show a different thread ID, read-only sandbox, reviewer model, structured verdict, and findings. State that the implementing call cannot approve itself. Do not claim that every reviewer-side command passed; Sentinel owns the release gate.
 
-### 1:48-2:08 - Evidence gate and honest release semantics
+### 1:48-2:18 - Evidence gate, settlement, and honest release semantics
 
-Select Sentinel's verification and Shipwright's promotion. Show that successful test-command exits and a non-empty diff are mandatory. Point to `environment: demo-sandbox` and `external_deployment: false`; say explicitly that this prototype does not push, merge, or deploy externally.
+Select Sentinel's verification and Shipwright's promotion. Show the independent `EXIT 0`, then advance until the ledger says `CONSERVED · 40/40 CR`. Point to `environment: demo-sandbox` and `external_deployment: false`; say explicitly that this prototype does not push, merge, or deploy externally.
 
-### 2:08-2:35 - Recover and assign liability
+### 2:18-2:40 - Recorded recovery and human authority
 
-Run the controlled recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration and source-linked incident evidence.
+Replay the recorded recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration, source-linked incident evidence, four proposed controls, and the human decision gate. Leave the final proposal visibly `proposed`; the read-only recording server must not mutate it.
 
-### 2:35-2:55 - Human-gated learning and close
+### 2:40-2:55 - Deployed fallback and close
 
-Open the policy check and proposal. Show the four memory, prompt, routing, and economy slots, the `structure-only-not-efficacy` scope, and the human decision control. Leave the final recorded proposal visibly `proposed` with no active mechanisms; explain that only a later human approval could serialize the controls into another run, whose strategy would remain `policy-gated-demo-sandbox`, not public canary traffic. Close with:
+Open the verified Render URL. Keep `FIXTURE`, `MODEL none`, `MODE read-only`, and `NO MODEL CALL` visible. Explain that this is the accessible no-secret judge fallback, while the preceding immutable local replay contains the two captured live Codex calls. Close with:
 
 > "Dhurandhar does not ask you to trust an agent transcript. It shows who did what, which evidence allowed the next step, what failure cost, and exactly where the human still decides."
 
@@ -194,6 +201,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 ### Verified public deployment — 2026-07-16
 
 - Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
+- Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar)
 - Source commit: `e1c689b1033b476e560a18c78425859726044d87`
 - Blueprint: `exs-d9c6rmm1a83c73bsov5g`
 - Render service: `srv-d9c6rt3tqb8s73agu030`
@@ -256,16 +264,18 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [x] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
-- [ ] Publish direct live-demo, repository, and video URLs.
-- [ ] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the release commit.
+- [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
+- [x] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the audited release candidate.
 - [ ] Create and push the tagged release.
-- [ ] Verify every claim and link against the final public commit.
+- [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response.
 
 ## Release/tag procedure
 
-Complete and check every pre-release evidence item above first. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the first command passes:
+Complete and check every pre-release evidence item above first. Merge the release commit into the default `main` branch and verify that it is an ancestor of the public branch before tagging. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the ancestry check and submission guard both pass:
 
 ```bash
+git fetch origin main
+git merge-base --is-ancestor HEAD origin/main
 make submission-check
 git tag -s v1.0.0 -m "Dhurandhar OpenAI Build Week submission"
 git push origin v1.0.0

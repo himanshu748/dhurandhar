@@ -6,6 +6,8 @@ Dhurandhar is an experimental software-company control plane for a solo founder.
 
 The submission story is a **live Codex workspace-write run** against a disposable Git worktree. The captured target objective adds a privacy-safe session evidence export to **Misconception Debugger**, a separate Education project. Dhurandhar is the Developer Tools entry and the control plane around that work; it does not claim Misconception Debugger as an internal Dhurandhar feature.
 
+[Public demo](https://dhurandhar-asc.onrender.com) · [Source repository](https://github.com/himanshu748/dhurandhar) · [Live Codex evidence](docs/LIVE_EVIDENCE.md) · [Video shot list](docs/VIDEO_SHOT_LIST.md)
+
 > [!IMPORTANT]
 > Dhurandhar is a hackathon prototype, not an unattended production deployment system. A successful "promotion" is an internal, reversible `demo-sandbox` lifecycle transition. The current adapter does not commit, push, merge, or deploy to external infrastructure.
 
@@ -188,7 +190,7 @@ Use **New objective** with this demo contract:
 
 All three engineers must bid. In Change Replay, show the winning evidence-backed bid, the implementation thread/model/tokens, actual command exit codes, changed files and diff hash/preview, then the separate reviewer thread and verdict. The run can enter the internal sandbox only after the live evidence gate succeeds.
 
-The captured run IDs, thread IDs, token categories, diff and stdout hashes, journal checksum, and recovery sequence are published in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The final 89-event journal and the historical development journal both remain in the repository so the proof is independently chain-verifiable.
+The captured run IDs, thread IDs, token categories, diff and stdout hashes, journal checksum, and recovery sequence are published in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The final 89-event journal and the historical development journal both remain in the repository so the proof is independently chain-verifiable. The [video shot list](docs/VIDEO_SHOT_LIST.md) maps the final run to exact replay sequences and on-screen proof.
 
 ### 4. Show recovery and accountable learning
 
@@ -325,7 +327,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, primary Codex collaboration session ID, and verified public read-only demo with independently verifiable evidence. The final video, cover image, remaining submission URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, primary Codex collaboration session ID, verified release gates, and verified public read-only demo with independently verifiable evidence. The final video, cover image, video URL, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 
