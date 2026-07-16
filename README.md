@@ -128,7 +128,7 @@ make install
 
 This is the submission path. Run it locally because the production image does not bundle an authenticated Codex CLI.
 
-The completed development run is documented in [Live Codex evidence](docs/LIVE_EVIDENCE.md): Forge won a three-engineer auction, a `gpt-5.5` workspace-write thread produced a six-file diff, a distinct read-only `gpt-5.5` thread approved it, and Sentinel independently passed 16 tests. The feature was then reviewed and committed to the Education repository. This is genuine Codex evidence, but it must be repeated with GPT-5.6 for the final competition recording.
+The final Build Week run is documented in [Live Codex evidence](docs/LIVE_EVIDENCE.md): Rivet won a three-engineer auction, a `gpt-5.6-sol` workspace-write thread produced a five-file, 226-insertion diff, a distinct read-only `gpt-5.6-sol` thread returned `approved`, and Sentinel independently passed the repository-owned pytest gate. Promotion remained internal to `demo-sandbox`; no commit, push, merge, or external deployment is claimed.
 
 ### 1. Prepare an isolated target
 
@@ -157,8 +157,9 @@ DHURANDHAR_CODEX_APPLY_CHANGES=true \
 DHURANDHAR_CODEX_WORKDIR=/tmp/misconception-debugger-dhurandhar-demo \
 DHURANDHAR_EVENT_LOG=/tmp/dhurandhar-misconception-demo-events.jsonl \
 DHURANDHAR_SEED_DEMO=false \
-DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.5 \
-DHURANDHAR_REVIEWER_MODEL=gpt-5.5 \
+DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.6-sol \
+DHURANDHAR_REVIEWER_MODEL=gpt-5.6-sol \
+DHURANDHAR_CODEX_TIMEOUT_SECONDS=600 \
 make dev-backend
 ```
 
@@ -187,7 +188,7 @@ Use **New objective** with this demo contract:
 
 All three engineers must bid. In Change Replay, show the winning evidence-backed bid, the implementation thread/model/tokens, actual command exit codes, changed files and diff hash/preview, then the separate reviewer thread and verdict. The run can enter the internal sandbox only after the live evidence gate succeeds.
 
-The captured run IDs, thread IDs, token categories, diff and stdout hashes, journal checksum, and recovery sequence are published in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The raw 90-event journal remains part of the repository so the proof is independently chain-verifiable.
+The captured run IDs, thread IDs, token categories, diff and stdout hashes, journal checksum, and recovery sequence are published in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The final 89-event journal and the historical development journal both remain in the repository so the proof is independently chain-verifiable.
 
 ### 4. Show recovery and accountable learning
 
@@ -195,18 +196,11 @@ After the run completes, use **Run recovery drill**. The API-driven drill append
 
 The drill is real application behavior over the event journal, but it is not an external production outage or infrastructure rollback.
 
-## Model status and GPT-5.6 submission requirement
+## Verified `gpt-5.6-sol` submission evidence
 
-As of 2026-07-15, the currently authenticated Codex catalog available to this project supports `gpt-5.5`; both adapter defaults therefore use `gpt-5.5`. No GPT-5.6 run is claimed in this repository.
+On 2026-07-16, the authenticated Codex catalog listed the exact `gpt-5.6-sol` tier. Dhurandhar recorded that slug in both completed live events: implementation thread `019f693d-e649-7a91-8dd3-f2cf1a772516` ran with `workspace-write`, while reviewer thread `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` ran read-only and returned `approved`. The complete model usage, commands, diff, Sentinel evidence, settlement, recovery, and 89-event chain are in [Live Codex evidence](docs/LIVE_EVIDENCE.md).
 
-Before the final submission, after the account has GPT-5.6 access:
-
-1. set both `DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.6` and `DHURANDHAR_REVIEWER_MODEL=gpt-5.6`;
-2. repeat the live disposable-worktree run;
-3. verify that the implementation and reviewer events both record `gpt-5.6`;
-4. capture the thread IDs, token usage, commands, diff, verdict, video, and `/feedback` session ID.
-
-Configuration is not evidence. Do not describe the project as GPT-5.6-powered until that run has been captured.
+Configuration is not evidence; the linked journal and independently recomputed Git metadata are the claim.
 
 ## Codex collaboration
 
@@ -237,7 +231,7 @@ curl -sS -o /tmp/dhurandhar-post.json -w '%{http_code}\n' \
 cat /tmp/dhurandhar-post.json
 ```
 
-The health response reports `runtime` as `deterministic`, both GET collections return successfully, and the POST prints status `503` plus `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as GPT-5.5, GPT-5.6, or a live Codex run.
+The health response reports `runtime` as `deterministic`, both GET collections return successfully, and the POST prints status `503` plus `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as a live or model-backed run.
 
 This path lets judges inspect the company roster, three-bid auction, ledger settlement, replay ordering, seeded recovery and policy evidence, and deterministic event chain without granting credentials.
 
@@ -327,7 +321,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed `gpt-5.5` live run with independently verifiable evidence. The repeated GPT-5.6 run, `/feedback` session ID, deployed demo, final video, and tagged release remain explicit submission blockers in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, and recovery journal with independently verifiable evidence. The `/feedback` tracking ID, deployed demo, final video, cover image, URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

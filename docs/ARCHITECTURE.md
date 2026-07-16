@@ -25,9 +25,9 @@ The submission's live target is **Misconception Debugger**, a separate Education
 | Live promotion gate requiring a real Git diff and successful test-command exit codes | Trusting a prose claim that tests passed |
 | Internal `demo-sandbox` promotion, health, fault injection, and known-good recovery state | Commit, push, merge, external deployment, production traffic, or infrastructure rollback |
 | Deterministic four-mechanism structural policy check with explicit human approval | Policy-efficacy benchmark, recursive self-modification, or silent activation |
-| Deterministic no-secret fixture for repeatable judge testing | Calling the fixture GPT-5.5, GPT-5.6, or live Codex |
+| Deterministic no-secret fixture for repeatable judge testing | Calling the fixture live or model-backed |
 
-The currently authenticated Codex account exposes `gpt-5.5`, so both configured defaults are `gpt-5.5`. GPT-5.6 must not be claimed until the account has access and a new live implementation plus reviewer run records it.
+The final 2026-07-16 evidence run explicitly configured the exact catalog slug `gpt-5.6-sol` for both a completed workspace-write implementation and a distinct read-only reviewer invocation. The linked [live evidence](LIVE_EVIDENCE.md) is the claim source; deterministic mode remains the application's safe runtime default.
 
 ## 3. Trust topology
 
@@ -397,6 +397,6 @@ Docker Compose runs a production-shaped, non-root container with the compiled fr
 - autonomous commit, push, pull request, merge, or external deployment;
 - replacing branch protection or human release authority;
 - presenting internal credits as money or independent economic agency;
-- claiming GPT-5.6, a live Codex run, or an external release without captured evidence;
+- claiming a live model tier or external release without captured evidence;
 - claiming that the Misconception Debugger demo target is part of Dhurandhar or was externally deployed;
 - silent self-modification of the running coordinator.
