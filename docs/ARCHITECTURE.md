@@ -388,7 +388,7 @@ Docker Compose runs a production-shaped, non-root container with the compiled fr
 
 ### Hosted fallback
 
-`render.yaml` is prepared to run the Docker image as a deterministic, read-only hosted replay. The image contains the immutable 89-event recorded-live journal at `/app/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`; seeding is disabled, the image-baked journal is read-only to the non-root process, and the hosted process makes no model calls or repository writes. This configuration does not by itself prove that the public service is running the expected image, so the deployment remains pending public health, route, and write-refusal verification.
+`render.yaml` is prepared to run the Docker image as a deterministic, read-only hosted replay. The image contains the immutable 89-event recorded-live journal at `/app/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`; seeding is disabled, the image-baked journal is read-only to the non-root process, and the hosted process makes no model calls or repository writes. The image entrypoint also fail-closes `DHURANDHAR_PUBLIC_REPLAY=true` to this exact boundary and removes any inherited operator token, so stale provider variables cannot silently restore fixture seeding or mutations. The separate `make demo` command explicitly opts out for its synthetic local fixture. This configuration does not by itself prove that the public service is running the expected image, so the deployment remains pending public health, route, and write-refusal verification.
 
 ## 12. Explicit non-goals for this build
 

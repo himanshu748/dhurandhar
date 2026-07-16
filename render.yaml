@@ -12,6 +12,8 @@ services:
     envVars:
       - key: DHURANDHAR_ENV
         value: production
+      - key: DHURANDHAR_PUBLIC_REPLAY
+        value: "true"
       - key: APP_HOST
         value: 0.0.0.0
       - key: LOG_LEVEL

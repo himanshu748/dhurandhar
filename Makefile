@@ -14,7 +14,7 @@ install: ## Install backend and frontend dependencies
 	cd frontend && npm ci
 
 demo: setup ## Run the deterministic, offline demo
-	DHURANDHAR_RUNTIME=deterministic DHURANDHAR_EVENT_LOG=/app/data/events.jsonl DHURANDHAR_SEED_DEMO=true docker compose up --build
+	DHURANDHAR_PUBLIC_REPLAY=false DHURANDHAR_RUNTIME=deterministic DHURANDHAR_EVENT_LOG=/app/data/events.jsonl DHURANDHAR_SEED_DEMO=true docker compose up --build
 
 dev: ## Start the production-shaped local stack
 	docker compose up --build
