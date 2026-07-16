@@ -48,7 +48,8 @@ env -u DHURANDHAR_OPERATOR_TOKEN \
 
 Open [http://127.0.0.1:8000/replay](http://127.0.0.1:8000/replay). Before recording, verify:
 
-- the top bar says `Kernel online`, `LIVE`, and `gpt-5.6-sol`;
+- the top bar says `Kernel online`, `RECORDED LIVE`, and
+  `REQUESTED gpt-5.6-sol`;
 - the run title is `Add privacy-safe session evidence export API`;
 - `GET /api/health` reports a valid 89-event chain;
 - an unauthenticated `POST /api/objectives` returns `503`;
@@ -103,8 +104,8 @@ that all three were eligible.
 First select implementation position `15 / 38`, `SEQ 052`, event
 `evt_05a431a053b849c3`.
 
-- **Keep visible:** `LIVE MODEL · gpt-5.6-sol · workspace-write` and the
-  Evidence Inspector section `Live model provenance`.
+- **Keep visible:** `LIVE CALL · REQUESTED gpt-5.6-sol · workspace-write` and
+  the Evidence Inspector section `Live call provenance`.
 - **Proof fields:** requested model `gpt-5.6-sol`, sandbox `workspace-write`, thread
   `019f693d-e649-7a91-8dd3-f2cf1a772516`, and token boxes
   `333,511 / 294,400 / 6,297 / 2,150` for input, cached, output, and reasoning.
@@ -117,7 +118,7 @@ First select implementation position `15 / 38`, `SEQ 052`, event
 Then select review position `16 / 38`, `SEQ 055`, event
 `evt_92a5b81af75de4a2`.
 
-- **Keep visible:** `LIVE MODEL · gpt-5.6-sol · read-only`.
+- **Keep visible:** `LIVE CALL · REQUESTED gpt-5.6-sol · read-only`.
 - **Proof fields:** the distinct thread
   `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` and token boxes
   `361,206 / 315,904 / 3,566 / 2,103`.
@@ -199,7 +200,9 @@ Do not click Approve. The recorded proposal must remain `proposed`.
   same committed 89-event journal whose implementation and review calls each
   requested `gpt-5.6-sol`.”
 
-Verify this exact release behavior before recording. The separate `make demo`
+This exact release behavior was verified on source commit
+`55aae7648c2357ae9679ecd5523fb61556a16b0d`, Render deployment
+`dep-d9c9drjbc2fs73bipqqg`. The separate `make demo`
 path is a synthetic 78-event fixture with no model tokens; it is not the hosted
 recorded-run playback. Never call either playback mode a new live model run.
 

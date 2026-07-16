@@ -188,7 +188,7 @@ Open the Render URL at its landing page. Keep the deterministic-replay disclosur
 
 The hosted and production-shaped Docker paths are deterministic, read-only playback of the committed immutable 89-event live-run journal. They let a judge inspect the roster, auction, economy, event chain, replay, recovery, and policy gate without credentials. The current process makes zero new model calls. Its landing-page `fixture` badge labels the playback process; the `/replay` cards preserve the captured events' historical `live` provenance, requested slug, thread IDs, and token totals.
 
-The public Render instance and default Docker Compose stack are intentionally read-only: both run with `DHURANDHAR_ENV=production`, load the image-baked journal, and reject mutation requests because no operator token is configured. The final release candidate must return:
+The public Render instance and default Docker Compose stack are intentionally read-only: both load the image-baked journal, and the public-replay entrypoint removes any inherited operator token before startup. The verified release returns:
 
 ```json
 {"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":89,"runtime":"deterministic"}
@@ -204,9 +204,9 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 
 - Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
 - Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar)
-- Required direct verification: deterministic health with a valid 89-event chain; `/` landing HTML `200`; `/replay` HTML `200`; GET collections `200`; and unauthenticated objective creation rejected with the documented `503` response.
+- Direct verification completed 2026-07-16: deterministic health with a valid 89-event chain; `/` landing HTML `200`; `/replay` HTML `200`; GET objectives, runs, and events `200`; and unauthenticated objective creation rejected with the documented `503` response.
 - Evidence storage: the committed journal is copied read-only into the image; Render's ephemeral filesystem is not used as the evidence source.
-- Release source commit and deployment identifier: **pending final rollout verification; do not infer or reuse the earlier seeded-fixture deployment identifiers.**
+- Release source commit: `55aae7648c2357ae9679ecd5523fb61556a16b0d`; Render deployment: `dep-d9c9drjbc2fs73bipqqg` (`live` at 2026-07-16T08:32:41Z). Earlier seeded-fixture deployment identifiers are not reused.
 
 ## Challenges
 
@@ -259,11 +259,11 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 - [x] Run implementation and reviewer with `gpt-5.6-sol` against a fresh disposable worktree.
 - [x] Capture the requested model slug, stream-derived implementation/reviewer thread IDs and tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence; document that stdout supplied no observed model field.
 - [x] Add the returned primary Codex collaboration session ID to README and release notes.
-- [ ] Redeploy the hardened deterministic 89-event public playback and record the verified source commit and deployment identifier.
+- [x] Redeploy the hardened deterministic 89-event public playback and record the verified source commit and deployment identifier.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
 - [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
-- [ ] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate.
+- [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; the submission guard now reports only unfinished human media items.
 - [ ] Create and push the tagged release.
 - [ ] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
 

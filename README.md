@@ -250,9 +250,9 @@ docker compose down --volumes
 
 ### Operator access and the public demo
 
-Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint and default Docker Compose stack deliberately omit that secret, so both are read-only replays: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
+Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint and default Docker Compose stack deliberately omit that secret, and the public-replay entrypoint removes any inherited value, so both are read-only replays: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
 
-**Public judge URL:** [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com). The release target serves the same deterministic, read-only playback of the committed 89-event live journal described above: it makes no new model calls, while `/replay` displays the evidence captured during the historical calls. Record a source commit and deployment identifier only after that exact release image is rolled out and its 89-event health response is re-verified.
+**Public judge URL:** [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com). The release target serves the same deterministic, read-only playback of the committed 89-event live journal described above: it makes no new model calls, while `/replay` displays the evidence captured during the historical calls. The exact image from source commit [`55aae7648c2357ae9679ecd5523fb61556a16b0d`](https://github.com/himanshu748/dhurandhar/commit/55aae7648c2357ae9679ecd5523fb61556a16b0d) became Render deployment `dep-d9c9drjbc2fs73bipqqg` on 2026-07-16; its health, landing, replay, GET collections, and unauthenticated `503` mutation refusal were verified directly after rollout.
 
 The evidence file is committed at [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl) and copied read-only into the release image. Render's filesystem is ephemeral, but the hosted process does not use an ephemeral journal as evidence and has no operator token with which to append events; a restart loads the same image-baked record again.
 
@@ -332,7 +332,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed run whose implementation and review invocations requested `gpt-5.6-sol`, plus stream-derived thread/token evidence, independent Git and Sentinel verification, settlement, recovery, the primary Codex collaboration session ID, and an immutable journal. The hardened public read-only release still requires final rollout verification. The video, cover image, video URL, and release tag are explicitly **pending / not tagged** in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed run whose implementation and review invocations requested `gpt-5.6-sol`, plus stream-derived thread/token evidence, independent Git and Sentinel verification, settlement, recovery, the primary Codex collaboration session ID, and an immutable journal. The hardened public read-only 89-event release is deployed and verified. The video, cover image, video URL, and release tag are explicitly **pending / not tagged** in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

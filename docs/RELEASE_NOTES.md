@@ -1,6 +1,6 @@
 # Dhurandhar v1.0.0 release notes — draft
 
-> **NOT TAGGED.** The video, video URL, cover image, hardened release verification, and final public-rollout audit remain pending.
+> **NOT TAGGED.** The video, video URL, and cover image remain pending. The hardened public rollout and direct response audit are complete.
 
 ## Build Week evidence
 
@@ -10,9 +10,9 @@
 - Model limitation: the historical `codex exec --json` stdout did not echo a model identifier. The journal model value is the requested slug accepted by the CLI, not an observed stream field. The journal was not backfilled. Future runs record requested/nullable-observed model, full invocation argv, and `codex --version`, and fail closed on model conflict or mismatch.
 - Full evidence: [Live Codex evidence](LIVE_EVIDENCE.md).
 - Chain-verifiable final journal: [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](../output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl).
-- Public judge URL, pending final release verification: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com).
+- Verified public judge URL: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com).
 - Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar).
-- Render source commit and deployment identifier: **pending final rollout verification**; the earlier seeded-fixture deployment identifiers are not release evidence for the new 89-event playback.
+- Render source commit: `55aae7648c2357ae9679ecd5523fb61556a16b0d`; deployment: `dep-d9c9drjbc2fs73bipqqg` (`live` at 2026-07-16T08:32:41Z). Earlier seeded-fixture deployments are not release evidence for this 89-event playback.
 - Recording guide: [Evidence-based video shot list](VIDEO_SHOT_LIST.md).
 
 ## Release validation
@@ -21,7 +21,7 @@ Version scopes are separate: the API currently reports `0.1.0`, this repository
 release is drafted as `v1.0.0`, and the captured internal demo-sandbox artifact
 is `v1.0.1`.
 
-- Backend/frontend tests, lint, production build, submission guard, and Docker smoke: **pending refresh from the hardened release candidate**.
+- Backend/frontend tests, Python compilation, TypeScript lint, production build, Blueprint validation, and the adversarial Docker smoke all passed on the hardened release candidate. `make submission-check` was rerun and remains intentionally blocked only by the unfinished video, cover image, and final video URL.
 - Required Docker/public behavior: `/` and `/replay` serve, GET routes remain readable, health verifies the immutable 89-event chain under `runtime: deterministic`, and unauthenticated mutation remains fail-closed with `503`.
 - The final journal independently verified at 89 events with head `e0653356f2bb00f3b355344fc0474e71c4446856a5d696d2d2d589b6459df9a2` and file checksum `cc6cad770642bbc667ed3d4c3a9de789717b720710bf54801659000e6ae0d8b5`.
 
