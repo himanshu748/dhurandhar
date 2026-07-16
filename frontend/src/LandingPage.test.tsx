@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import LandingPage from "./LandingPage";
+import landingStyles from "./styles.css?raw";
 
 const IMPLEMENTATION_THREAD = "019f693d-e649-7a91-8dd3-f2cf1a772516";
 const REVIEW_THREAD = "019f6940-61f5-7ea2-85e8-d20a1afaaf6f";
@@ -43,6 +44,57 @@ describe("judge-facing landing page", () => {
       "src",
       expect.stringContaining("dhurandhar-auction-live-1440x1000.jpg"),
     );
+  });
+
+  it("does not hide or offset animated landing content in the default stylesheet", () => {
+    const { container } = render(<LandingPage />);
+    const style = document.createElement("style");
+    style.textContent = landingStyles.replace(/^@import[^;]+;\s*/gm, "");
+    document.head.append(style);
+
+    const targets = Array.from(container.querySelectorAll<HTMLElement>(
+      "[data-landing-hero-item], [data-landing-reveal], [data-landing-hero-parallax]",
+    ));
+    const violations: string[] = [];
+
+    const visitRules = (rules: CSSRuleList) => {
+      Array.from(rules).forEach((rule) => {
+        if ("selectorText" in rule && "style" in rule) {
+          const styleRule = rule as CSSStyleRule;
+          styleRule.selectorText.split(",").forEach((rawSelector) => {
+            const selector = rawSelector.trim();
+            if (/:(?:hover|active|focus(?:-visible)?|disabled)\b|::(?:before|after)\b/.test(selector)) return;
+
+            let affectsTarget = false;
+            try {
+              affectsTarget = targets.some((target) => target.matches(selector) || target.closest(selector) !== null);
+            } catch {
+              return;
+            }
+            if (!affectsTarget) return;
+
+            for (const [property, forbidden] of [
+              ["opacity", "0"],
+              ["visibility", "hidden"],
+              ["display", "none"],
+            ] as const) {
+              const value = styleRule.style.getPropertyValue(property).trim();
+              if (value === forbidden) violations.push(`${selector} sets ${property}: ${value}`);
+            }
+
+            const transform = styleRule.style.getPropertyValue("transform").trim();
+            if (transform && transform !== "none") violations.push(`${selector} sets transform: ${transform}`);
+          });
+        } else if ("cssRules" in rule) {
+          visitRules((rule as CSSGroupingRule).cssRules);
+        }
+      });
+    };
+
+    if (!style.sheet) throw new Error("Landing stylesheet did not attach to the test document.");
+    visitRules(style.sheet.cssRules);
+    style.remove();
+    expect(violations).toEqual([]);
   });
 
   it("renders the exact captured identifiers and reproduction boundary", () => {

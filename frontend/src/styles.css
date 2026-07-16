@@ -3380,6 +3380,14 @@ button:disabled {
   color: var(--text-primary);
 }
 
+/* CSS owns the durable state; JavaScript may add only short-lived animation styles. */
+.landing [data-landing-hero-item],
+.landing [data-landing-reveal],
+.landing [data-landing-hero-parallax] {
+  opacity: 1;
+  visibility: visible;
+}
+
 .landing a {
   color: inherit;
   text-decoration: none;

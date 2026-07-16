@@ -92,6 +92,9 @@ const lifecycleStages = [
   { stage: "Learn", agent: "Chronicle", action: "Records outcomes as regressions assign liability; only a human can approve proposed controls." },
 ];
 
+const LANDING_ANIMATION_TARGETS = "[data-landing-hero-item], [data-landing-reveal], [data-landing-hero-parallax]";
+const LANDING_ANIMATION_DEADLINE_MS = 1_500;
+
 function ExternalAnchor({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
   return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<ExternalLink size={13} aria-hidden="true" /></a>;
 }
@@ -124,48 +127,127 @@ export default function LandingPage() {
     const element = root.current;
     if (!element || reducedMotion) return undefined;
     let cancelled = false;
+    let safetyExpired = false;
     let context: { revert: () => void } | undefined;
+    let entryFrame: number | undefined;
+    const revealFrames = new Set<number>();
+    const deadline = window.performance.now() + LANDING_ANIMATION_DEADLINE_MS;
+    let killTweens: ((targets: HTMLElement[]) => void) | undefined;
 
-    void import("./lib/gsap").then(({ gsap }) => {
-      if (cancelled || !root.current) return;
-      context = gsap.context(() => {
-        const heroItems = gsap.utils.toArray<HTMLElement>("[data-landing-hero-item]");
-        gsap.fromTo(heroItems, { opacity: 0, y: 20 }, {
-          opacity: 1,
-          y: 0,
-          duration: 0.78,
-          stagger: 0.1,
-          ease: "power3.out",
-        });
+    const animationTargets = () => Array.from(element.querySelectorAll<HTMLElement>(LANDING_ANIMATION_TARGETS));
 
-        const heroScreenshot = root.current?.querySelector<HTMLElement>("[data-landing-hero-parallax]");
-        if (heroScreenshot) {
-          gsap.fromTo(heroScreenshot, { yPercent: -1.25 }, {
-            yPercent: 1.25,
-            ease: "none",
-            scrollTrigger: {
-              trigger: heroScreenshot,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.6,
-            },
-          });
+    const clearInlineAnimationState = () => {
+      animationTargets().forEach((target) => {
+        target.style.removeProperty("opacity");
+        target.style.removeProperty("transform");
+        target.style.removeProperty("translate");
+        target.style.removeProperty("visibility");
+      });
+    };
+
+    const cancelAnimationFrames = () => {
+      if (entryFrame !== undefined) {
+        window.cancelAnimationFrame(entryFrame);
+        entryFrame = undefined;
+      }
+      revealFrames.forEach((frame) => window.cancelAnimationFrame(frame));
+      revealFrames.clear();
+    };
+
+    const stopAnimations = () => {
+      cancelAnimationFrames();
+      killTweens?.(animationTargets());
+      context?.revert();
+      context = undefined;
+      clearInlineAnimationState();
+    };
+
+    const isExpired = () => cancelled || safetyExpired || window.performance.now() >= deadline;
+    const expireAnimations = () => {
+      if (cancelled) return;
+      safetyExpired = true;
+      stopAnimations();
+    };
+
+    const safetyTimer = window.setTimeout(expireAnimations, LANDING_ANIMATION_DEADLINE_MS);
+
+    void import("./lib/gsap").then(({ gsap, ScrollTrigger }) => {
+      if (isExpired() || !root.current) {
+        expireAnimations();
+        return;
+      }
+      killTweens = (targets) => gsap.killTweensOf(targets);
+
+      entryFrame = window.requestAnimationFrame(() => {
+        entryFrame = undefined;
+        if (isExpired() || !root.current) {
+          expireAnimations();
+          return;
         }
 
-        gsap.utils.toArray<HTMLElement>("[data-landing-reveal]").forEach((section) => {
-          gsap.fromTo(section, { opacity: 0, y: 22 }, {
+        context = gsap.context(() => {
+          const heroItems = gsap.utils.toArray<HTMLElement>("[data-landing-hero-item]");
+          gsap.set(heroItems, { opacity: 0, y: 20 });
+          gsap.to(heroItems, {
             opacity: 1,
             y: 0,
-            duration: 0.7,
+            duration: 0.78,
+            stagger: 0.1,
             ease: "power3.out",
-            scrollTrigger: { trigger: section, start: "top 86%", once: true },
           });
-        });
-      }, element);
-    });
+
+          const heroScreenshot = root.current?.querySelector<HTMLElement>("[data-landing-hero-parallax]");
+          if (heroScreenshot) {
+            gsap.set(heroScreenshot, { yPercent: -1.25 });
+            gsap.to(heroScreenshot, {
+              yPercent: 1.25,
+              ease: "none",
+              scrollTrigger: {
+                trigger: heroScreenshot,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.6,
+              },
+            });
+          }
+
+          gsap.utils.toArray<HTMLElement>("[data-landing-reveal]").forEach((section) => {
+            ScrollTrigger.create({
+              trigger: section,
+              start: "top 86%",
+              once: true,
+              onEnter: () => {
+                if (isExpired()) {
+                  expireAnimations();
+                  return;
+                }
+                const frame = window.requestAnimationFrame(() => {
+                  revealFrames.delete(frame);
+                  if (isExpired()) {
+                    expireAnimations();
+                    return;
+                  }
+                  gsap.set(section, { opacity: 0, y: 22 });
+                  gsap.to(section, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    ease: "power3.out",
+                  });
+                });
+                revealFrames.add(frame);
+              },
+            });
+          });
+        }, element);
+      });
+    }).catch(() => expireAnimations());
 
     return () => {
       cancelled = true;
+      window.clearTimeout(safetyTimer);
+      cancelAnimationFrames();
+      killTweens?.(animationTargets());
       context?.revert();
     };
   }, [reducedMotion]);
