@@ -3,6 +3,8 @@ services:
     name: dhurandhar-asc
     runtime: docker
     plan: free
+    repo: https://github.com/himanshu748/dhurandhar
+    branch: agent/finalize-dhurandhar
     dockerfilePath: ./Dockerfile
     dockerContext: .
     # Render's Docker runtime builds through Dockerfile; dockerCommand is the
