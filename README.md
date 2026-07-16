@@ -245,6 +245,8 @@ docker compose down --volumes
 
 Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint and default Docker Compose stack deliberately omit that secret, so both are read-only replays: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
 
+**Verified public judge demo:** [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com). This deployment serves the deterministic seeded fixture only; the live `gpt-5.6-sol` run remains the separately committed evidence described in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The public service was verified on 2026-07-16 from commit `e1c689b1033b476e560a18c78425859726044d87` after Render deploy `dep-d9c821vavr4c73airodg` reached `live`.
+
 The public Render demo stores its seeded event journal at `/tmp/events.jsonl` on Render's ephemeral filesystem. A restart, redeploy, or instance replacement can reset that runtime journal, so the hosted replay is a disposable judge-facing fallback rather than durable evidence storage. The immutable final live-run record remains committed at [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl).
 
 For a controlled local recording, set the server-side token before starting the API, click the **Read-only** control in the top bar, and enter the same value. The browser keeps it only in the current React memory, sends it only in `X-Dhurandhar-Operator-Token` on mutation requests, and never writes it to storage, request bodies, or the event journal. **Forget token** or a page reload clears it.
@@ -323,7 +325,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, and primary Codex collaboration session ID with independently verifiable evidence. The deployed demo, final video, cover image, URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, primary Codex collaboration session ID, and verified public read-only demo with independently verifiable evidence. The final video, cover image, remaining submission URLs, final release gates, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

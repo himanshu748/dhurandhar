@@ -1,7 +1,7 @@
 # Dhurandhar - submission draft
 
 > [!WARNING]
-> This is not yet a complete submission. The deployed demo, narrated video, final screenshot, public URLs, final release gates, and tagged release are still uncaptured. The checklist at the end is the source of truth.
+> This is not yet a complete submission. The narrated video, final screenshot, video URL, final release gates, and tagged release are still uncaptured. The deterministic public demo is deployed and verified; the checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -191,6 +191,17 @@ Representative GET routes such as `/api/objectives` and `/api/runs` return `200`
 
 The fallback is a reliability path, not the video story and not evidence for the Codex criterion.
 
+### Verified public deployment — 2026-07-16
+
+- Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
+- Source commit: `e1c689b1033b476e560a18c78425859726044d87`
+- Blueprint: `exs-d9c6rmm1a83c73bsov5g`
+- Render service: `srv-d9c6rt3tqb8s73agu030`
+- Successful deploy: `dep-d9c821vavr4c73airodg`, status `live`
+- Direct verification: exact deterministic health response with a valid 78-event chain; seeded objective and run IDs; three replay bids; `fixture` code provenance; frontend HTML `200`; and unauthenticated objective creation rejected with the exact documented `503` response.
+- The error-log query scoped from the successful deploy start (`2026-07-16T06:58:15Z`) returned no error records.
+- Ephemeral-storage disclosure: [README — Operator access and the public demo](../README.md#operator-access-and-the-public-demo).
+
 ## Challenges
 
 - preserving independent review while both roles use the same bounded CLI boundary;
@@ -213,7 +224,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 
 ## What comes next
 
-1. Publish the final demo, video, cover image, and direct submission URLs.
+1. Record the final video and cover image, then publish the remaining direct submission URLs.
 2. Add authenticated GitHub branch/PR and CI-evidence adapters with exact repository allowlists.
 3. Add a real deployment-provider and monitor adapter while preserving human release authority.
 4. Move the event journal to durable signed storage with authentication and tenant isolation.
@@ -242,7 +253,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [x] Run implementation and reviewer with `gpt-5.6-sol` against a fresh disposable worktree.
 - [x] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence.
 - [x] Add the returned primary Codex collaboration session ID to README and release notes.
-- [ ] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
+- [x] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
 - [ ] Publish direct live-demo, repository, and video URLs.
