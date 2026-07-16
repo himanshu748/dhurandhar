@@ -52,6 +52,7 @@ pnpm-debug.log*
 *.db-journal
 *.jsonl
 !output/evidence/codex-live-run-2026-07-15.jsonl
+!output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl
 logs/
 *.log
 

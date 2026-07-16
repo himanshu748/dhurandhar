@@ -1,7 +1,7 @@
 # Dhurandhar - submission draft
 
 > [!WARNING]
-> This is not yet a complete submission. The live GPT-5.6 run, Codex `/feedback` session ID, deployed demo, narrated video, final screenshot, and tagged release are still uncaptured. The checklist at the end is the source of truth.
+> This is not yet a complete submission. The narrated video, cover image, video URL, and tagged release are still uncaptured. The deterministic public demo and release gates are verified; the checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -74,20 +74,20 @@ The live event record contains the configured model, thread ID, token categories
 
 Codex was used throughout the repository build: translating the original autonomous-software-company brief into a testable architecture, implementing the FastAPI and React system, adding the persistent roster and auction economy, hardening the runtime/reviewer/evidence boundary, testing the result, and revising the submission so claims match the code. This is materially different from adding a late model button to a conventionally built demo.
 
-The final README and release notes must include the real `/feedback` session ID so judges can inspect that collaboration.
+The README and release-notes draft include the real feedback session ID returned for the primary Codex build task so judges can inspect that collaboration.
 
-> [!CAUTION]
-> **Required session ID: TODO - NOT CAPTURED.** Generate it from the primary Codex build session, verify it, then replace this line. Never fabricate an identifier.
+> [!NOTE]
+> **Codex collaboration session ID: `019f6172-596f-7d50-a842-b839fd16af3e`.** Codex 0.144.2 returned this exact value from the official feedback upload for the primary Dhurandhar build task on 2026-07-16. The upload omitted extra app log files.
 
 ### Current model truth
 
-As of 2026-07-15, the authenticated account available to this project exposes `gpt-5.5`; the implementation and reviewer defaults are therefore `gpt-5.5`. No GPT-5.6 call is claimed.
+On 2026-07-16, the authenticated catalog listed `gpt-5.6-sol`. A completed workspace-write implementation and a distinct read-only reviewer invocation both recorded that exact slug. The thread IDs, token categories, commands, Git evidence, reviewer verdict, Sentinel result, settlement, recovery, and verified journal are in [Live Codex evidence](LIVE_EVIDENCE.md).
 
-The final competition recording requires account access to GPT-5.6. Once available, set both model variables to `gpt-5.6`, run the live path again, and show the recorded model fields in Change Replay. A configuration value without a completed run is not acceptable evidence.
+A configuration value alone is not evidence. Every submission claim names the exact recorded tier and links to the completed run.
 
 ## Hero objective: Misconception Debugger
 
-Use the bounded objective already completed in the captured development run so the Codex result can be reviewed and verified inside the video:
+Use the bounded objective from the captured final 2026-07-16 run so the Codex result can be reviewed and verified inside the video:
 
 **Title:** Add privacy-safe session evidence export API
 
@@ -99,9 +99,14 @@ Use the bounded objective already completed in the captured development run so t
 2. Zero-attempt and completed sessions are supported, and unknown sessions preserve the existing `404` behavior.
 3. Focused tests prove both aggregate correctness and exclusion of raw learning text.
 
-This exact objective produced a six-file, 293-insertion diff; an independent read-only review approved it and Sentinel passed 16 tests. The full `gpt-5.5` development record is in [Live Codex evidence](LIVE_EVIDENCE.md), including both thread IDs, token categories, diff/test hashes, and the chain-verifiable 90-event journal. Repeat it from the same clean baseline with GPT-5.6 for the final recording. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
+The final 2026-07-16 run produced a five-file, 226-insertion diff from the same clean baseline. A distinct read-only `gpt-5.6-sol` reviewer approved it, Sentinel's independent static-allowlist pytest command exited `0`, the 40-credit escrow settled completely, and the recovery drill ended at an unapproved human decision gate. The complete 89-event record is in [Live Codex evidence](LIVE_EVIDENCE.md). The earlier six-file `gpt-5.5` development run remains there as historical context. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
 
-## Safe live-run configuration
+## Safe live-run configuration for another model run
+
+The final evidence already exists. Use the immutable playback procedure in the
+[video shot list](VIDEO_SHOT_LIST.md) for recording. Use this section only if a
+new model invocation is intentionally required; it creates new evidence rather
+than replaying the captured final run.
 
 Create a disposable worktree from the separate target repository:
 
@@ -122,16 +127,19 @@ DHURANDHAR_CODEX_APPLY_CHANGES=true \
 DHURANDHAR_CODEX_WORKDIR=/tmp/misconception-debugger-dhurandhar-demo \
 DHURANDHAR_EVENT_LOG=/tmp/dhurandhar-misconception-demo-events.jsonl \
 DHURANDHAR_SEED_DEMO=false \
-DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.5 \
-DHURANDHAR_REVIEWER_MODEL=gpt-5.5 \
+DHURANDHAR_IMPLEMENTATION_MODEL=gpt-5.6-sol \
+DHURANDHAR_REVIEWER_MODEL=gpt-5.6-sol \
+DHURANDHAR_CODEX_TIMEOUT_SECONDS=600 \
 make dev-backend
 ```
 
-Run `make dev-frontend` separately. Use a new branch, worktree path, and event-log path for the final recording. Replace both model values with `gpt-5.6` only after that model appears in the authenticated catalog.
+Run `make dev-frontend` separately. Use a new branch, worktree path, and event-log path for every recording. The exact tier must still appear in the authenticated catalog before another claimed live run.
 
 ## Three-minute judge video
 
-Target length: **2:55**, narrated. Record the real run; if model latency is removed, mark the time cut on screen rather than implying an instantaneous response.
+Target length: **2:55**, narrated. Replay the captured real run from its read-only journal copy. If footage from the original model latency is removed, mark the time cut on screen rather than implying an instantaneous response.
+
+The exact immutable-playback commands, event sequences, UI proof labels, and narration guardrails are in the [evidence-based video shot list](VIDEO_SHOT_LIST.md).
 
 ### 0:00-0:18 - Hook
 
@@ -145,12 +153,12 @@ Point to the `live` provenance badge and the Misconception Debugger objective.
 
 Open Agents long enough to show all eight names. Return to Replay and select the auction. Show that Forge, Prism, and Rivet all bid, one ineligible or higher bid cannot win merely by being cheap, and the lowest eligible bid is awarded. Briefly point to bid fees and bounty escrow.
 
-### 0:42-1:25 - Live Codex is the hero
+### 0:42-1:20 - Live Codex is the hero
 
 Show the moment the objective is submitted, then the resulting implementation event. In the evidence inspector, show:
 
 - `live` + `workspace-write`;
-- the configured GPT-5.6 model after access is available;
+- the recorded `gpt-5.6-sol` model field;
 - implementation thread ID and measured token categories;
 - actual commands with exit codes;
 - changed files, numstat, diff SHA-256, and diff preview;
@@ -158,21 +166,21 @@ Show the moment the objective is submitted, then the resulting implementation ev
 
 Do not use the deterministic seed for this section.
 
-### 1:25-1:48 - Independent reviewer
+### 1:20-1:48 - Diff and independent reviewer
 
-Select Aegis's review event. Show a different thread ID, read-only sandbox, reviewer model, structured verdict, and findings. State that the implementing call cannot approve itself.
+Keep the implementation diff evidence visible, then select Aegis's review event. Show a different thread ID, read-only sandbox, reviewer model, structured verdict, and findings. State that the implementing call cannot approve itself. Do not claim that every reviewer-side command passed; Sentinel owns the release gate.
 
-### 1:48-2:08 - Evidence gate and honest release semantics
+### 1:48-2:18 - Evidence gate, settlement, and honest release semantics
 
-Select Sentinel's verification and Shipwright's promotion. Show that successful test-command exits and a non-empty diff are mandatory. Point to `environment: demo-sandbox` and `external_deployment: false`; say explicitly that this prototype does not push, merge, or deploy externally.
+Select Sentinel's verification and Shipwright's promotion. Show the independent `EXIT 0`, then advance until the ledger says `CONSERVED · 40/40 CR`. Point to `environment: demo-sandbox` and `external_deployment: false`; say explicitly that this prototype does not push, merge, or deploy externally.
 
-### 2:08-2:35 - Recover and assign liability
+### 2:18-2:40 - Recorded recovery and human authority
 
-Run the controlled recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration and source-linked incident evidence.
+Replay the recorded recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration, source-linked incident evidence, four proposed controls, and the human decision gate. Leave the final proposal visibly `proposed`; the read-only recording server must not mutate it.
 
-### 2:35-2:55 - Human-gated learning and close
+### 2:40-2:55 - Deployed fallback and close
 
-Open the policy check and proposal. Show the four memory, prompt, routing, and economy slots, the `structure-only-not-efficacy` scope, and the human decision control. After approval, point out that the next runtime brief inherits the serialized controls and that the strategy is labeled `policy-gated-demo-sandbox`, not public canary traffic. Close with:
+Open the verified Render URL. Keep `FIXTURE`, `MODEL none`, `MODE read-only`, and `NO MODEL CALL` visible. Explain that this is the accessible no-secret judge fallback, while the preceding immutable local replay contains the two captured live Codex calls. Close with:
 
 > "Dhurandhar does not ask you to trust an agent transcript. It shows who did what, which evidence allowed the next step, what failure cost, and exactly where the human still decides."
 
@@ -189,6 +197,18 @@ The public Render instance and default Docker Compose stack are intentionally re
 Representative GET routes such as `/api/objectives` and `/api/runs` return `200`; `POST /api/objectives` without an operator token returns `503` with `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. The narrated mutable hero run uses the separate local-development path with a controlled server-side operator token held only in the browser tab's memory.
 
 The fallback is a reliability path, not the video story and not evidence for the Codex criterion.
+
+### Verified public deployment — 2026-07-16
+
+- Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
+- Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar)
+- Source commit: `e1c689b1033b476e560a18c78425859726044d87`
+- Blueprint: `exs-d9c6rmm1a83c73bsov5g`
+- Render service: `srv-d9c6rt3tqb8s73agu030`
+- Successful deploy: `dep-d9c821vavr4c73airodg`, status `live`
+- Direct verification: exact deterministic health response with a valid 78-event chain; seeded objective and run IDs; three replay bids; `fixture` code provenance; frontend HTML `200`; and unauthenticated objective creation rejected with the exact documented `503` response.
+- The error-log query scoped from the successful deploy start (`2026-07-16T06:58:15Z`) returned no error records.
+- Ephemeral-storage disclosure: [README — Operator access and the public demo](../README.md#operator-access-and-the-public-demo).
 
 ## Challenges
 
@@ -212,7 +232,7 @@ The fallback is a reliability path, not the video story and not evidence for the
 
 ## What comes next
 
-1. Capture and document the GPT-5.6 implementation/reviewer run and Codex `/feedback` session.
+1. Record the final video and cover image, then publish the remaining direct submission URLs.
 2. Add authenticated GitHub branch/PR and CI-evidence adapters with exact repository allowlists.
 3. Add a real deployment-provider and monitor adapter while preserving human release authority.
 4. Move the event journal to durable signed storage with authentication and tenant isolation.
@@ -233,26 +253,29 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [x] Four-way escaped-regression liability and human-gated policy activation.
 - [x] Deterministic no-secret judge fallback.
 - [x] Captured `gpt-5.5` development run with distinct implementation/review threads, diff/test hashes, and a verified raw event journal.
+- [x] Captured the final `gpt-5.6-sol` implementation, independent review, Sentinel gate, settlement, recovery, and verified raw journal.
 
 ### Evidence and publishing still required
 
-- [ ] Obtain GPT-5.6 access for the authenticated Codex account.
-- [ ] Run implementation and reviewer with GPT-5.6 against a fresh disposable worktree.
-- [ ] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, and final messages.
-- [ ] Add the required primary Codex `/feedback` session ID to README and release notes.
-- [ ] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
+- [x] Confirm `gpt-5.6-sol` in the authenticated Codex catalog.
+- [x] Run implementation and reviewer with `gpt-5.6-sol` against a fresh disposable worktree.
+- [x] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence.
+- [x] Add the returned primary Codex collaboration session ID to README and release notes.
+- [x] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
-- [ ] Publish direct live-demo, repository, and video URLs.
-- [ ] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the release commit.
+- [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
+- [x] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the audited release candidate.
 - [ ] Create and push the tagged release.
-- [ ] Verify every claim and link against the final public commit.
+- [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response.
 
 ## Release/tag procedure
 
-Complete and check every pre-release evidence item above first. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the first command passes:
+Complete and check every pre-release evidence item above first. Merge the release commit into the default `main` branch and verify that it is an ancestor of the public branch before tagging. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the ancestry check and submission guard both pass:
 
 ```bash
+git fetch origin main
+git merge-base --is-ancestor HEAD origin/main
 make submission-check
 git tag -s v1.0.0 -m "Dhurandhar OpenAI Build Week submission"
 git push origin v1.0.0
