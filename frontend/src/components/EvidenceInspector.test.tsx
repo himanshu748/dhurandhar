@@ -19,6 +19,7 @@ const liveEvent: ReplayEvent = {
   provenance: {
     mode: "live",
     runtime: "codex",
+    requestedModel: "gpt-5.5",
     model: "gpt-5.5",
     sandbox: "workspace-write",
     threadId: "thread_live_123",
@@ -44,7 +45,9 @@ describe("EvidenceInspector provenance", () => {
   it("renders live model identity, session, usage, outcomes, changed files, and diff proof", () => {
     render(<EvidenceInspector event={liveEvent} runMode="codex" />);
 
-    expect(screen.getByText("Live model provenance")).toBeInTheDocument();
+    expect(screen.getByText("Live call provenance")).toBeInTheDocument();
+    expect(screen.getByText("Requested model")).toBeInTheDocument();
+    expect(screen.getByText("Not emitted by JSONL")).toBeInTheDocument();
     expect(screen.getByText("gpt-5.5")).toBeInTheDocument();
     expect(screen.getByText("thread_live_123")).toBeInTheDocument();
     expect(screen.getByText("workspace-write")).toBeInTheDocument();

@@ -8,15 +8,17 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
-      # Match the public Render service: deterministic seeded replay, with
-      # mutations disabled because no operator token is present.
+      # Match the public Render service: deterministic playback of the
+      # immutable captured live journal, with mutations disabled because no
+      # operator token is present.
       # Keep the judge-facing Compose path read-only even when README setup
       # copies .env.example, whose local-development value is "development".
       DHURANDHAR_ENV: production
+      DHURANDHAR_PUBLIC_REPLAY: ${DHURANDHAR_PUBLIC_REPLAY:-true}
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
-      DHURANDHAR_EVENT_LOG: /app/data/events.jsonl
-      DHURANDHAR_SEED_DEMO: ${DHURANDHAR_SEED_DEMO:-true}
+      DHURANDHAR_EVENT_LOG: ${DHURANDHAR_EVENT_LOG:-/app/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl}
+      DHURANDHAR_SEED_DEMO: ${DHURANDHAR_SEED_DEMO:-false}
       DHURANDHAR_CORS_ORIGINS: ${DHURANDHAR_CORS_ORIGINS:-http://localhost:5173,http://localhost:8000}
       DHURANDHAR_RUNTIME: ${DHURANDHAR_RUNTIME:-deterministic}
       DHURANDHAR_ENABLE_CODEX_RUNTIME: ${DHURANDHAR_ENABLE_CODEX_RUNTIME:-false}

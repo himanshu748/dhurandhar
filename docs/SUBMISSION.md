@@ -1,7 +1,7 @@
 # Dhurandhar - submission draft
 
 > [!WARNING]
-> This is not yet a complete submission. The narrated video, cover image, video URL, and tagged release are still uncaptured. The deterministic public demo and release gates are verified; the checklist at the end is the source of truth.
+> This is not yet a complete submission. The narrated video, cover image, and video URL are **pending**, and the release is **not tagged**. The hardened deterministic public playback and release gates must be re-verified from the final candidate; the checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -38,7 +38,7 @@ The submission is not "eight chat personas." Its differentiator is a coherent co
 - selects the lowest eligible bid and records assessments, fees, escrow, payouts, refunds, and penalties;
 - invokes an explicitly enabled Codex CLI implementation runtime against one configured Git worktree;
 - invokes an independent Codex reviewer in a read-only sandbox;
-- parses structured JSONL into model, thread, tokens, commands, files, final message, and event count;
+- parses structured JSONL into requested model, any stream-observed model, thread, tokens, commands, files, final message, and event count;
 - captures changed files, numstat, diff SHA-256, and a bounded preview after workspace writes;
 - blocks live promotion without a real diff, approved verdict, recognized test command, and zero failing test exits;
 - records every material action in an append-only SHA-256-linked JSONL journal whose event discriminator is `type`;
@@ -68,7 +68,7 @@ The implementation runtime calls the authenticated Codex CLI with a scoped brief
 
 Aegis is a second Codex call in a read-only sandbox. It receives the objective and bounded diff context, cannot edit the worktree, and must produce a structured verdict and findings. An unknown verdict or requested change fails closed.
 
-The live event record contains the configured model, thread ID, token categories, command status and exit code, files, diff metadata, final message, and raw JSONL event count. The adapter does not persist raw process or command output and does not commit, push, merge, or deploy.
+For future runs, the live event record distinguishes `requested_model` from nullable `observed_model` and also records the exact invocation argv and `codex --version`. A stream-observed model that conflicts with itself or disagrees with the request fails closed. The record also contains the thread ID, token categories, command status and exit code, files, diff metadata, final message, and raw JSONL event count. The adapter does not persist raw process or command output and does not commit, push, merge, or deploy.
 
 ### Codex collaboration used to build Dhurandhar
 
@@ -81,9 +81,9 @@ The README and release-notes draft include the real feedback session ID returned
 
 ### Current model truth
 
-On 2026-07-16, the authenticated catalog listed `gpt-5.6-sol`. A completed workspace-write implementation and a distinct read-only reviewer invocation both recorded that exact slug. The thread IDs, token categories, commands, Git evidence, reviewer verdict, Sentinel result, settlement, recovery, and verified journal are in [Live Codex evidence](LIVE_EVIDENCE.md).
+On 2026-07-16, the authenticated catalog listed `gpt-5.6-sol`. The completed workspace-write implementation and distinct read-only review each requested that exact slug through `--model`, and the CLI accepted both invocations. Their thread IDs and token categories were parsed from `codex exec --json`, but the historical stdout did not echo a model field to cross-check. The requested-slug limitation, commands, Git evidence, reviewer verdict, Sentinel result, settlement, recovery, and verified journal are in [Live Codex evidence](LIVE_EVIDENCE.md).
 
-A configuration value alone is not evidence. Every submission claim names the exact recorded tier and links to the completed run.
+A configuration value alone is not stream-observed model evidence. The historical journal remains immutable and has not been backfilled; every claim links the requested tier to the completed stream-derived threads/tokens and independent Git and Sentinel evidence while naming the limitation.
 
 ## Hero objective: Misconception Debugger
 
@@ -99,7 +99,7 @@ Use the bounded objective from the captured final 2026-07-16 run so the Codex re
 2. Zero-attempt and completed sessions are supported, and unknown sessions preserve the existing `404` behavior.
 3. Focused tests prove both aggregate correctness and exclusion of raw learning text.
 
-The final 2026-07-16 run produced a five-file, 226-insertion diff from the same clean baseline. A distinct read-only `gpt-5.6-sol` reviewer approved it, Sentinel's independent static-allowlist pytest command exited `0`, the 40-credit escrow settled completely, and the recovery drill ended at an unapproved human decision gate. The complete 89-event record is in [Live Codex evidence](LIVE_EVIDENCE.md). The earlier six-file `gpt-5.5` development run remains there as historical context. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
+The final 2026-07-16 run produced a five-file, 226-insertion diff from the same clean baseline. A distinct read-only reviewer invocation requested `gpt-5.6-sol` and approved it, Sentinel's independent static-allowlist pytest command exited `0`, the 40-credit escrow settled completely, and the recovery drill ended at an unapproved human decision gate. The complete 89-event record and model-verification limitation are in [Live Codex evidence](LIVE_EVIDENCE.md). The earlier six-file `gpt-5.5` development run remains there as historical context. Product completion, hosted deployment, and Education-category claims belong to the separate Misconception Debugger submission.
 
 ## Safe live-run configuration for another model run
 
@@ -158,7 +158,7 @@ Open Agents long enough to show all eight names. Return to Replay and select the
 Show the moment the objective is submitted, then the resulting implementation event. In the evidence inspector, show:
 
 - `live` + `workspace-write`;
-- the recorded `gpt-5.6-sol` model field;
+- the historical requested-model field showing `gpt-5.6-sol`, explicitly described as requested and CLI-accepted rather than stream-echoed;
 - implementation thread ID and measured token categories;
 - actual commands with exit codes;
 - changed files, numstat, diff SHA-256, and diff preview;
@@ -178,37 +178,35 @@ Select Sentinel's verification and Shipwright's promotion. Show the independent 
 
 Replay the recorded recovery drill. Select the alert, then the four penalties: implementing engineer, Aegis, Sentinel, and Shipwright. Show the known-good sandbox restoration, source-linked incident evidence, four proposed controls, and the human decision gate. Leave the final proposal visibly `proposed`; the read-only recording server must not mutate it.
 
-### 2:40-2:55 - Deployed fallback and close
+### 2:40-2:55 - Deployed read-only playback and close
 
-Open the verified Render URL. Keep `FIXTURE`, `MODEL none`, `MODE read-only`, and `NO MODEL CALL` visible. Explain that this is the accessible no-secret judge fallback, while the preceding immutable local replay contains the two captured live Codex calls. Close with:
+Open the Render URL at its landing page. Keep the deterministic-replay disclosure, `fixture` playback badge, `NO MODEL CALL`, live-evidence link, and `/replay` action visible. Explain that the hosted process makes no new model calls and replays the committed immutable 89-event live journal; event cards preserve historical live provenance and must not be presented as a new live call. Close with:
 
 > "Dhurandhar does not ask you to trust an agent transcript. It shows who did what, which evidence allowed the next step, what failure cost, and exactly where the human still decides."
 
-## Deterministic fallback for judges
+## Deterministic playback for judges
 
-The hosted or Docker fallback is intentionally fixture-backed. It lets a judge inspect the roster, auction, economy, event chain, replay, recovery, and policy gate without credentials. It makes zero model calls, reports zero model tokens, and must be labeled `fixture` throughout.
+The hosted and production-shaped Docker paths are deterministic, read-only playback of the committed immutable 89-event live-run journal. They let a judge inspect the roster, auction, economy, event chain, replay, recovery, and policy gate without credentials. The current process makes zero new model calls. Its landing-page `fixture` badge labels the playback process; the `/replay` cards preserve the captured events' historical `live` provenance, requested slug, thread IDs, and token totals.
 
-The public Render instance and default Docker Compose stack are intentionally read-only: both run with `DHURANDHAR_ENV=production`, expose the seeded evidence, and reject mutation requests because no operator token is configured. On a fresh seeded instance, `GET /api/health` must return exactly:
+The public Render instance and default Docker Compose stack are intentionally read-only: both load the image-baked journal, and the public-replay entrypoint removes any inherited operator token before startup. The verified release returns:
 
 ```json
-{"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":78,"runtime":"deterministic"}
+{"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":89,"runtime":"deterministic"}
 ```
 
 Representative GET routes such as `/api/objectives` and `/api/runs` return `200`; `POST /api/objectives` without an operator token returns `503` with `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. The narrated mutable hero run uses the separate local-development path with a controlled server-side operator token held only in the browser tab's memory.
 
-The fallback is a reliability path, not the video story and not evidence for the Codex criterion.
+Playback is an accessible evidence viewer, not proof that the hosted process called Codex. The real-call evidence is the immutable historical record documented in [Live Codex evidence](LIVE_EVIDENCE.md).
 
-### Verified public deployment — 2026-07-16
+The separate `make demo` path remains a synthetic 78-event seed for offline product testing. That mode is wholly `fixture`, has no threads or model tokens, and is not the hosted recorded-run playback.
+
+### Public release verification
 
 - Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
 - Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar)
-- Source commit: `e1c689b1033b476e560a18c78425859726044d87`
-- Blueprint: `exs-d9c6rmm1a83c73bsov5g`
-- Render service: `srv-d9c6rt3tqb8s73agu030`
-- Successful deploy: `dep-d9c821vavr4c73airodg`, status `live`
-- Direct verification: exact deterministic health response with a valid 78-event chain; seeded objective and run IDs; three replay bids; `fixture` code provenance; frontend HTML `200`; and unauthenticated objective creation rejected with the exact documented `503` response.
-- The error-log query scoped from the successful deploy start (`2026-07-16T06:58:15Z`) returned no error records.
-- Ephemeral-storage disclosure: [README — Operator access and the public demo](../README.md#operator-access-and-the-public-demo).
+- Direct verification completed 2026-07-16: deterministic health with a valid 89-event chain; `/` landing HTML `200`; `/replay` HTML `200`; GET objectives, runs, and events `200`; and unauthenticated objective creation rejected with the documented `503` response.
+- Evidence storage: the committed journal is copied read-only into the image; Render's ephemeral filesystem is not used as the evidence source.
+- Release source commit: `55aae7648c2357ae9679ecd5523fb61556a16b0d`; Render deployment: `dep-d9c9drjbc2fs73bipqqg` (`live` at 2026-07-16T08:32:41Z). Earlier seeded-fixture deployment identifiers are not reused.
 
 ## Challenges
 
@@ -251,23 +249,23 @@ The fallback is a reliability path, not the video story and not evidence for the
 - [x] Live gate requiring a real diff and successful test commands.
 - [x] Explicit `demo-sandbox` / `external_deployment: false` semantics.
 - [x] Four-way escaped-regression liability and human-gated policy activation.
-- [x] Deterministic no-secret judge fallback.
+- [x] Deterministic no-secret recorded-journal playback, with a separate seeded-fixture test mode.
 - [x] Captured `gpt-5.5` development run with distinct implementation/review threads, diff/test hashes, and a verified raw event journal.
-- [x] Captured the final `gpt-5.6-sol` implementation, independent review, Sentinel gate, settlement, recovery, and verified raw journal.
+- [x] Captured the final run that requested `gpt-5.6-sol` for implementation and review, plus the independent Sentinel gate, settlement, recovery, and verified raw journal.
 
 ### Evidence and publishing still required
 
 - [x] Confirm `gpt-5.6-sol` in the authenticated Codex catalog.
 - [x] Run implementation and reviewer with `gpt-5.6-sol` against a fresh disposable worktree.
-- [x] Capture the live model fields, implementation/reviewer thread IDs, tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence.
+- [x] Capture the requested model slug, stream-derived implementation/reviewer thread IDs and tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence; document that stdout supplied no observed model field.
 - [x] Add the returned primary Codex collaboration session ID to README and release notes.
-- [x] Deploy the deterministic public demo and verify its ephemeral-storage disclosure.
+- [x] Redeploy the hardened deterministic 89-event public playback and record the verified source commit and deployment identifier.
 - [ ] Record and narrate the sub-three-minute live-Codex video.
 - [ ] Capture a final implementation cover image from the release candidate.
 - [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
-- [x] Re-run `make test`, `make lint`, `make build`, and the Docker smoke test from the audited release candidate.
+- [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; the submission guard now reports only unfinished human media items.
 - [ ] Create and push the tagged release.
-- [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response.
+- [ ] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
 
 ## Release/tag procedure
 

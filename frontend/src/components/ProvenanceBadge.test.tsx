@@ -21,6 +21,8 @@ const event = (provenance?: ReplayEvent["provenance"]): ReplayEvent => ({
 
 const liveProvenance: NonNullable<ReplayEvent["provenance"]> = {
   mode: "live",
+  requestedModel: "gpt-5.5",
+  observedModel: "gpt-5.5",
   model: "gpt-5.5",
   inputTokens: 120,
   cachedInputTokens: 40,
@@ -36,11 +38,17 @@ describe("ProvenanceBadge", () => {
     const { rerender } = render(
       <ProvenanceBadge event={event({ ...liveProvenance, sandbox: "danger-full-access" })} runMode="codex" />,
     );
-    expect(screen.getByText("LIVE MODEL · gpt-5.5 · danger-full-access")).toBeInTheDocument();
+    expect(screen.getByText("LIVE CALL · OBSERVED gpt-5.5 · danger-full-access")).toBeInTheDocument();
 
     rerender(<ProvenanceBadge event={event(liveProvenance)} runMode="codex" />);
-    expect(screen.getByText("LIVE MODEL · gpt-5.5")).toBeInTheDocument();
+    expect(screen.getByText("LIVE CALL · OBSERVED gpt-5.5")).toBeInTheDocument();
     expect(screen.queryByText(/workspace-write/i)).not.toBeInTheDocument();
+  });
+
+  it("distinguishes a requested-only model from a stream observation", () => {
+    render(<ProvenanceBadge event={event({ ...liveProvenance, observedModel: undefined })} runMode="codex" />);
+    expect(screen.getByText("LIVE CALL · REQUESTED gpt-5.5")).toBeInTheDocument();
+    expect(screen.getByLabelText(/JSONL stream did not echo a model/i)).toBeInTheDocument();
   });
 
   it("labels a non-model Codex event as live orchestration", () => {

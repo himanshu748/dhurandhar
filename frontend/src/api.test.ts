@@ -87,6 +87,8 @@ describe("Dhurandhar API adapter", () => {
         data: {
           change_id: "codex_abc123",
           runtime: "codex",
+          requested_model: "gpt-5.5",
+          observed_model: null,
           model: "gpt-5.5",
           thread_id: "thread_abc123",
           write_mode: true,
@@ -128,6 +130,8 @@ describe("Dhurandhar API adapter", () => {
     expect(generated?.provenance).toMatchObject({
       mode: "live",
       runtime: "codex",
+      requestedModel: "gpt-5.5",
+      observedModel: undefined,
       model: "gpt-5.5",
       threadId: "thread_abc123",
       inputTokens: 1200,

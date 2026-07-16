@@ -65,7 +65,18 @@ class LiveEvidenceRuntime:
             change_id="codex_verified",
             write_mode=True,
             thread_id=self.implementation_thread_id,
+            requested_model=self.implementation_model,
+            observed_model=None,
             model=self.implementation_model,
+            invocation_argv=[
+                "/usr/bin/codex",
+                "exec",
+                "--json",
+                "--model",
+                self.implementation_model,
+                "-",
+            ],
+            codex_version="codex-cli 0.144.5",
             input_tokens=120,
             output_tokens=48,
             commands=[
@@ -99,7 +110,18 @@ class LiveEvidenceRuntime:
             change_id="review_verified",
             write_mode=self.review_write_mode,
             thread_id=self.review_thread_id,
+            requested_model=self.reviewer_model,
+            observed_model=None,
             model=self.reviewer_model,
+            invocation_argv=[
+                "/usr/bin/codex",
+                "exec",
+                "--json",
+                "--model",
+                self.reviewer_model,
+                "-",
+            ],
+            codex_version="codex-cli 0.144.5",
             verdict="approved",
             final_message='{"verdict":"approved","findings":[]}',
             raw_event_count=4,
@@ -170,6 +192,17 @@ def test_live_run_requires_and_preserves_structured_codex_evidence(
     assert generated.data["provenance"] == "live"
     assert generated.data["thread_id"] == "thread_impl_verified"
     assert generated.data["model"] == "gpt-5.5"
+    assert generated.data["requested_model"] == "gpt-5.5"
+    assert generated.data["observed_model"] is None
+    assert generated.data["invocation_argv"] == [
+        "/usr/bin/codex",
+        "exec",
+        "--json",
+        "--model",
+        "gpt-5.5",
+        "-",
+    ]
+    assert generated.data["codex_version"] == "codex-cli 0.144.5"
     assert generated.data["diff"]["sha256"] == "a" * 64
     assert generated.data["commands"][0]["exit_code"] == 0
 
@@ -587,6 +620,7 @@ def test_restart_reconciliation_fails_without_replaying_side_effects(
         objective_id=objective.id,
         data={"agent_id": "forge", "assignee": "forge"},
     )
+    interrupted_event_id = original.store.all()[-1].id
 
     restarted = Orchestrator(JsonlEventStore(event_path), DeterministicRuntime())
     appended = restarted.reconcile_interrupted_runs()
@@ -596,7 +630,7 @@ def test_restart_reconciliation_fails_without_replaying_side_effects(
     assert detail.events[-1].type == "run.failed"
     assert detail.events[-1].data == {
         "reason": "startup_interrupted",
-        "last_event_id": original.store.all()[-1].id,
+        "last_event_id": interrupted_event_id,
         "last_event_type": "task.assigned",
         "resumed": False,
     }

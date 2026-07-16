@@ -20,14 +20,14 @@ The submission's live target is **Misconception Debugger**, a separate Education
 | Evidence-backed auction requiring bids from Forge, Prism, and Rivet | Open-ended hiring or arbitrary dynamic agents |
 | Bid fees, bounty escrow, evidence-gated payouts, refunds, and liability penalties | Money, cryptocurrency, or model-token settlement |
 | Codex CLI read-only and triple-opt-in workspace-write modes | General host access or unattended code execution |
-| Structured Codex JSONL provenance: model, thread, tokens, commands, files, diff, and final message | A live model run when only fixture data or configuration exists |
+| Structured Codex provenance: requested model, nullable stream-observed model, CLI argv/version, thread, tokens, commands, files, diff, and final message | Treating a requested model slug as though Codex echoed it in JSONL |
 | Separate read-only Codex reviewer with structured verdict and findings | Engineer self-approval |
 | Live promotion gate requiring a real Git diff and successful test-command exit codes | Trusting a prose claim that tests passed |
 | Internal `demo-sandbox` promotion, health, fault injection, and known-good recovery state | Commit, push, merge, external deployment, production traffic, or infrastructure rollback |
 | Deterministic four-mechanism structural policy check with explicit human approval | Policy-efficacy benchmark, recursive self-modification, or silent activation |
 | Deterministic no-secret fixture for repeatable judge testing | Calling the fixture live or model-backed |
 
-The final 2026-07-16 evidence run explicitly configured the exact catalog slug `gpt-5.6-sol` for both a completed workspace-write implementation and a distinct read-only reviewer invocation. The linked [live evidence](LIVE_EVIDENCE.md) is the claim source; deterministic mode remains the application's safe runtime default.
+The final 2026-07-16 evidence run explicitly requested the exact catalog slug `gpt-5.6-sol` for both a completed workspace-write implementation and a distinct read-only reviewer invocation, and the CLI accepted both invocations. Its JSONL stream did not echo a model identifier, so that history does not claim a stream-observed model. The linked [live evidence](LIVE_EVIDENCE.md) is the claim source; deterministic mode remains the application's safe runtime default.
 
 ## 3. Trust topology
 
@@ -189,9 +189,9 @@ DHURANDHAR_CODEX_WORKDIR=<existing Git worktree>
 
 The implementation invocation uses `--sandbox workspace-write` only after the explicit write opt-in and worktree check. Its prompt forbids leaving the worktree, committing, pushing, merging, deploying, network access from repository commands, and secret disclosure.
 
-The JSONL parser requires both `thread.started` and `turn.completed`. It extracts:
+The JSONL parser requires both `thread.started` and `turn.completed`. It records `requested_model` from the exact CLI argument and `observed_model` only when a model identifier is present in the JSONL event envelope. If a stream-observed model is present, it must agree with the requested slug or the invocation fails closed. When Codex does not echo a model, `observed_model` remains null and the adapter preserves the full invocation argv plus the output of `codex --version` as run evidence. It also extracts:
 
-- thread ID and configured model;
+- thread ID and any stream-observed model identifier;
 - input, cached-input, output, and reasoning-output tokens;
 - command ID, command, status, and exit code;
 - file-change path, nested change `kind`, and status;
@@ -201,7 +201,7 @@ After a workspace-write call, evidence-only Git commands capture tracked and unt
 
 ### 5.4 Independent Codex reviewer
 
-Aegis invokes Codex again in `read-only` mode with the bounded diff context. It has its own thread ID and configured reviewer model. The final message must parse into:
+Aegis invokes Codex again in `read-only` mode with the bounded diff context. It has its own thread ID, requested reviewer model, nullable stream-observed model, invocation argv, and Codex CLI version evidence. The final message must parse into:
 
 ```json
 {
@@ -388,7 +388,7 @@ Docker Compose runs a production-shaped, non-root container with the compiled fr
 
 ### Hosted fallback
 
-`render.yaml` describes the same Docker image in deterministic mode. It is a deployment scaffold, not evidence that a public demo is currently live. Its default `/tmp` journal is ephemeral; durable external storage and authentication are required beyond a single-user hackathon demo.
+`render.yaml` runs the Docker image as a deterministic, read-only hosted replay. The image contains the immutable 89-event recorded-live journal at `/app/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`; seeding is disabled, the image-baked journal is read-only to the non-root process, and the hosted process makes no model calls or repository writes. The image entrypoint also fail-closes `DHURANDHAR_PUBLIC_REPLAY=true` to this exact boundary and removes any inherited operator token, so stale provider variables cannot silently restore fixture seeding or mutations. The separate `make demo` command explicitly opts out for its synthetic local fixture. Source commit `55aae7648c2357ae9679ecd5523fb61556a16b0d` was verified live as Render deployment `dep-d9c9drjbc2fs73bipqqg`: chain-valid deterministic health reported 89 events, `/` and `/replay` served, GET collections remained readable, and unauthenticated mutation returned the documented `503` refusal.
 
 ## 12. Explicit non-goals for this build
 

@@ -258,7 +258,11 @@ const provenanceForEvent = (event: RawEvent): ModelProvenance | undefined => {
   const declared = data.provenance;
   const declaredRecord = asRecord(declared);
   const runtime = asString(data.runtime) ?? asString(declaredRecord?.runtime);
-  const model = asString(data.model) ?? asString(declaredRecord?.model);
+  const legacyModel = asString(data.model) ?? asString(declaredRecord?.model);
+  const observedModel = asString(data.observed_model) ?? asString(declaredRecord?.observed_model);
+  const requestedModel = asString(data.requested_model) ?? asString(declaredRecord?.requested_model)
+    ?? (observedModel ? undefined : legacyModel);
+  const model = observedModel ?? requestedModel ?? legacyModel;
   const threadId = asString(data.thread_id) ?? asString(declaredRecord?.thread_id);
   const sessionId = asString(data.session_id) ?? asString(declaredRecord?.session_id);
   const hasModelBoundary = ["runtime.invoked", "code.generated", "review.completed"].includes(event.type)
@@ -306,6 +310,8 @@ const provenanceForEvent = (event: RawEvent): ModelProvenance | undefined => {
   return {
     mode: deterministic ? "deterministic" : "live",
     runtime,
+    requestedModel,
+    observedModel,
     model,
     sandbox: asString(data.sandbox) ?? asString(declaredRecord?.sandbox) ?? explicitWriteMode,
     threadId,
@@ -395,7 +401,9 @@ const evidenceForEvent = (event: RawEvent): EvidenceItem[] => {
   }
   const provenance = provenanceForEvent(event);
   if (provenance?.mode === "live") {
-    add("review", provenance.model ? `Live model: ${provenance.model}` : "Live model invocation", provenance.threadId ?? provenance.sessionId);
+    const evidenceModel = provenance.observedModel ?? provenance.requestedModel ?? provenance.model;
+    const modelLabel = provenance.observedModel ? "Stream-observed model" : "CLI-requested model";
+    add("review", evidenceModel ? `${modelLabel}: ${evidenceModel}` : "Live model invocation", provenance.threadId ?? provenance.sessionId);
   } else if (provenance?.mode === "deterministic") {
     add("review", "Deterministic fallback", "No model call was made");
   }

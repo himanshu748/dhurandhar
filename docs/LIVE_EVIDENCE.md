@@ -2,7 +2,7 @@
 
 ## Final Build Week run — 2026-07-16 (`gpt-5.6-sol`)
 
-This is the final recorded live path for Dhurandhar. It used the exact authenticated catalog slug `gpt-5.6-sol` for a workspace-write implementation and a separate read-only review, then required Sentinel's own static-allowlist test command before internal sandbox promotion and settlement. A controlled regression subsequently exercised liability, known-good recovery, structural policy analysis, and the human decision gate.
+This is the final recorded live path for Dhurandhar. Both Codex invocations requested the exact authenticated catalog slug `gpt-5.6-sol` through the CLI's `--model` argument: one workspace-write implementation and one separate read-only review. Sentinel then required its own static-allowlist test command before internal sandbox promotion and settlement. A controlled regression subsequently exercised liability, known-good recovery, structural policy analysis, and the human decision gate.
 
 ### Run identity
 
@@ -27,12 +27,30 @@ Forge, Prism, and Rivet each paid the recorded 1-credit participation fee. Atlas
 
 ### Codex provenance
 
-| Stage | Exact model | Sandbox | Thread ID | Input | Cached input | Output | Reasoning output | Raw JSONL events |
+| Stage | Requested model (`--model`) | Sandbox | Thread ID | Input | Cached input | Output | Reasoning output | Raw JSONL events |
 | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Implementation | `gpt-5.6-sol` | `workspace-write` | `019f693d-e649-7a91-8dd3-f2cf1a772516` | 333,511 | 294,400 | 6,297 | 2,150 | 28 |
 | Independent review | `gpt-5.6-sol` | `read-only` | `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` | 361,206 | 315,904 | 3,566 | 2,103 | 21 |
 
-Both events record `provenance: live`. The implementation records `write_mode: true`; the reviewer records `write_mode: false`, no diff, and no file changes. The release gate records the two distinct thread IDs, exact expected reviewer model, read-only status, and `eligible: true` with no reasons.
+Both events record `provenance: live`. The implementation records `write_mode: true`; the reviewer records `write_mode: false`, no diff, and no file changes. The release gate records the two distinct thread IDs, expected requested reviewer slug, read-only status, and `eligible: true` with no reasons.
+
+> [!IMPORTANT]
+> **Model-verification boundary:** the historical `codex exec --json` stdout for these two calls did not echo a model identifier in `thread.started`, `turn.completed`, or any other captured event. The journal's `model` value is therefore the requested slug passed through `--model` and accepted by the CLI, which rejects unknown slugs; it is not a stream-observed model field. The two thread IDs, four token categories, command records, and raw event counts above were parsed from the actual JSONL stream. This limitation is named here instead of being hidden or approximated.
+
+The historical 89-event journal is immutable and has not been backfilled with fields that were not captured during the run. The hardened adapter records `requested_model`, nullable `observed_model`, the full Codex invocation argv, and `codex --version` for future runs. If a future stream does expose a model, conflicting observations or disagreement with the requested slug fail closed.
+
+#### Fresh JSONL-envelope audit — 2026-07-16
+
+Because the historical adapter deliberately did not persist raw subprocess output, that exact stdout cannot be reconstructed. A new minimal read-only diagnostic inspected the current authenticated CLI envelope without reading or changing repository files:
+
+- Codex version output: `codex-cli 0.144.5`.
+- Diagnostic thread: `019f69f6-6c67-7c32-bdf2-879c76058854`.
+- Exact argv: `/Applications/ChatGPT.app/Contents/Resources/codex exec --ignore-user-config --config 'model_reasoning_effort="low"' --json --model gpt-5.6-sol --sandbox read-only --skip-git-repo-check 'Return exactly OK. Do not inspect files, run tools, or include any other text.'`.
+- Emitted event types, in order: `thread.started`, `turn.started`, two `item.completed` envelopes, and `turn.completed`.
+- Usage: 17,686 input, 9,984 cached input, 5 output, 0 reasoning-output tokens.
+- Result: no `model`, `model_id`, or `model_slug` field appeared anywhere in any emitted JSON envelope.
+
+This diagnostic confirms the current stream shape; it is not substituted for the historical hero-run evidence and is not inserted into or backfilled into that 89-event chain. The runtime fix therefore takes the only honest path: use a stream-observed model when present and fail closed on disagreement, otherwise retain the requested slug as requested-only evidence while sealing argv and CLI version into the new run record.
 
 ### Commands recorded from the implementation thread
 
@@ -145,7 +163,7 @@ The failed 120-second rehearsal is not copied into the repository and is not use
 
 This is captured development evidence for Dhurandhar's hero path. It proves that the control plane invoked Codex to change a separate repository, captured the resulting Git diff, required an independent Codex reviewer, ran its own trusted test command, promoted only after the gates passed, and exercised a recoverable internal sandbox.
 
-It is historical, not the final Build Week artifact. Both completed model calls recorded `gpt-5.5`; the separate final `gpt-5.6-sol` evidence is documented above.
+It is historical, not the final Build Week artifact. Both completed calls requested `gpt-5.5`; the separate final `gpt-5.6-sol` evidence and its model-verification limitation are documented above.
 
 ### Historical run identity
 
@@ -159,7 +177,7 @@ It is historical, not the final Build Week artifact. Both completed model calls 
 
 ### Historical Codex provenance
 
-| Stage | Model | Thread ID | Input | Cached input | Output | Reasoning output |
+| Stage | Requested model | Thread ID | Input | Cached input | Output | Reasoning output |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
 | Implementation | `gpt-5.5` | `019f64e4-79ae-7161-8d15-739b5b57620a` | 943,703 | 882,560 | 7,597 | 1,642 |
 | Independent review | `gpt-5.5` | `019f64e8-40e0-7962-b886-164b7bf305b7` | 166,593 | 128,896 | 1,710 | 778 |

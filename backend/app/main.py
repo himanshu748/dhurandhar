@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
@@ -21,6 +21,7 @@ from app.services.runtime import build_runtime
 
 
 logger = logging.getLogger("dhurandhar.api")
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -124,8 +125,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
 
     application.include_router(router)
-    frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+    frontend_dist = FRONTEND_DIST
     if frontend_dist.joinpath("index.html").is_file():
+        @application.get("/replay", include_in_schema=False)
+        @application.get("/replay/", include_in_schema=False)
+        async def replay_frontend() -> FileResponse:
+            return FileResponse(frontend_dist / "index.html")
+
         application.mount(
             "/",
             StaticFiles(directory=frontend_dist, html=True),

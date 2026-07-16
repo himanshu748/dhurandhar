@@ -13,10 +13,10 @@ const nav = [
 export function Sidebar({ active, onSelect }: { active: Page; onSelect: (page: Page) => void }) {
   return (
     <aside className="sidebar">
-      <button className="brand" onClick={() => onSelect("replay")} aria-label="Open Dhurandhar replay">
+      <a className="brand" href="/" aria-label="Open Dhurandhar overview">
         <span className="brand-mark" aria-hidden="true">D</span>
         <span className="brand-name">Dhurandhar</span>
-      </button>
+      </a>
 
       <nav className="nav-list" aria-label="Primary navigation">
         {nav.map(({ id, label, icon: Icon }) => (

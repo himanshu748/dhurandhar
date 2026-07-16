@@ -77,7 +77,11 @@ class RuntimeResult(BaseModel):
     raw_output: str | None = None
     write_mode: bool = False
     thread_id: str | None = None
+    requested_model: str | None = None
+    observed_model: str | None = None
     model: str | None = None
+    invocation_argv: list[str] = Field(default_factory=list)
+    codex_version: str | None = None
     input_tokens: int = 0
     cached_input_tokens: int = 0
     output_tokens: int = 0
@@ -140,6 +144,7 @@ class _ParsedCodexStream(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     thread_id: str
+    observed_model: str | None = None
     input_tokens: int = 0
     cached_input_tokens: int = 0
     output_tokens: int = 0
@@ -176,6 +181,7 @@ class CodexCliRuntime:
     _MAX_PROMPT_CHARS = 12_000
     _MAX_COMMAND_CHARS = 2_000
     _MAX_PATH_CHARS = 1_000
+    _MAX_VERSION_CHARS = 500
     _MAX_DIFF_PREVIEW_BYTES = 8_000
     _GIT_TIMEOUT_SECONDS = 30
 
@@ -321,6 +327,7 @@ class CodexCliRuntime:
         command.append("-")
         baseline = self._capture_clean_baseline() if write_mode else None
         try:
+            codex_version = self._capture_codex_version(executable)
             completed = subprocess.run(
                 command,
                 input=prompt,
@@ -347,6 +354,14 @@ class CodexCliRuntime:
             if parse_error is not None:
                 raise parse_error
             assert parsed is not None
+            if (
+                parsed.observed_model is not None
+                and parsed.observed_model != model
+            ):
+                raise RuntimeError(
+                    "Codex stream model disagreed with requested model: "
+                    f"requested {model!r}, observed {parsed.observed_model!r}"
+                )
 
             diff = (
                 self._capture_git_diff(baseline=baseline)
@@ -373,7 +388,11 @@ class CodexCliRuntime:
                 raw_output=None,
                 write_mode=write_mode,
                 thread_id=parsed.thread_id,
-                model=model,
+                requested_model=model,
+                observed_model=parsed.observed_model,
+                model=parsed.observed_model or model,
+                invocation_argv=command,
+                codex_version=codex_version,
                 input_tokens=parsed.input_tokens,
                 cached_input_tokens=parsed.cached_input_tokens,
                 output_tokens=parsed.output_tokens,
@@ -405,6 +424,30 @@ class CodexCliRuntime:
         environment["NO_COLOR"] = "1"
         return environment
 
+    def _capture_codex_version(self, executable: str) -> str:
+        command = [executable, "--version"]
+        completed = subprocess.run(
+            command,
+            cwd=self.workdir,
+            env=self._codex_environment(),
+            capture_output=True,
+            text=True,
+            timeout=min(self.timeout_seconds, 30),
+            check=False,
+        )
+        if completed.returncode != 0:
+            diagnostic = completed.stderr.strip()[-500:]
+            raise RuntimeError(
+                "Codex version evidence capture failed with status "
+                f"{completed.returncode}: {diagnostic}"
+            )
+        version = completed.stdout.strip()
+        if not version:
+            raise RuntimeError("Codex version evidence capture returned empty output")
+        if len(version) > self._MAX_VERSION_CHARS:
+            raise RuntimeError("Codex version evidence exceeded the maximum length")
+        return version
+
     @classmethod
     def _parse_jsonl(cls, output: str) -> _ParsedCodexStream:
         events: list[dict[str, Any]] = []
@@ -435,9 +478,11 @@ class CodexCliRuntime:
         commands: dict[str, RuntimeCommand] = {}
         file_changes: dict[str, RuntimeFileChange] = {}
         terminal_error: str | None = None
+        observed_models: set[str] = set()
 
         for event_index, event in enumerate(events):
             event_type = str(event.get("type", ""))
+            observed_models.update(cls._model_identifiers(event))
             if event_type == "thread.started" and isinstance(
                 event.get("thread_id"), str
             ):
@@ -510,8 +555,14 @@ class CodexCliRuntime:
             raise RuntimeError("Codex JSONL did not include thread.started")
         if not turn_completed:
             raise RuntimeError("Codex JSONL did not include turn.completed")
+        if len(observed_models) > 1:
+            raise RuntimeError(
+                "Codex JSONL included conflicting model identifiers: "
+                + ", ".join(sorted(observed_models))
+            )
         return _ParsedCodexStream(
             thread_id=thread_id,
+            observed_model=next(iter(observed_models), None),
             input_tokens=input_tokens,
             cached_input_tokens=cached_input_tokens,
             output_tokens=output_tokens,
@@ -521,6 +572,43 @@ class CodexCliRuntime:
             final_message=final_message,
             raw_event_count=len(events),
         )
+
+    @classmethod
+    def _model_identifiers(cls, event: dict[str, Any]) -> set[str]:
+        """Find model fields in every stream envelope without trusting tool data.
+
+        A direct model field on an item is part of the CLI envelope and is inspected.
+        Nested item data can contain model-authored text or tool arguments, so it is
+        deliberately excluded. All other event-envelope dictionaries are inspected
+        to tolerate a future Codex JSONL shape that echoes the selected model outside
+        ``thread.started`` or ``turn.completed``.
+        """
+
+        identifiers: set[str] = set()
+
+        def add_identifier(key: str, value: Any) -> None:
+            if (
+                key in {"model", "model_id", "model_slug"}
+                and isinstance(value, str)
+                and value.strip()
+            ):
+                identifiers.add(value.strip())
+
+        def visit(value: Any) -> None:
+            if isinstance(value, dict):
+                for key, nested in value.items():
+                    add_identifier(key, nested)
+                    if key == "item" and isinstance(nested, dict):
+                        for item_key, item_value in nested.items():
+                            add_identifier(item_key, item_value)
+                        continue
+                    visit(nested)
+            elif isinstance(value, list):
+                for nested in value:
+                    visit(nested)
+
+        visit(event)
+        return identifiers
 
     @staticmethod
     def _as_nonnegative_int(value: Any) -> int:

@@ -1,5 +1,7 @@
 # Dhurandhar Build Week video shot list
 
+> **VIDEO STATUS: PENDING.** This is the recording plan, not a published video or video URL.
+
 This guide is tied to the committed 2026-07-16 event journal. It does not ask the
 model to run again, alter the target worktree, or mutate the recorded evidence.
 Target runtime: **2:55 with narration**.
@@ -44,9 +46,10 @@ env -u DHURANDHAR_OPERATOR_TOKEN \
     --host 127.0.0.1 --port 8000
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Before recording, verify:
+Open [http://127.0.0.1:8000/replay](http://127.0.0.1:8000/replay). Before recording, verify:
 
-- the top bar says `Kernel online`, `LIVE`, and `gpt-5.6-sol`;
+- the top bar says `Kernel online`, `RECORDED LIVE`, and
+  `REQUESTED gpt-5.6-sol`;
 - the run title is `Add privacy-safe session evidence export API`;
 - `GET /api/health` reports a valid 89-event chain;
 - an unauthenticated `POST /api/objectives` returns `503`;
@@ -58,6 +61,12 @@ thread, and token fields displayed in Change Replay come from the immutable
 captured events. Do not enable the Codex runtime, load an operator token, or say
 that playback is a new model invocation. If the objective or top-bar provenance
 does not match the checks above, stop; the UI may have fallen back to its fixture.
+
+The historical card's `model` value needs one spoken qualification: it is the
+slug requested through `--model` and accepted by the CLI. The captured
+`codex exec --json` stdout did not echo a model identifier, so it is not an
+independently stream-observed field. Thread IDs, token totals, commands, and raw
+event counts did come from that stream. Do not imply otherwise.
 
 ## Six required shots
 
@@ -95,23 +104,25 @@ that all three were eligible.
 First select implementation position `15 / 38`, `SEQ 052`, event
 `evt_05a431a053b849c3`.
 
-- **Keep visible:** `LIVE MODEL · gpt-5.6-sol · workspace-write` and the
-  Evidence Inspector section `Live model provenance`.
-- **Proof fields:** model `gpt-5.6-sol`, sandbox `workspace-write`, thread
+- **Keep visible:** `LIVE CALL · REQUESTED gpt-5.6-sol · workspace-write` and
+  the Evidence Inspector section `Live call provenance`.
+- **Proof fields:** requested model `gpt-5.6-sol`, sandbox `workspace-write`, thread
   `019f693d-e649-7a91-8dd3-f2cf1a772516`, and token boxes
   `333,511 / 294,400 / 6,297 / 2,150` for input, cached, output, and reasoning.
-- **Narrate:** “Codex used the authenticated `gpt-5.6-sol` tier in a bounded
-  workspace-write session. Dhurandhar captured the exact thread, token
-  categories, commands, files, and Git evidence.”
+- **Narrate:** “This invocation requested the authenticated `gpt-5.6-sol` slug
+  in a bounded workspace-write session. Codex's JSONL supplied the exact thread,
+  token categories, commands, and files; Git evidence was computed by the
+  kernel. The stream did not echo the model back, and the evidence document
+  names that limitation.”
 
 Then select review position `16 / 38`, `SEQ 055`, event
 `evt_92a5b81af75de4a2`.
 
-- **Keep visible:** `LIVE MODEL · gpt-5.6-sol · read-only`.
+- **Keep visible:** `LIVE CALL · REQUESTED gpt-5.6-sol · read-only`.
 - **Proof fields:** the distinct thread
   `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` and token boxes
   `361,206 / 315,904 / 3,566 / 2,103`.
-- **Narrate:** “Aegis invoked Codex again on the same exact tier, but in a
+- **Narrate:** “Aegis invoked Codex again requesting the same slug, but in a
   separate read-only thread. The implementing session cannot approve itself.”
 
 The top bar reflects the latest model boundary and therefore says `read-only`.
@@ -170,24 +181,30 @@ Do not click Approve. The recorded proposal must remain `proposed`.
 
 - **Navigate:** open
   [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com).
-- **Keep visible:** top-bar `FIXTURE`, `MODEL none`, and `MODE read-only`; run
-  header `FIXTURE · DETERMINISTIC FALLBACK`; a card badge
-  `FIXTURE · DETERMINISTIC`; and the inspector label `NO MODEL CALL`.
-- **Proof:** the public instance serves objective `obj_seed_self_hosting_v1`, run
-  `run_seed_self_hosting_v1`, and a valid 78-event chain. Its exact health
-  response is:
+- **Keep visible:** the landing-page deterministic-replay disclosure, existing
+  `fixture` playback badge, `NO MODEL CALL`, direct live-evidence link, and
+  `Replay the recorded run` action.
+- **Then navigate:** open `/replay` briefly and show the recorded objective plus
+  the current `MODE read-only` boundary. The event cards retain historical
+  `live` provenance because they come from the committed journal; do not call
+  the current viewer a live invocation.
+- **Proof:** the release instance serves objective `obj_8f98814a95fb`, run
+  `run_8f98814a95fb`, and a valid 89-event chain. Its required health response is:
 
 ```json
-{"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":78,"runtime":"deterministic"}
+{"status":"ok","service":"Dhurandhar API","version":"0.1.0","event_chain_valid":true,"events":89,"runtime":"deterministic"}
 ```
 
 - **Narrate:** “The deployed Render URL is an intentionally read-only,
-  no-secret deterministic replay for judges. It proves the product is
-  accessible; the earlier immutable local replay is the evidence for the two
-  real Codex `gpt-5.6-sol` calls.”
+  no-secret deterministic viewer. It makes no model calls now; it replays the
+  same committed 89-event journal whose implementation and review calls each
+  requested `gpt-5.6-sol`.”
 
-The hosted service is live, but its model evidence is fixture-backed. Never call
-the hosted replay a live model run.
+This exact release behavior was verified on source commit
+`55aae7648c2357ae9679ecd5523fb61556a16b0d`, Render deployment
+`dep-d9c9drjbc2fs73bipqqg`. The separate `make demo`
+path is a synthetic 78-event fixture with no model tokens; it is not the hosted
+recorded-run playback. Never call either playback mode a new live model run.
 
 ## Final audio checklist
 
@@ -195,12 +212,14 @@ The narration must say all of the following explicitly:
 
 - Codex collaborated on building Dhurandhar, with primary collaboration session
   ID `019f6172-596f-7d50-a842-b839fd16af3e` recorded in the repository.
-- Inside Dhurandhar, Codex made two distinct calls using exact tier
-  `gpt-5.6-sol`: one workspace-write implementation and one read-only review.
+- Inside Dhurandhar, Codex made two distinct calls that each requested exact
+  slug `gpt-5.6-sol`: one workspace-write implementation and one read-only
+  review. The JSONL stream did not echo a model field, and that limitation is
+  explicit in the evidence document.
 - Sentinel independently supplied the release-gating `EXIT 0` evidence.
 - Promotion was internal to `demo-sandbox`; no external deployment was claimed.
-- The Render deployment is a deterministic, read-only judge fallback with no
-  model call.
+- The Render deployment is deterministic, read-only playback of the committed
+  journal and makes no new model call.
 
 End on: “Dhurandhar does not ask you to trust an agent transcript. It shows who
 did what, which evidence allowed the next step, what failure cost, and exactly

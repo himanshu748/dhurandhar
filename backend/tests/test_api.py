@@ -9,6 +9,26 @@ from app.main import create_app
 from app.services.orchestrator import SEED_RUN_ID
 
 
+def test_frontend_index_and_direct_replay_route_serve_the_same_shell(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir()
+    index = "<!doctype html><title>Dhurandhar route shell</title>"
+    frontend_dist.joinpath("index.html").write_text(index, encoding="utf-8")
+    monkeypatch.setattr("app.main.FRONTEND_DIST", frontend_dist)
+
+    settings = Settings(
+        event_log_path=tmp_path / "route-events.jsonl",
+        seed_demo=False,
+    )
+    with TestClient(create_app(settings)) as route_client:
+        assert route_client.get("/").text == index
+        assert route_client.get("/replay").text == index
+        assert route_client.get("/replay/").text == index
+
+
 def test_seeded_state_exposes_complete_auditable_run(client: TestClient) -> None:
     health = client.get("/api/health")
     assert health.status_code == 200
