@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { REDUCED_MOTION_QUERY } from "../lib/gsap";
+import { REDUCED_MOTION_QUERY } from "../lib/motion";
 
 const preference = () => typeof window !== "undefined"
   && typeof window.matchMedia === "function"

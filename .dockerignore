@@ -14,7 +14,10 @@ frontend/node_modules
 frontend/dist
 frontend/.vite
 .playwright-cli
-output
+output/*
+!output/evidence/
+output/evidence/*
+!output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl
 docs
 agents
 benchmarks

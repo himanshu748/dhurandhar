@@ -197,6 +197,9 @@ function VerdictMoment({ event }: { event: ReplayEvent }) {
 function CodexEvidence({ event }: { event: ReplayEvent }) {
   const provenance = event.provenance;
   if (!provenance) return null;
+  const observedModel = provenance.observedModel;
+  const requestedModel = provenance.requestedModel ?? provenance.model;
+  const displayedModel = observedModel ?? requestedModel;
   const outcomes = [...provenance.commands, ...provenance.checks.filter((check) =>
     !provenance.commands.some((command) => command.command === check.command),
   )];
@@ -207,7 +210,8 @@ function CodexEvidence({ event }: { event: ReplayEvent }) {
         <code>{provenance.runtime ?? "runtime unreported"}</code>
       </div>
       <dl className="codex-identity-grid">
-        <div><dt>Model</dt><dd>{provenance.model ?? (provenance.mode === "deterministic" ? "No model call" : "unreported")}</dd></div>
+        <div><dt>{provenance.mode === "live" ? observedModel ? "Observed model" : "Requested model" : "Model"}</dt><dd>{displayedModel ?? (provenance.mode === "deterministic" ? "No model call" : "unreported")}</dd></div>
+        {provenance.mode === "live" && <div><dt>Stream model</dt><dd>{observedModel ? "matched request" : "not emitted"}</dd></div>}
         <div><dt>Sandbox</dt><dd>{provenance.sandbox ?? "unreported"}</dd></div>
         <div><dt>Thread</dt><dd>{provenance.threadId ? <CopyableValue value={provenance.threadId} label="thread ID" /> : "unreported"}</dd></div>
         <div><dt>Tokens</dt><dd>{provenance.inputTokens.toLocaleString()} in · {provenance.cachedInputTokens.toLocaleString()} cached · {provenance.outputTokens.toLocaleString()} out · {provenance.reasoningOutputTokens.toLocaleString()} reasoning</dd></div>
@@ -305,11 +309,12 @@ function HashChainLink({ event, previousRaw, skipped }: { event: ReplayEvent; pr
     return <div className="hash-chain hash-unavailable"><Link2 size={11} /><span>CHAIN UNAVAILABLE IN THIS EVIDENCE SOURCE</span></div>;
   }
   const genesis = !event.previousHash;
+  const predecessorOutsideView = !genesis && !previousRaw;
   const verified = genesis || Boolean(previousRaw?.hash && event.previousHash === previousRaw.hash);
   return (
-    <div className={`hash-chain ${verified ? "is-verified" : "is-unverified"}`} data-hash-link>
+    <div className={`hash-chain ${verified ? "is-verified" : predecessorOutsideView ? "is-external" : "is-unverified"}`} data-hash-link>
       <Link2 size={11} />
-      <span>{genesis ? "GENESIS" : verified ? "APPEND-ONLY LINK VERIFIED" : "CHAIN LINK NOT VERIFIED"}</span>
+      <span>{genesis ? "GENESIS" : verified ? "APPEND-ONLY LINK VERIFIED" : predecessorOutsideView ? "PREDECESSOR OUTSIDE RUN VIEW" : "CHAIN LINK NOT VERIFIED"}</span>
       {event.previousHash && <CopyableValue value={event.previousHash} label="previous event hash" />}
       <span aria-hidden="true">→</span>
       {event.hash && <CopyableValue value={event.hash} label="event hash" />}

@@ -614,7 +614,7 @@ class Orchestrator:
             if result.diff
             else list(dict.fromkeys(change.path for change in result.file_changes))
         )
-        return {
+        evidence = {
             "change_id": result.change_id,
             "runtime": result.runtime,
             "provenance": result.provenance,
@@ -637,6 +637,16 @@ class Orchestrator:
             "final_message": result.final_message,
             "raw_event_count": result.raw_event_count,
         }
+        if result.provenance == "live":
+            evidence.update(
+                {
+                    "requested_model": result.requested_model,
+                    "observed_model": result.observed_model,
+                    "invocation_argv": result.invocation_argv,
+                    "codex_version": result.codex_version,
+                }
+            )
+        return evidence
 
     @staticmethod
     def _sentinel_environment() -> dict[str, str]:

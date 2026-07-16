@@ -55,6 +55,9 @@ export interface DiffProvenance {
 export interface ModelProvenance {
   mode: "live" | "deterministic";
   runtime?: string;
+  requestedModel?: string;
+  observedModel?: string;
+  /** Backward-compatible display value; requestedModel/observedModel carry proof semantics. */
   model?: string;
   sandbox?: string;
   threadId?: string;

@@ -19,6 +19,9 @@ from app.services.runtime import (
 )
 
 
+CODEX_VERSION_OUTPUT = "codex-cli 0.144.5"
+
+
 def _jsonl(*events: dict[str, object]) -> str:
     return "\n".join(json.dumps(event) for event in events)
 
@@ -27,9 +30,16 @@ def _successful_stream(
     final_message: str = "Implemented safely",
     *,
     thread_id: str = "thread_live_123",
+    observed_model: str | None = None,
 ) -> str:
+    thread_started: dict[str, object] = {
+        "type": "thread.started",
+        "thread_id": thread_id,
+    }
+    if observed_model is not None:
+        thread_started["model"] = observed_model
     return _jsonl(
-        {"type": "thread.started", "thread_id": thread_id},
+        thread_started,
         {"type": "turn.started"},
         {
             "type": "item.started",
@@ -83,6 +93,16 @@ def _successful_stream(
     )
 
 
+def _is_codex_version(command: list[str]) -> bool:
+    return command[1:] == ["--version"]
+
+
+def _codex_version_result(command: list[str]) -> CompletedProcess[str]:
+    return CompletedProcess(
+        command, 0, stdout=f"{CODEX_VERSION_OUTPUT}\n", stderr=""
+    )
+
+
 def test_deterministic_runtime_repeats_and_reviews_exactly() -> None:
     runtime = DeterministicRuntime()
     first = runtime.generate(brief="Add health endpoint", run_id="run_1")
@@ -127,6 +147,8 @@ def test_read_only_codex_run_parses_structured_jsonl_and_reduces_environment(
     captured: dict[str, object] = {}
 
     def fake_run(command: list[str], **kwargs: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         captured["command"] = command
         captured["input"] = kwargs["input"]
         captured["env"] = kwargs["env"]
@@ -175,6 +197,12 @@ def test_read_only_codex_run_parses_structured_jsonl_and_reduces_environment(
     assert result.provenance == "live"
     assert result.thread_id == "thread_live_123"
     assert result.model == "gpt-5.5"
+    assert result.requested_model == "gpt-5.5"
+    assert result.observed_model is None
+    assert result.invocation_argv == captured["command"]
+    assert result.invocation_argv[-1] == "-"
+    assert "Add a health signal" not in result.invocation_argv
+    assert result.codex_version == CODEX_VERSION_OUTPUT
     assert result.input_tokens == 1200
     assert result.cached_input_tokens == 900
     assert result.output_tokens == 240
@@ -227,6 +255,8 @@ def test_workspace_write_uses_model_json_and_attaches_diff_evidence(
     def fake_run(command: list[str], **kwargs: object) -> CompletedProcess[str]:
         if command[0] == "git":
             return real_run(command, **kwargs)  # type: ignore[return-value]
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         captured["command"] = command
         return CompletedProcess(command, 0, stdout=_successful_stream(), stderr="")
 
@@ -289,6 +319,8 @@ def test_reviewer_is_read_only_uses_reviewer_model_and_parses_verdict(
     )
 
     def fake_run(command: list[str], **kwargs: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         captured["command"] = command
         captured["input"] = kwargs["input"]
         return CompletedProcess(
@@ -349,10 +381,101 @@ def test_jsonl_parser_rejects_malformed_missing_or_failed_streams() -> None:
         )
 
 
+def test_jsonl_parser_observes_envelope_model_and_ignores_nested_tool_model() -> None:
+    parsed = CodexCliRuntime._parse_jsonl(
+        _jsonl(
+            {
+                "type": "thread.started",
+                "thread_id": "thread_1",
+                "metadata": {"model": "gpt-5.6-sol"},
+            },
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "message_1",
+                    "type": "agent_message",
+                    "model": "gpt-5.6-sol",
+                    "arguments": {"model": "untrusted-tool-model"},
+                    "text": "done",
+                },
+            },
+            {"type": "turn.completed", "usage": {}},
+        )
+    )
+
+    assert parsed.observed_model == "gpt-5.6-sol"
+
+    with pytest.raises(RuntimeError, match="conflicting model identifiers"):
+        CodexCliRuntime._parse_jsonl(
+            _jsonl(
+                {
+                    "type": "thread.started",
+                    "thread_id": "thread_1",
+                    "model": "gpt-5.6-sol",
+                },
+                {"type": "turn.completed", "model": "gpt-5.6-luna"},
+            )
+        )
+
+
+def test_codex_fails_closed_when_observed_model_disagrees(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
+        return CompletedProcess(
+            command,
+            0,
+            stdout=_successful_stream(observed_model="gpt-5.6-luna"),
+            stderr="",
+        )
+
+    monkeypatch.setattr(runtime_module.shutil, "which", lambda _: "/usr/bin/codex")
+    monkeypatch.setattr(runtime_module.subprocess, "run", fake_run)
+    runtime = CodexCliRuntime(
+        enabled=True,
+        executable="codex",
+        workdir=tmp_path,
+        timeout_seconds=30,
+        implementation_model="gpt-5.6-sol",
+    )
+
+    with pytest.raises(RuntimeError, match="stream model disagreed"):
+        runtime.generate(brief="Inspect", run_id="run_model_mismatch")
+
+
+def test_codex_version_evidence_failure_is_fail_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[list[str]] = []
+
+    def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+        calls.append(command)
+        return CompletedProcess(
+            command, 9, stdout="", stderr="version unavailable"
+        )
+
+    monkeypatch.setattr(runtime_module.shutil, "which", lambda _: "/usr/bin/codex")
+    monkeypatch.setattr(runtime_module.subprocess, "run", fake_run)
+    runtime = CodexCliRuntime(
+        enabled=True,
+        executable="codex",
+        workdir=tmp_path,
+        timeout_seconds=30,
+    )
+
+    with pytest.raises(RuntimeError, match="version evidence capture failed"):
+        runtime.generate(brief="Inspect", run_id="run_version_failure")
+    assert calls == [["/usr/bin/codex", "--version"]]
+
+
 def test_nonzero_codex_exit_is_contained_without_stdout_leak(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         return CompletedProcess(
             command,
             7,
@@ -378,6 +501,8 @@ def test_codex_timeout_propagates_as_runtime_boundary_failure(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         raise subprocess.TimeoutExpired(command, 30)
 
     monkeypatch.setattr(runtime_module.shutil, "which", lambda _: "/usr/bin/codex")
@@ -462,6 +587,8 @@ def test_workspace_write_records_clean_baseline_and_refuses_reattribution(
         nonlocal codex_calls
         if command[0] == "git":
             return real_run(command, **kwargs)  # type: ignore[return-value]
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         codex_calls += 1
         tracked.write_text("changed by this invocation\n", encoding="utf-8")
         (tmp_path / "created.py").write_text("print('created')\n", encoding="utf-8")
@@ -501,6 +628,8 @@ def test_failed_workspace_write_restores_only_git_visible_invocation_changes(
     def fake_run(command: list[str], **kwargs: object) -> CompletedProcess[str]:
         if command[0] == "git":
             return real_run(command, **kwargs)  # type: ignore[return-value]
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         tracked.write_text("failed tracked change\n", encoding="utf-8")
         staged = tmp_path / "staged.py"
         staged.write_text("print('staged')\n", encoding="utf-8")
@@ -556,6 +685,8 @@ def test_workspace_write_that_mutates_head_fails_closed_for_manual_recovery(
     def fake_run(command: list[str], **kwargs: object) -> CompletedProcess[str]:
         if command[0] == "git":
             return real_run(command, **kwargs)  # type: ignore[return-value]
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         (tmp_path / "committed.py").write_text("print('unsafe')\n", encoding="utf-8")
         real_run(
             ["git", "add", "committed.py"],
@@ -609,6 +740,8 @@ def test_reviewer_must_use_a_distinct_codex_thread(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+        if _is_codex_version(command):
+            return _codex_version_result(command)
         return CompletedProcess(
             command,
             0,

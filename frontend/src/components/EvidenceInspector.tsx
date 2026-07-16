@@ -93,16 +93,24 @@ function ProvenanceEvidence({ provenance, runMode }: { provenance?: ModelProvena
   }
 
   const live = provenance.mode === "live";
+  const observedModel = provenance.observedModel;
+  const requestedModel = provenance.requestedModel ?? provenance.model;
+  const displayedModel = observedModel ?? requestedModel;
   return (
     <section className={`inspector-section model-provenance provenance-${provenance.mode}`}>
       <div className="provenance-heading">
-        <span><Radio size={14} /><strong>{live ? "Live model provenance" : "Deterministic fallback"}</strong></span>
+        <span><Radio size={14} /><strong>{live ? "Live call provenance" : "Deterministic fallback"}</strong></span>
         <code>{live ? "MODEL CALL" : "NO MODEL CALL"}</code>
       </div>
-      <p>{live ? "Captured runtime evidence is attached to this event." : "This event was produced by the deterministic fixture and carries no live model claim."}</p>
+      <p>{live
+        ? observedModel
+          ? "The JSONL stream echoed the model identifier and it matched the requested slug."
+          : "Thread and token evidence came from JSONL; the requested CLI model was not echoed by the stream."
+        : "This event was produced by the deterministic fixture and carries no live model claim."}</p>
       <dl className="provenance-facts">
         <div><dt>Runtime</dt><dd>{provenance.runtime ?? "Not reported"}</dd></div>
-        <div><dt>Model</dt><dd>{provenance.model ?? (live ? "Not reported" : "None")}</dd></div>
+        <div><dt>{live ? observedModel ? "Observed model" : "Requested model" : "Model"}</dt><dd>{displayedModel ?? (live ? "Not reported" : "None")}</dd></div>
+        {live && <div><dt>Stream model</dt><dd>{observedModel ? "Observed in JSONL" : "Not emitted by JSONL"}</dd></div>}
         <div><dt>Thread / session</dt><dd>{provenance.threadId || provenance.sessionId ? <CopyableValue value={provenance.threadId ?? provenance.sessionId ?? ""} label="thread or session ID" /> : "Not reported"}</dd></div>
         <div><dt>Sandbox</dt><dd>{provenance.sandbox ?? "Not reported"}</dd></div>
       </dl>

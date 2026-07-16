@@ -184,7 +184,8 @@ export default function App() {
         page={page}
         source={snapshot.source}
         operatorEnabled={operatorEnabled}
-        model={latestProvenance?.model}
+        model={latestProvenance?.observedModel ?? latestProvenance?.requestedModel ?? latestProvenance?.model}
+        modelLabel={latestProvenance?.observedModel ? "OBSERVED" : latestProvenance?.requestedModel || latestProvenance?.model ? "REQUESTED" : undefined}
         provenance={snapshot.run.mode === "codex" ? "live" : "fixture"}
         sandbox={latestProvenance?.sandbox}
         onNewObjective={() => setDialogOpen(true)}

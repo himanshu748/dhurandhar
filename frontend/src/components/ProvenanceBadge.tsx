@@ -9,17 +9,22 @@ interface BadgeContent {
   description: string;
 }
 
-function badgeContent(event: ReplayEvent, runMode: RunSummary["mode"]): BadgeContent {
-  const provenance = event.provenance;
+function badgeContent(event: ReplayEvent | undefined, runMode: RunSummary["mode"]): BadgeContent {
+  const provenance = event?.provenance;
 
   if (provenance?.mode === "live") {
-    const reportedModel = provenance.model ?? "model not reported";
+    const observed = provenance.observedModel;
+    const requested = provenance.requestedModel ?? provenance.model;
+    const displayedModel = observed ?? requested ?? "model not reported";
+    const proof = observed ? "OBSERVED" : requested ? "REQUESTED" : "UNREPORTED";
     return {
       kind: "live-model",
-      label: `LIVE MODEL · ${reportedModel}${provenance.sandbox ? ` · ${provenance.sandbox}` : ""}`,
-      description: provenance.sandbox
-        ? `Direct live model evidence. Reported sandbox: ${provenance.sandbox}.`
-        : "Direct live model evidence. Sandbox was not reported.",
+      label: `LIVE CALL · ${proof} ${displayedModel}${provenance.sandbox ? ` · ${provenance.sandbox}` : ""}`,
+      description: observed
+        ? `Live call with stream-observed model ${displayedModel}${provenance.sandbox ? ` and reported sandbox ${provenance.sandbox}` : ""}.`
+        : requested
+          ? `Live call requested model ${displayedModel} through the CLI; the JSONL stream did not echo a model${provenance.sandbox ? `. Reported sandbox: ${provenance.sandbox}` : ""}.`
+          : "Live call evidence; no model identifier was reported.",
     };
   }
 
@@ -43,7 +48,7 @@ export function ProvenanceBadge({
   runMode,
   className,
 }: {
-  event: ReplayEvent;
+  event?: ReplayEvent;
   runMode: RunSummary["mode"];
   className?: string;
 }) {

@@ -13,6 +13,7 @@ export function Topbar({
   source,
   operatorEnabled,
   model,
+  modelLabel,
   provenance,
   sandbox,
   onNewObjective,
@@ -22,6 +23,7 @@ export function Topbar({
   source: "api" | "snapshot";
   operatorEnabled: boolean;
   model?: string;
+  modelLabel?: "OBSERVED" | "REQUESTED";
   provenance: "live" | "fixture";
   sandbox?: string;
   onNewObjective: () => void;
@@ -36,8 +38,8 @@ export function Topbar({
           <span className={source === "api" ? "health-dot" : "health-dot snapshot"} />
           <span>{source === "api" ? "Kernel online" : "Snapshot fallback"}</span>
           </button>
-          <span className={`topbar-provenance is-${provenance}`}><Radio size={11} />{provenance === "live" ? "LIVE" : "FIXTURE"}</span>
-          <span className="topbar-model"><small>MODEL</small><code>{model ?? (provenance === "fixture" ? "none" : "unreported")}</code></span>
+          <span className={`topbar-provenance is-${provenance}`}><Radio size={11} />{provenance === "live" ? "RECORDED LIVE" : "FIXTURE"}</span>
+          <span className="topbar-model"><small>{modelLabel ?? "MODEL"}</small><code>{model ?? (provenance === "fixture" ? "none" : "unreported")}</code></span>
           {sandbox && <span className="topbar-model"><small>MODE</small><code>{sandbox}</code></span>}
         </div>
         <button

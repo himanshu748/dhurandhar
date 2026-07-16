@@ -53,12 +53,13 @@ Credits are internal allocation units, not money and not model tokens. Every tra
 
 The Codex adapter consumes structured JSONL and records:
 
-- provenance (`live` or `fixture`), sandbox mode, configured model, and Codex thread ID;
+- provenance (`live` or `fixture`), sandbox mode, requested model, any independently observed stream model, and Codex thread ID;
 - input, cached-input, output, and reasoning-output tokens;
 - commands, status, and exit code;
 - reported file changes;
 - Git changed-file list, numstat, diff SHA-256, bounded preview, and truncation status;
-- final Codex message and raw JSONL event count.
+- final Codex message and raw JSONL event count;
+- the full Codex invocation argv and `codex --version` output.
 
 Raw subprocess output is deliberately not persisted. The adapter receives a reduced environment and never gets a policy bypass.
 
@@ -130,7 +131,7 @@ make install
 
 This is the submission path. Run it locally because the production image does not bundle an authenticated Codex CLI.
 
-The final Build Week run is documented in [Live Codex evidence](docs/LIVE_EVIDENCE.md): Rivet won a three-engineer auction, a `gpt-5.6-sol` workspace-write thread produced a five-file, 226-insertion diff, a distinct read-only `gpt-5.6-sol` thread returned `approved`, and Sentinel independently passed the repository-owned pytest gate. Promotion remained internal to `demo-sandbox`; no commit, push, merge, or external deployment is claimed.
+The final Build Week run is documented in [Live Codex evidence](docs/LIVE_EVIDENCE.md): Rivet won a three-engineer auction, the implementation and review invocations each requested `gpt-5.6-sol`, the workspace-write thread produced a five-file, 226-insertion diff, the distinct read-only thread returned `approved`, and Sentinel independently passed the repository-owned pytest gate. Promotion remained internal to `demo-sandbox`; no commit, push, merge, or external deployment is claimed.
 
 ### 1. Prepare an isolated target
 
@@ -171,7 +172,7 @@ Use a new event-log path for every recorded run. In a second terminal:
 make dev-frontend
 ```
 
-Open [http://localhost:5173](http://localhost:5173). Kernel health must say `codex`, and the run evidence must say `live` and `workspace-write` before it can be used in a submission claim.
+Open [http://localhost:5173/replay](http://localhost:5173/replay). Kernel health must say `codex`, and the run evidence must say `live` and `workspace-write` before it can be used in a submission claim.
 
 Before submitting the objective, click **Read-only** in the top bar and load the same `dhurandhar-demo-operator-token` value. It is held only in the current browser tab's React memory.
 
@@ -198,11 +199,11 @@ After the run completes, use **Run recovery drill**. The API-driven drill append
 
 The drill is real application behavior over the event journal, but it is not an external production outage or infrastructure rollback.
 
-## Verified `gpt-5.6-sol` submission evidence
+## Recorded `gpt-5.6-sol` submission evidence
 
-On 2026-07-16, the authenticated Codex catalog listed the exact `gpt-5.6-sol` tier. Dhurandhar recorded that slug in both completed live events: implementation thread `019f693d-e649-7a91-8dd3-f2cf1a772516` ran with `workspace-write`, while reviewer thread `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` ran read-only and returned `approved`. The complete model usage, commands, diff, Sentinel evidence, settlement, recovery, and 89-event chain are in [Live Codex evidence](docs/LIVE_EVIDENCE.md).
+On 2026-07-16, the authenticated Codex catalog listed the exact `gpt-5.6-sol` tier. Both completed invocations requested that slug through `--model`: implementation thread `019f693d-e649-7a91-8dd3-f2cf1a772516` ran with `workspace-write`, while reviewer thread `019f6940-61f5-7ea2-85e8-d20a1afaaf6f` ran read-only and returned `approved`. Their thread IDs and token totals were parsed from `codex exec --json`; the captured stdout did not echo a model field, so the historical journal's model value is requested-and-CLI-accepted, not independently stream-observed. The complete commands, Git diff, Sentinel evidence, settlement, recovery, 89-event chain, and this limitation are in [Live Codex evidence](docs/LIVE_EVIDENCE.md).
 
-Configuration is not evidence; the linked journal and independently recomputed Git metadata are the claim.
+The historical journal is immutable and was not backfilled. Future runs additionally record `requested_model`, nullable `observed_model`, the exact invocation argv, and `codex --version`; a conflicting observed model or requested/observed mismatch fails closed. A configuration value alone is not proof of execution—the linked stream-derived thread/tokens, independently recomputed Git metadata, reviewer verdict, and Sentinel gate are the evidence for the completed run.
 
 ## Codex collaboration
 
@@ -215,9 +216,9 @@ The completed in-product run is inspectable in [Live Codex evidence](docs/LIVE_E
 > [!CAUTION]
 > **Codex collaboration session ID:** `019f6172-596f-7d50-a842-b839fd16af3e`. Codex 0.144.2 returned this exact value from the official feedback upload for the primary Dhurandhar build task on 2026-07-16; extra app logs were not included. This collaboration identifier is separate from the two in-product implementation/reviewer thread IDs above.
 
-## Deterministic judge/testing fallback
+## Deterministic judge playback
 
-The deterministic fixture remains the no-secret fallback, not the hero story.
+The production-shaped judge path is a no-secret, read-only playback of the committed immutable 89-event live-run journal. The server runtime is `deterministic` and executes no new Codex or model call. The landing-page `fixture` badge describes that current playback process; the cards under `/replay` preserve the recorded events' `live` provenance, requested model slug, stream-derived thread IDs, and token totals. Playback must never be narrated as a new live invocation.
 
 ```bash
 cp .env.example .env
@@ -233,23 +234,27 @@ curl -sS -o /tmp/dhurandhar-post.json -w '%{http_code}\n' \
 cat /tmp/dhurandhar-post.json
 ```
 
-The health response reports `runtime` as `deterministic`, both GET collections return successfully, and the POST prints status `503` plus `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. Open [http://localhost:8000](http://localhost:8000). The running fallback makes no model or external-service calls and writes no repository files. Change Replay labels its provenance `fixture`, reports zero model tokens, and must never be presented as a live or model-backed run.
+The health response reports `runtime` as `deterministic`, `events` as `89`, and `event_chain_valid` as `true`. Both GET collections return successfully, and the POST prints status `503` plus `{"detail":"mutations are disabled until DHURANDHAR_OPERATOR_TOKEN is configured"}`. Open the judge explanation at [http://localhost:8000](http://localhost:8000) or the evidence viewer at [http://localhost:8000/replay](http://localhost:8000/replay). This process makes no model or external-service calls and cannot mutate the committed journal.
 
-This path lets judges inspect the company roster, three-bid auction, ledger settlement, replay ordering, seeded recovery and policy evidence, and deterministic event chain without granting credentials.
+This path lets judges inspect the recorded company roster, three-bid auction, ledger settlement, replay ordering, recovery, policy evidence, and valid event chain without granting credentials.
 
-Stop the fallback and remove its seeded test volumes before starting local development:
+Stop the playback before starting local development:
 
 ```bash
 docker compose down --volumes
 ```
 
+### Separate seeded-fixture mode
+
+`make demo` remains the deliberately synthetic, offline product-testing path. It creates the seeded 78-event objective and labels its run and cards `fixture`; it has no thread IDs, no model usage, and no claim on the live evidence above. Do not confuse that fixture with deterministic playback of the committed 89-event live journal.
+
 ### Operator access and the public demo
 
 Every mutation in Codex mode or a non-development deployment requires `DHURANDHAR_OPERATOR_TOKEN` with at least 16 characters. The Render blueprint and default Docker Compose stack deliberately omit that secret, so both are read-only replays: GET routes work, while objective, recovery, and policy-decision POSTs return `503` instead of mutating shared state.
 
-**Verified public judge demo:** [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com). This deployment serves the deterministic seeded fixture only; the live `gpt-5.6-sol` run remains the separately committed evidence described in [Live Codex evidence](docs/LIVE_EVIDENCE.md). The public service was verified on 2026-07-16 from commit `e1c689b1033b476e560a18c78425859726044d87` after Render deploy `dep-d9c821vavr4c73airodg` reached `live`.
+**Public judge URL:** [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com). The release target serves the same deterministic, read-only playback of the committed 89-event live journal described above: it makes no new model calls, while `/replay` displays the evidence captured during the historical calls. Record a source commit and deployment identifier only after that exact release image is rolled out and its 89-event health response is re-verified.
 
-The public Render demo stores its seeded event journal at `/tmp/events.jsonl` on Render's ephemeral filesystem. A restart, redeploy, or instance replacement can reset that runtime journal, so the hosted replay is a disposable judge-facing fallback rather than durable evidence storage. The immutable final live-run record remains committed at [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl).
+The evidence file is committed at [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl) and copied read-only into the release image. Render's filesystem is ephemeral, but the hosted process does not use an ephemeral journal as evidence and has no operator token with which to append events; a restart loads the same image-baked record again.
 
 For a controlled local recording, set the server-side token before starting the API, click the **Read-only** control in the top bar, and enter the same value. The browser keeps it only in the current React memory, sends it only in `X-Dhurandhar-Operator-Token` on mutation requests, and never writes it to storage, request bodies, or the event journal. **Forget token** or a page reload clears it.
 
@@ -327,7 +332,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains the completed `gpt-5.6-sol` implementation, independent review, verification, settlement, recovery journal, primary Codex collaboration session ID, verified release gates, and verified public read-only demo with independently verifiable evidence. The final video, cover image, video URL, and tagged release remain explicit blockers in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed run whose implementation and review invocations requested `gpt-5.6-sol`, plus stream-derived thread/token evidence, independent Git and Sentinel verification, settlement, recovery, the primary Codex collaboration session ID, and an immutable journal. The hardened public read-only release still requires final rollout verification. The video, cover image, video URL, and release tag are explicitly **pending / not tagged** in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 
