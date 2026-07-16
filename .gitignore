@@ -62,8 +62,13 @@ test-results/
 .nyc_output/
 .playwright-cli/
 output/playwright/*.yml
+output/playwright/landing-verify/
+output/playwright/video-preflight/
 
 # Deployment and local tooling
 .render/
 .docker/
 .codex/
+
+# Rendered submission media
+video/out/

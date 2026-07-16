@@ -14,6 +14,7 @@ import { CopyableValue } from "./components/CopyableValue";
 import { ProvenanceBadge } from "./components/ProvenanceBadge";
 import { companyRoster } from "./data/roster";
 import { useReducedMotion } from "./hooks/useReducedMotion";
+import heroScreenshot from "./assets/dhurandhar-auction-live-1440x1000.jpg";
 
 const REPOSITORY = "https://github.com/himanshu748/dhurandhar";
 const LIVE_EVIDENCE = `${REPOSITORY}/blob/main/docs/LIVE_EVIDENCE.md`;
@@ -25,7 +26,6 @@ const IMPLEMENTATION_THREAD = "019f693d-e649-7a91-8dd3-f2cf1a772516";
 const REVIEW_THREAD = "019f6940-61f5-7ea2-85e8-d20a1afaaf6f";
 const FEEDBACK_SESSION = "019f6172-596f-7d50-a842-b839fd16af3e";
 const DIFF_SHA256 = "40eae170d3cadfa956810ab3a4c47467b0f14eea1fab232f1b9e55a90a176b33";
-
 const LIVE_COMMAND = [
   "source .venv/bin/activate",
   "DHURANDHAR_OPERATOR_TOKEN=dhurandhar-demo-operator-token \\",
@@ -72,6 +72,26 @@ const enforcementClaims = [
   },
 ];
 
+const journalStats = [
+  { value: "89", label: "chained events" },
+  { value: "2", label: "Codex threads" },
+  { value: "5", label: "changed files" },
+  { value: "+226", label: "lines" },
+  { value: "40/40", label: "credits conserved" },
+  { value: "1", label: "executed release gate" },
+];
+
+const lifecycleStages = [
+  { stage: "Objective", agent: "Atlas", action: "Scopes the objective and runs the auction." },
+  { stage: "Bid", agent: "Forge · Prism · Rivet", action: "Each pays 1 CR to submit evidence-backed work." },
+  { stage: "Implement", agent: "Rivet", action: "The winner invokes Codex in workspace-write." },
+  { stage: "Review", agent: "Aegis", action: "Invokes Codex read-only in a separate thread." },
+  { stage: "Verify", agent: "Sentinel", action: "Executes the real allowlisted release test command." },
+  { stage: "Promote", agent: "Shipwright", action: "Promotes only to the reversible demo sandbox." },
+  { stage: "Settle", agent: "Atlas", action: "Escrow pays out with 40/40 credits conserved." },
+  { stage: "Learn", agent: "Chronicle", action: "Records outcomes as regressions assign liability; only a human can approve proposed controls." },
+];
+
 function ExternalAnchor({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
   return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<ExternalLink size={13} aria-hidden="true" /></a>;
 }
@@ -109,6 +129,29 @@ export default function LandingPage() {
     void import("./lib/gsap").then(({ gsap }) => {
       if (cancelled || !root.current) return;
       context = gsap.context(() => {
+        const heroItems = gsap.utils.toArray<HTMLElement>("[data-landing-hero-item]");
+        gsap.fromTo(heroItems, { opacity: 0, y: 20 }, {
+          opacity: 1,
+          y: 0,
+          duration: 0.78,
+          stagger: 0.1,
+          ease: "power3.out",
+        });
+
+        const heroScreenshot = root.current?.querySelector<HTMLElement>("[data-landing-hero-parallax]");
+        if (heroScreenshot) {
+          gsap.fromTo(heroScreenshot, { yPercent: -1.25 }, {
+            yPercent: 1.25,
+            ease: "none",
+            scrollTrigger: {
+              trigger: heroScreenshot,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.6,
+            },
+          });
+        }
+
         gsap.utils.toArray<HTMLElement>("[data-landing-reveal]").forEach((section) => {
           gsap.fromTo(section, { opacity: 0, y: 22 }, {
             opacity: 1,
@@ -134,11 +177,31 @@ export default function LandingPage() {
           <span className="brand-mark" aria-hidden="true">D</span>
           <span>Dhurandhar</span>
         </a>
-        <a className="landing-replay-cta" href="/replay">Open Change Replay<ArrowRight size={15} aria-hidden="true" /></a>
+        <a className="landing-replay-cta" href="/replay" aria-label="Open replay navigation">Open Change Replay<ArrowRight size={15} aria-hidden="true" /></a>
       </header>
 
-      <section className="landing-hero" data-landing-reveal>
-        <h1>Eight AI agents with a credit economy deliver software through auction, independent review, an independent test gate and settlement, with every step recorded in a hash-chained event log.</h1>
+      <section className="landing-hero">
+        <div className="landing-hero-grid">
+          <div className="landing-hero-copy">
+            <h1 data-landing-hero-item>An AI software company that shows receipts.</h1>
+            <p className="landing-hero-subtext" data-landing-hero-item>AI agents ship code on faith. Dhurandhar earns trust with auctions, independent review, a real test gate and hash-chained evidence.</p>
+            <div className="landing-hero-actions" data-landing-hero-item>
+              <a className="landing-hero-primary" href="/replay">Open Change Replay<ArrowRight size={16} aria-hidden="true" /></a>
+              <ExternalAnchor className="landing-hero-secondary" href={REPOSITORY}>View source on GitHub</ExternalAnchor>
+            </div>
+          </div>
+          <a className="landing-hero-visual" href="/replay" aria-label="Inspect the replay screenshot" data-landing-hero-item>
+            <img
+              src={heroScreenshot}
+              alt="Dhurandhar Change Replay showing the three-engineer auction and evidence ledger"
+              width="1440"
+              height="1000"
+              decoding="async"
+              fetchPriority="high"
+              data-landing-hero-parallax
+            />
+          </a>
+        </div>
         <div className="landing-disclosure" role="note" aria-label="Hosted replay disclosure">
           <ProvenanceBadge runMode="deterministic" />
           <div>
@@ -150,6 +213,37 @@ export default function LandingPage() {
             <ExternalAnchor href={LIVE_RUNBOOK}>One-command live-runtime launch</ExternalAnchor>
           </div>
         </div>
+        <div className="landing-run-strip" aria-label="Recorded run summary">
+          <span>This real objective was implemented live by Codex, independently reviewed, test-gated and settled.</span>
+          <a href="/replay">Replay every recorded event at /replay.<ArrowRight size={14} aria-hidden="true" /></a>
+        </div>
+        <p className="landing-codex-boundary" aria-label="Codex sandbox boundary">
+          Implementation and review were two live Codex CLI invocations in separate sandboxes: <code>workspace-write</code> and <code>read-only</code>.
+        </p>
+      </section>
+
+      <section className="landing-journal-stats" data-landing-reveal aria-label="Recorded run facts">
+        {journalStats.map((stat) => (
+          <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>
+        ))}
+      </section>
+
+      <section className="landing-lifecycle" data-landing-reveal aria-labelledby="lifecycle-title">
+        <div className="landing-lifecycle-heading">
+          <span>RECORDED RUN LIFECYCLE</span>
+          <h2 id="lifecycle-title">From objective to human authority</h2>
+          <p>Every handoff is backed by a journal event and an enforced boundary.</p>
+        </div>
+        <ol className="landing-lifecycle-flow">
+          {lifecycleStages.map((item, index) => (
+            <li className="landing-lifecycle-step" key={item.stage}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <code>{item.agent.includes("·") ? "AGENTS" : "AGENT"} · {item.agent}</code>
+              <h3>{item.stage}</h3>
+              <p>{item.action}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section className="landing-section landing-verify" data-landing-reveal aria-labelledby="verify-title">

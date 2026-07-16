@@ -1,0 +1,373 @@
+{
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce"
+  },
+  "localLanding": {
+    "file": "00-local-landing.png",
+    "headline": "An AI software company that shows receipts."
+  },
+  "replay": [
+    {
+      "file": "01-objective-seq033.png",
+      "kind": "objective",
+      "position": 1,
+      "sequence": 33,
+      "eventId": "evt_fce40784e4ae67f1",
+      "title": "Objective accepted",
+      "selectedProof": [
+        "Add privacy-safe session evidence export API",
+        "LIVE JOURNAL · ORCHESTRATION"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "02-auction-seq049.png",
+      "kind": "auction",
+      "position": 12,
+      "sequence": 49,
+      "eventId": "evt_db0ad87af2a4890e",
+      "title": "Implementation auction awarded",
+      "selectedProof": [
+        "Competitive implementation auction",
+        "3 bids · 40 CR bounty"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .auction-stage"
+      ]
+    },
+    {
+      "file": "03-implementation-model-seq052.png",
+      "kind": "implementation-model",
+      "position": 15,
+      "sequence": 52,
+      "eventId": "evt_05a431a053b849c3",
+      "title": "Engineer implemented",
+      "selectedProof": [
+        "LIVE CALL · REQUESTED gpt-5.6-sol · workspace-write",
+        "333,511 in · 294,400 cached · 6,297 out · 2,150 reasoning"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .codex-proof",
+        ".inspector .model-provenance"
+      ]
+    },
+    {
+      "file": "04-implementation-diff-seq052.png",
+      "kind": "implementation-diff",
+      "position": 15,
+      "sequence": 52,
+      "eventId": "evt_05a431a053b849c3",
+      "title": "Engineer implemented",
+      "selectedProof": [
+        "5 changed files",
+        "backend/app/db.py",
+        "backend/app/main.py",
+        "backend/app/schemas.py",
+        "backend/app/service.py",
+        "backend/tests/test_api.py"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .diff-proof",
+        ".inspector .provenance-diff"
+      ]
+    },
+    {
+      "file": "05-review-model-seq055.png",
+      "kind": "review-model",
+      "position": 16,
+      "sequence": 55,
+      "eventId": "evt_92a5b81af75de4a2",
+      "title": "Reviewer completed evidence check",
+      "selectedProof": [
+        "LIVE CALL · REQUESTED gpt-5.6-sol · read-only",
+        "361,206 in · 315,904 cached · 3,566 out · 2,103 reasoning"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .codex-proof",
+        ".inspector .model-provenance"
+      ]
+    },
+    {
+      "file": "06-review-verdict-seq055.png",
+      "kind": "review-verdict",
+      "position": 16,
+      "sequence": 55,
+      "eventId": "evt_92a5b81af75de4a2",
+      "title": "Reviewer completed evidence check",
+      "selectedProof": [
+        "AEGIS",
+        "APPROVED",
+        "independent verdict"
+      ],
+      "inspectorProof": [
+        "{\"verdict\":\"approved\",\"findings\":[]}"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .approval-seal",
+        ".inspector .model-final-message"
+      ]
+    },
+    {
+      "file": "07-sentinel-gate-seq057.png",
+      "kind": "sentinel-gate",
+      "position": 17,
+      "sequence": 57,
+      "eventId": "evt_f72e510acca15e3c",
+      "title": "QA verified",
+      "selectedProof": [
+        "SENTINEL RELEASE GATE PASSED",
+        "1 executable check",
+        "/opt/anaconda3/bin/python3.13 -m pytest -q",
+        "EXIT 0"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .test-gate-proof"
+      ]
+    },
+    {
+      "file": "08-sentinel-hash-seq057.png",
+      "tailFile": "08b-sentinel-hash-tail-seq057.png",
+      "kind": "sentinel-hash",
+      "position": 17,
+      "sequence": 57,
+      "eventId": "evt_f72e510acca15e3c",
+      "title": "QA verified",
+      "inspectorProof": [
+        "e808f9e27f781515bf11c4fd490d7c7757ce086ef58c6d4a9582a6cad6d521d6"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .test-gate-proof",
+        ".inspector .artifact-frame"
+      ]
+    },
+    {
+      "file": "09-promotion-seq060.png",
+      "kind": "promotion",
+      "position": 19,
+      "sequence": 60,
+      "eventId": "evt_02441864d3295a79",
+      "title": "Promoted to demo environment",
+      "inspectorProof": [
+        "\"environment\": \"demo-sandbox\"",
+        "\"external_deployment\": false"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]",
+        ".inspector .artifact-frame"
+      ]
+    },
+    {
+      "file": "10-settlement-seq067.png",
+      "tailFile": "10b-settlement-rivet-seq067.png",
+      "kind": "settlement",
+      "position": 26,
+      "sequence": 67,
+      "eventId": "evt_4781eef24522413a",
+      "title": "Ledger transaction recorded",
+      "selectedProof": [
+        "refund",
+        "1 CR",
+        "escrow → atlas"
+      ],
+      "focus": [
+        ".conservation-badge.is-conserved"
+      ]
+    },
+    {
+      "file": "11-recovery-regression-seq079.png",
+      "kind": "recovery",
+      "position": 28,
+      "sequence": 79,
+      "eventId": "evt_1ae3cfbc52ef4b58",
+      "title": "Controlled regression injected",
+      "selectedProof": [
+        "HTTP 503"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "12-recovery-alert-seq080.png",
+      "kind": "recovery",
+      "position": 29,
+      "sequence": 80,
+      "eventId": "evt_24cc8876b4bc1ad4",
+      "title": "Monitor detected regression",
+      "selectedProof": [
+        "HTTP 500",
+        "42.0% error rate"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "13-recovery-rivet-seq081.png",
+      "kind": "recovery",
+      "position": 30,
+      "sequence": 81,
+      "eventId": "evt_e5ea76427d38d86d",
+      "title": "Ledger transaction recorded",
+      "selectedProof": [
+        "penalty",
+        "4 CR",
+        "rivet → incident-escrow"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .ledger-moment"
+      ]
+    },
+    {
+      "file": "14-recovery-aegis-seq082.png",
+      "kind": "recovery",
+      "position": 31,
+      "sequence": 82,
+      "eventId": "evt_34caf82facf123ff",
+      "title": "Ledger transaction recorded",
+      "selectedProof": [
+        "penalty",
+        "3 CR",
+        "aegis → incident-escrow"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .ledger-moment"
+      ]
+    },
+    {
+      "file": "15-recovery-sentinel-seq083.png",
+      "kind": "recovery",
+      "position": 32,
+      "sequence": 83,
+      "eventId": "evt_7994d1d6951d6b67",
+      "title": "Ledger transaction recorded",
+      "selectedProof": [
+        "penalty",
+        "2 CR",
+        "sentinel → incident-escrow"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .ledger-moment"
+      ]
+    },
+    {
+      "file": "16-recovery-shipwright-seq084.png",
+      "kind": "recovery",
+      "position": 33,
+      "sequence": 84,
+      "eventId": "evt_a8cada1d6913b7a7",
+      "title": "Ledger transaction recorded",
+      "selectedProof": [
+        "penalty",
+        "2 CR",
+        "shipwright → incident-escrow"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"] .ledger-moment"
+      ]
+    },
+    {
+      "file": "17-recovery-start-seq085.png",
+      "kind": "recovery",
+      "position": 34,
+      "sequence": 85,
+      "eventId": "evt_a4138ffc24c32253",
+      "title": "Rollback started",
+      "inspectorProof": [
+        "\"target_version\": \"v1.0.1\""
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]",
+        ".inspector .artifact-frame"
+      ]
+    },
+    {
+      "file": "18-recovery-restored-seq086.png",
+      "kind": "recovery",
+      "position": 35,
+      "sequence": 86,
+      "eventId": "evt_557daaa5f569640c",
+      "title": "Rollback completed",
+      "selectedProof": [
+        "Restored known-good release v1.0.1",
+        "Restored v1.0.1"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "19-recovery-analysis-seq087.png",
+      "kind": "recovery",
+      "position": 36,
+      "sequence": 87,
+      "eventId": "evt_9509265598ca496b",
+      "title": "Root cause identified",
+      "selectedProof": [
+        "The regression bypassed a missing promotion gate",
+        "Health contract was checked before deploy but not during promotion.",
+        "Release confidence must combine prevention, detection, and recovery."
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "20-recovery-benchmark-seq088.png",
+      "kind": "recovery",
+      "position": 37,
+      "sequence": 88,
+      "eventId": "evt_ea664cf4a1b1d26b",
+      "title": "Policy benchmark passed",
+      "selectedProof": [
+        "Structural coverage: 0.00 → 1.00",
+        "4 required control kinds · structure only, not efficacy"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "21-recovery-proposal-seq089.png",
+      "kind": "recovery",
+      "position": 38,
+      "sequence": 89,
+      "eventId": "evt_a6a6733b583f2553",
+      "title": "Policy update proposed",
+      "selectedProof": [
+        "Proposed four runtime-backed incident controls",
+        "proposed"
+      ],
+      "focus": [
+        ".evidence-card[aria-current=\"step\"]"
+      ]
+    },
+    {
+      "file": "22-recovery-human-gate-seq089.png",
+      "kind": "human-gate",
+      "position": 38,
+      "sequence": 89,
+      "eventId": "evt_a6a6733b583f2553",
+      "title": "Policy update proposed",
+      "pageProof": [
+        "Regression containment",
+        "4 liability entries / 11 cr",
+        "Known-good restored",
+        "The company cannot promote this policy itself.",
+        "Awaiting decision"
+      ],
+      "focus": [
+        ".human-gate"
+      ]
+    }
+  ],
+  "deployed": {
+    "landingFile": "23-deployed-landing.png",
+    "replayFile": "24-deployed-replay.png"
+  }
+}

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import LandingPage from "./LandingPage";
 
@@ -25,6 +25,26 @@ describe("judge-facing landing page", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("leads with a concise mechanism and the real replay screenshot", () => {
+    render(<LandingPage />);
+
+    expect(screen.getByRole("heading", { name: "An AI software company that shows receipts." })).toBeInTheDocument();
+    expect(screen.getByText("AI agents ship code on faith. Dhurandhar earns trust with auctions, independent review, a real test gate and hash-chained evidence.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Recorded run summary")).toHaveTextContent(
+      "This real objective was implemented live by Codex, independently reviewed, test-gated and settled.",
+    );
+    expect(screen.getByRole("link", { name: "Replay every recorded event at /replay." })).toHaveAttribute("href", "/replay");
+    expect(screen.getByRole("link", { name: "Open Change Replay" })).toHaveAttribute("href", "/replay");
+    expect(screen.getByRole("link", { name: /View source on GitHub/i })).toHaveAttribute(
+      "href",
+      "https://github.com/himanshu748/dhurandhar",
+    );
+    expect(screen.getByRole("img", { name: /three-engineer auction and evidence ledger/i })).toHaveAttribute(
+      "src",
+      expect.stringContaining("dhurandhar-auction-live-1440x1000.jpg"),
+    );
+  });
+
   it("renders the exact captured identifiers and reproduction boundary", () => {
     render(<LandingPage />);
 
@@ -40,6 +60,35 @@ describe("judge-facing landing page", () => {
     expect(command).toHaveTextContent("DHURANDHAR_REVIEWER_MODEL=gpt-5.6-sol");
     expect(command).toHaveTextContent("make dev-backend");
     expect(screen.getByText(/Requires Codex CLI 0.144.0\+/)).toBeInTheDocument();
+  });
+
+  it("shows the journal-backed facts and the complete recorded lifecycle", () => {
+    render(<LandingPage />);
+
+    expect(screen.getByLabelText("Codex sandbox boundary")).toHaveTextContent(
+      "Implementation and review were two live Codex CLI invocations in separate sandboxes: workspace-write and read-only.",
+    );
+
+    const facts = screen.getByRole("region", { name: "Recorded run facts" });
+    for (const [value, label] of [
+      ["89", "chained events"],
+      ["2", "Codex threads"],
+      ["5", "changed files"],
+      ["+226", "lines"],
+      ["40/40", "credits conserved"],
+      ["1", "executed release gate"],
+    ]) {
+      expect(within(facts).getByText(value)).toBeInTheDocument();
+      expect(within(facts).getByText(label)).toBeInTheDocument();
+    }
+
+    const lifecycle = screen.getByRole("region", { name: "From objective to human authority" });
+    expect(within(lifecycle).getAllByRole("listitem")).toHaveLength(8);
+    for (const stage of ["Objective", "Bid", "Implement", "Review", "Verify", "Promote", "Settle", "Learn"]) {
+      expect(within(lifecycle).getByRole("heading", { name: stage })).toBeInTheDocument();
+    }
+    expect(within(lifecycle).getByText("AGENTS · Forge · Prism · Rivet")).toBeInTheDocument();
+    expect(within(lifecycle).getByText(/only a human can approve/)).toBeInTheDocument();
   });
 
   it("names all eight roles and links every enforcement claim to source lines", () => {

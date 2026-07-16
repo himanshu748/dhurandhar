@@ -1,0 +1,25 @@
+{
+  "name": "dhurandhar-demo-video",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node scripts/capture.mjs",
+    "typecheck": "tsc --noEmit",
+    "render": "remotion render src/index.ts DhurandharDemo out/dhurandhar-demo.mp4 --codec=h264 --pixel-format=yuv420p --image-format=png --color-space=bt709 --crf=18 --enforce-audio-track"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.490",
+    "@remotion/media": "4.0.490",
+    "playwright": "1.57.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.490"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.7.2"
+  }
+}
