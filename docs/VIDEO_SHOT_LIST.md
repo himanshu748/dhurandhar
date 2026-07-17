@@ -181,9 +181,10 @@ Do not click Approve. The recorded proposal must remain `proposed`.
 
 - **Navigate:** open
   [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com).
-- **Keep visible:** the landing-page deterministic-replay disclosure, existing
-  `fixture` playback badge, `NO MODEL CALL`, direct live-evidence link, and
-  `Replay the recorded run` action.
+- **Keep visible:** the landing-page deterministic-replay disclosure, the
+  `FIXTURE · DETERMINISTIC` badge, the sentence `It executes no model calls.`,
+  the direct live-evidence link, and the `Replay the recorded run` block with
+  its `Open the 89-event replay` action.
 - **Then navigate:** open `/replay` briefly and show the recorded objective plus
   the current `MODE read-only` boundary. The event cards retain historical
   `live` provenance because they come from the committed journal; do not call
@@ -200,9 +201,12 @@ Do not click Approve. The recorded proposal must remain `proposed`.
   same committed 89-event journal whose implementation and review calls each
   requested `gpt-5.6-sol`.”
 
-This exact release behavior was verified on source commit
-`55aae7648c2357ae9679ecd5523fb61556a16b0d`, Render deployment
-`dep-d9c9drjbc2fs73bipqqg`. The separate `make demo`
+This exact release behavior was re-verified on source commit
+`40ca2c4b4a804e18f366a530db0346abf9a4c64f`, Render deployment
+`dep-d9ctc461a83c739r8p7g`. The 2026-07-17 preflight observed about 59 seconds
+from the latest Render process start to its first successful health probe. Hit
+`/api/health` at least 90 seconds before recording and wait for the exact JSON
+above before opening the public-demo shot. The separate `make demo`
 path is a synthetic 78-event fixture with no model tokens; it is not the hosted
 recorded-run playback. Never call either playback mode a new live model run.
 
