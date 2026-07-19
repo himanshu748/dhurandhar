@@ -1,7 +1,7 @@
-# Dhurandhar - submission draft
+# Dhurandhar submission
 
-> [!WARNING]
-> This is not yet a complete submission. The narrated video, cover image, and video URL are **pending**, and the release is **not tagged**. The hardened deterministic public playback and release gates must be re-verified from the final candidate; the checklist at the end is the source of truth.
+> [!NOTE]
+> The final video and cover image are attached. The automated release gates passed on 2026-07-19. Submission forms remain human-owned; the checklist at the end is the source of truth.
 
 ## One-line pitch
 
@@ -204,6 +204,8 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 
 - Live demo: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com)
 - Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar)
+- Demo video: [https://youtu.be/FFN0SHpwWFQ](https://youtu.be/FFN0SHpwWFQ) (2:58).
+- Cover image: [SEQ 052 implementation evidence](assets/dhurandhar-build-week-cover.png) (1920x1080).
 - Direct verification completed 2026-07-16: deterministic health with a valid 89-event chain; `/` landing HTML `200`; `/replay` HTML `200`; GET objectives, runs, and events `200`; and unauthenticated objective creation rejected with the documented `503` response.
 - Evidence storage: the committed journal is copied read-only into the image; Render's ephemeral filesystem is not used as the evidence source.
 - Release source commit: `55aae7648c2357ae9679ecd5523fb61556a16b0d`; Render deployment: `dep-d9c9drjbc2fs73bipqqg` (`live` at 2026-07-16T08:32:41Z). Earlier seeded-fixture deployment identifiers are not reused.
@@ -230,7 +232,7 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 
 ## What comes next
 
-1. Record the final video and cover image, then publish the remaining direct submission URLs.
+1. Submit the prepared artifacts through each organizer's form.
 2. Add authenticated GitHub branch/PR and CI-evidence adapters with exact repository allowlists.
 3. Add a real deployment-provider and monitor adapter while preserving human release authority.
 4. Move the event journal to durable signed storage with authentication and tenant isolation.
@@ -260,10 +262,10 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 - [x] Capture the requested model slug, stream-derived implementation/reviewer thread IDs and tokens, commands, files, diff, verdict, final messages, settlement, and recovery evidence; document that stdout supplied no observed model field.
 - [x] Add the returned primary Codex collaboration session ID to README and release notes.
 - [x] Redeploy the hardened deterministic 89-event public playback and record the verified source commit and deployment identifier.
-- [ ] Record and narrate the sub-three-minute live-Codex video.
-- [ ] Capture a final implementation cover image from the release candidate.
-- [ ] Add the final video URL alongside the verified live-demo and source-repository URLs.
-- [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; the submission guard now reports only unfinished human media items.
+- [x] Record and narrate the sub-three-minute live-Codex video.
+- [x] Capture a final implementation cover image from the release candidate.
+- [x] Add the final video URL alongside the verified live-demo and source-repository URLs.
+- [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; after media integration, the submission guard reports no release blockers.
 - [ ] Create and push the tagged release.
 - [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
 

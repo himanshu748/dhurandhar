@@ -6,7 +6,7 @@ Dhurandhar is an experimental software-company control plane for a solo founder.
 
 The submission story is a **live Codex workspace-write run** against a disposable Git worktree. The captured target objective adds a privacy-safe session evidence export to **Misconception Debugger**, a separate Education project. Dhurandhar is the Developer Tools entry and the control plane around that work; it does not claim Misconception Debugger as an internal Dhurandhar feature.
 
-[Public demo](https://dhurandhar-asc.onrender.com) · [Source repository](https://github.com/himanshu748/dhurandhar) · [Live Codex evidence](docs/LIVE_EVIDENCE.md) · [Video shot list](docs/VIDEO_SHOT_LIST.md)
+[Public demo](https://dhurandhar-asc.onrender.com) · [Demo video](https://youtu.be/FFN0SHpwWFQ) · [Source repository](https://github.com/himanshu748/dhurandhar) · [Live Codex evidence](docs/LIVE_EVIDENCE.md) · [Video shot list](docs/VIDEO_SHOT_LIST.md)
 
 > [!IMPORTANT]
 > Dhurandhar is a hackathon prototype, not an unattended production deployment system. A successful "promotion" is an internal, reversible `demo-sandbox` lifecycle transition. The current adapter does not commit, push, merge, or deploy to external infrastructure.

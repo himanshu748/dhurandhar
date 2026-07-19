@@ -1,10 +1,10 @@
 # Dhurandhar Build Week video shot list
 
-> **VIDEO STATUS: PENDING.** This is the recording plan, not a published video or video URL.
+> **VIDEO STATUS: PUBLISHED.** [Watch the final 2:58 demo](https://youtu.be/FFN0SHpwWFQ). This document preserves the recording plan and proof-field checklist used for the published video.
 
 This guide is tied to the committed 2026-07-16 event journal. It does not ask the
 model to run again, alter the target worktree, or mutate the recorded evidence.
-Target runtime: **2:55 with narration**.
+Published runtime: **2:58 with narration**.
 
 ## Recording setup: immutable live-run playback
 

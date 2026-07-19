@@ -1,6 +1,6 @@
-# Dhurandhar v1.0.0 release notes — draft
+# Dhurandhar v1.0.0 release notes
 
-> **NOT TAGGED.** The video, video URL, and cover image remain pending. The hardened public rollout and direct response audit are complete.
+> The final video and cover image are published. The automated release gates passed on 2026-07-19.
 
 ## Build Week evidence
 
@@ -12,6 +12,8 @@
 - Chain-verifiable final journal: [`output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl`](../output/evidence/codex-live-run-2026-07-16-gpt-5.6-sol.jsonl).
 - Verified public judge URL: [https://dhurandhar-asc.onrender.com](https://dhurandhar-asc.onrender.com).
 - Source repository: [https://github.com/himanshu748/dhurandhar](https://github.com/himanshu748/dhurandhar).
+- Demo video: [https://youtu.be/FFN0SHpwWFQ](https://youtu.be/FFN0SHpwWFQ) (2:58).
+- Cover image: [SEQ 052 implementation evidence](assets/dhurandhar-build-week-cover.png) (1920x1080).
 - Render source commit: `55aae7648c2357ae9679ecd5523fb61556a16b0d`; deployment: `dep-d9c9drjbc2fs73bipqqg` (`live` at 2026-07-16T08:32:41Z). Earlier seeded-fixture deployments are not release evidence for this 89-event playback.
 - Recording guide: [Evidence-based video shot list](VIDEO_SHOT_LIST.md).
 
@@ -21,7 +23,7 @@ Version scopes are separate: the API currently reports `0.1.0`, this repository
 release is drafted as `v1.0.0`, and the captured internal demo-sandbox artifact
 is `v1.0.1`.
 
-- Backend/frontend tests, Python compilation, TypeScript lint, production build, Blueprint validation, and the adversarial Docker smoke all passed on the hardened release candidate. `make submission-check` was rerun and remains intentionally blocked only by the unfinished video, cover image, and final video URL.
+- Backend/frontend tests, Python compilation, TypeScript lint, production build, Blueprint validation, and the adversarial Docker smoke all passed on the hardened release candidate. On 2026-07-19, the final `make test`, `make lint`, `make build`, and `make submission-check` gates passed after media integration; the submission guard reported no release blockers. The Makefile's optional Ruff branch reported that Ruff was not installed and skipped that additional check.
 - Required Docker/public behavior: `/` and `/replay` serve, GET routes remain readable, health verifies the immutable 89-event chain under `runtime: deterministic`, and unauthenticated mutation remains fail-closed with `503`.
 - The final journal independently verified at 89 events with head `e0653356f2bb00f3b355344fc0474e71c4446856a5d696d2d2d589b6459df9a2` and file checksum `cc6cad770642bbc667ed3d4c3a9de789717b720710bf54801659000e6ae0d8b5`.
 
