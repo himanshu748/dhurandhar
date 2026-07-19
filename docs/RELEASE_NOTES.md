@@ -20,7 +20,7 @@
 ## Release validation
 
 Version scopes are separate: the API currently reports `0.1.0`, this repository
-release is drafted as `v1.0.0`, and the captured internal demo-sandbox artifact
+release is tagged as `v1.0.0`, and the captured internal demo-sandbox artifact
 is `v1.0.1`.
 
 - Backend/frontend tests, Python compilation, TypeScript lint, production build, Blueprint validation, and the adversarial Docker smoke all passed on the hardened release candidate. On 2026-07-19, the final `make test`, `make lint`, `make build`, and `make submission-check` gates passed after media integration; the submission guard reported no release blockers. The Makefile's optional Ruff branch reported that Ruff was not installed and skipped that additional check.

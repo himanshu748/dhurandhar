@@ -266,19 +266,18 @@ The separate `make demo` path remains a synthetic 78-event seed for offline prod
 - [x] Capture a final implementation cover image from the release candidate.
 - [x] Add the final video URL alongside the verified live-demo and source-repository URLs.
 - [x] Re-run `make test`, `make lint`, `make build`, `make submission-check`, and the Docker smoke test from the hardened release candidate; after media integration, the submission guard reports no release blockers.
-- [ ] Create and push the tagged release.
+- [x] Create and push the tagged release.
 - [x] Verify every current claim, journal identifier, checksum, relative link, public repository URL, and live-demo response after the final rollout.
 
-## Release/tag procedure
+## Release/tag record
 
-Complete and check every pre-release evidence item above first. Merge the release commit into the default `main` branch and verify that it is an ancestor of the public branch before tagging. The tag action itself is intentionally post-guard. Then run these commands in order; do not create or push a release tag unless the ancestry check and submission guard both pass:
+The annotated `v1.0.0` tag was created and pushed only after the pre-release evidence items and submission guard passed. These commands verify the published tag and its ancestry without moving it:
 
 ```bash
-git fetch origin main
-git merge-base --is-ancestor HEAD origin/main
+git fetch origin main --tags
+git merge-base --is-ancestor 'v1.0.0^{}' origin/main
 make submission-check
-git tag -s v1.0.0 -m "Dhurandhar OpenAI Build Week submission"
-git push origin v1.0.0
+git cat-file -p refs/tags/v1.0.0
 ```
 
 Rules references: [OpenAI Build Week rules](https://openai.devpost.com/rules) and [OpenAI Build Week](https://openai.com/build-week/).

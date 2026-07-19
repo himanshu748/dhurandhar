@@ -332,7 +332,7 @@ The dated [clean-machine README audit](docs/CLEAN_MACHINE_AUDIT.md) records the 
 
 ## Project status
 
-Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed run whose implementation and review invocations requested `gpt-5.6-sol`, plus stream-derived thread/token evidence, independent Git and Sentinel verification, settlement, recovery, the primary Codex collaboration session ID, and an immutable journal. The hardened public read-only 89-event release is deployed and verified. The video, cover image, video URL, and release tag are explicitly **pending / not tagged** in [SUBMISSION.md](docs/SUBMISSION.md).
+Dhurandhar is an OpenAI Build Week prototype. The repository contains a completed run whose implementation and review invocations requested `gpt-5.6-sol`, plus stream-derived thread/token evidence, independent Git and Sentinel verification, settlement, recovery, the primary Codex collaboration session ID, and an immutable journal. The hardened public read-only 89-event release is deployed and verified. The final 2:58 video, cover image, video URL, and annotated `v1.0.0` release tag are published and recorded in [SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

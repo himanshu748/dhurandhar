@@ -56,5 +56,5 @@ Replay comparison completed on 2026-07-15 at the 1440 × 1000 desktop demo targe
 - The production build's eager entry plus modulepreloaded runtime/React JavaScript totals 192,908 raw bytes; the 87,488-byte replay chunk is absent from the landing document and is loaded only at `/replay`.
 - Dedicated captures cover the implementation hero, three-way auction, and complete recovery/human-gate story.
 - Frontend type-check, Vitest suite, production build, and browser console checks are required to pass before the branch is published.
-- The final submission recording and video URL remain pending. Recording should describe the hosted process as deterministic, read-only playback of the committed 89-event live journal with no new model call, while keeping the separate synthetic 78-event fixture mode distinct.
-- No release tag has been created.
+- The final 2:58 submission recording and video URL are published. Its linked shot list describes the hosted process as deterministic, read-only playback of the committed 89-event live journal with no new model call, while keeping the separate synthetic 78-event fixture mode distinct.
+- The annotated `v1.0.0` release tag is published.
